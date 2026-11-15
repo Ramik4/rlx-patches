@@ -1,0 +1,61 @@
+name: Build
+
+on:
+  push:
+    branches-ignore:
+      - upstream
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build patches
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cache Gradle
+        uses: burrunan/gradle-cache-action@v3
+
+      - name: Version script tests
+        run: python3 -m unittest discover -s rlx/scripts
+
+      # buildAndroid adds DEX to the jar in place, so it runs last.
+      - name: Build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew -q printVersions --no-daemon
+          ./gradlew :patches:buildAndroid --no-daemon
+
+      - name: Check bundle
+        run: |
+          mpp="$(ls patches/build/libs/patches-*.mpp)"
+          echo "$mpp"
+          unzip -p "$mpp" META-INF/MANIFEST.MF
+          if unzip -l "$mpp" | grep -E 'app/morphe/patches/reddit/|extensions/reddit\.mpe'; then
+            echo "::error::Reddit is not excluded from the bundle"
+            exit 1
+          fi
+
+      - name: Upload patches
+        uses: actions/upload-artifact@v7
+        with:
+          name: rlx-patches
+          path: patches/build/libs/patches-*.mpp
+          if-no-files-found: error

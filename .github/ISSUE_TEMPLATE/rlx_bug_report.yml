@@ -1,0 +1,36 @@
+name: Bug report
+description: Report a problem with RLX Patches.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check that the problem also happens with the latest RLX release.
+        Problems that also happen with the official Morphe Patches belong to Morphe.
+  - type: input
+    id: rlx-version
+    attributes:
+      label: RLX Patches version
+      description: Shown on the RLX Patches source card in Morphe Manager.
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: App and version
+      placeholder: YouTube 21.45.82
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What happens
+      description: Steps to reproduce, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Debug logs or a crash log, if available.
+      render: shell

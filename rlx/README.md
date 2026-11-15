@@ -1,0 +1,86 @@
+# RLX maintenance
+
+Notes for maintaining RLX Patches on top of Morphe Patches.
+
+## Branches
+
+| Branch | Content |
+| --- | --- |
+| `upstream` | Mirror of Morphe's `dev` branch. Only ever fast-forwarded, never committed to. |
+| `main` | Morphe + RLX. Morphe releases are merged in, never rebased; no force pushes. |
+
+Morphe is the `upstream` remote. Its tags are fetched into `refs/upstream-tags/*`, so they
+never mix with the RLX tags (`vX.Y.Z`) of this repository:
+
+```sh
+git remote add upstream https://github.com/MorpheApp/morphe-patches.git
+git config remote.upstream.tagOpt --no-tags
+git config --add remote.upstream.fetch '+refs/tags/*:refs/upstream-tags/*'
+git fetch upstream
+```
+
+## Syncing with Morphe
+
+```sh
+rlx/scripts/merge_upstream.sh refs/upstream-tags/v2.3.0-dev.8
+```
+
+The script merges the Morphe release, sets the RLX version and commits. It resolves the
+conflicts that are expected on every release by itself:
+
+- [`sync/removed.txt`](sync/removed.txt): Morphe files that RLX deletes (Morphe's workflows,
+  issue templates, bundle icon). Workflows Morphe adds later are deleted too, so they never
+  run here.
+- [`sync/ours.txt`](sync/ours.txt): files RLX owns entirely (`README.md`,
+  `patches-bundle.json`, `patches-list.json`).
+
+Any other conflict stops the script with the list of files and leaves the merge in progress.
+
+## Where RLX code lives
+
+RLX changes as few Morphe files as possible, so merges stay clean.
+
+- `rlx/`: build hooks, version, sync scripts and lists.
+- `patches/src/main/kotlin/app/rlx/`: RLX patches.
+- `extensions/*/src/main/java/app/rlx/`: RLX extension code.
+
+Hooks in Morphe files, each marked with an `RLX:` comment:
+
+| File | Hook |
+| --- | --- |
+| `build.gradle.kts` | applies `rlx/rlx.gradle.kts` (version) |
+| `patches/build.gradle.kts` | applies `rlx/patches.gradle.kts`; bundle name and description |
+| `settings.gradle.kts` | root project name |
+
+Patches of other apps (Reddit) stay in the tree untouched and are left out of the bundle by
+`rlx/patches.gradle.kts`, so deleting them never causes merge conflicts.
+
+## Versioning
+
+`gradle.properties` keeps Morphe's own version, which is the Morphe base version. The RLX
+version is in [`rlx.properties`](rlx.properties) and is computed by
+[`scripts/next_version.py`](scripts/next_version.py):
+
+| Morphe | RLX |
+| --- | --- |
+| `X.Y.0-dev.N` | `X.Y.N` (a skipped dev release skips its number too) |
+| `X.Y.0` | `X.(Y+1).0` |
+| RLX-only release | last RLX version + 1 |
+
+When a number is already taken, the next free one is used, so the last number only grows.
+Examples: Morphe 1.50.0 → RLX 1.51.0, Morphe 1.51.0-dev.2 → RLX 1.51.2.
+
+```sh
+./gradlew -q printVersions
+python3 -m unittest discover -s rlx/scripts
+```
+
+## Building
+
+Morphe's Gradle plugin and libraries are on GitHub Packages, which needs a GitHub token with
+`read:packages`, as `gpr.user`/`gpr.key` in `~/.gradle/gradle.properties` or as
+`GITHUB_ACTOR`/`GITHUB_TOKEN`. In GitHub Actions the workflow token is used.
+
+```sh
+./gradlew :patches:buildAndroid    # patches/build/libs/patches-<version>.mpp
+```

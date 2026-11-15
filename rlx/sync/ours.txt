@@ -1,0 +1,6 @@
+# Files that RLX owns entirely although Morphe has a file of the same name.
+# On a merge conflict rlx/scripts/merge_upstream.sh keeps the RLX side; the RLX release
+# workflow regenerates the generated ones.
+README.md
+patches-bundle.json
+patches-list.json

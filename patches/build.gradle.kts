@@ -2,14 +2,17 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 group = "app.morphe"
 
+// RLX: leaves the patches of other apps out of the bundle, see rlx/patches.gradle.kts.
+apply(from = rootProject.file("rlx/patches.gradle.kts"))
+
 patches {
     about {
-        name = "Morphe Patches"
-        description = "Patches for Morphe"
-        source = "git@github.com:MorpheApp/morphe-patches.git"
-        author = "MorpheApp"
-        contact = "na"
-        website = "https://morphe.software"
+        name = "RLX Patches"
+        description = "Morphe patches + VoT + extra features"
+        source = "git@github.com:RAMiK4/rlx-patches.git"
+        author = "RAMiK4"
+        contact = "https://github.com/RAMiK4/rlx-patches/issues"
+        website = "https://github.com/RAMiK4/rlx-patches"
         license = "GNU General Public License v3.0, with additional GPL section 7 requirements"
     }
 }
