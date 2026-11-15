@@ -61,6 +61,8 @@ public final class RlxDefaults {
             "app.morphe.extension.shared.settings.SharedYouTubeSettings",
             "app.morphe.extension.youtube.settings.Settings",
             "app.morphe.extension.music.settings.Settings",
+            // RLX patches.
+            "app.rlx.extension.youtube.yandexvot.YandexVotSettings",
     };
 
     /**

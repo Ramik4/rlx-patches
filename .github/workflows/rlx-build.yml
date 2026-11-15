@@ -54,9 +54,17 @@ jobs:
           fi
           for entry in app/rlx/build.properties app/rlx/defaults.json \
                        rlx/drawable/rlx_settings_screen_extended.xml \
-                       addresources/values/rlx/strings.xml; do
+                       addresources/values/rlx/strings.xml addresources/values/rlx/arrays.xml \
+                       rlx/drawable/morphe_yt_yandex_vot.xml rlx/drawable/morphe_yt_yandex_vot_bold.xml; do
             unzip -l "$mpp" | grep -q " $entry$" || { echo "::error::Missing in the bundle: $entry"; exit 1; }
           done
+          # RLX patches and extension classes. The .mpp and .mpe files hold DEX, so look for class names.
+          contains() { (unzip -p "$1" 2>/dev/null || cat "$1") | grep -aq "$2"; }
+          contains "$mpp" "app/rlx/patches/youtube/video/yandexvot" \
+            || { echo "::error::Missing in the bundle: Yandex voice over translation patch"; exit 1; }
+          unzip -p "$mpp" extensions/youtube.mpe > "$RUNNER_TEMP/youtube.mpe"
+          contains "$RUNNER_TEMP/youtube.mpe" "Lapp/rlx/extension/youtube/yandexvot/YandexVot;" \
+            || { echo "::error::Missing in the YouTube extension: Yandex voice over translation"; exit 1; }
           unzip -p "$mpp" app/rlx/build.properties
 
       - name: Upload patches

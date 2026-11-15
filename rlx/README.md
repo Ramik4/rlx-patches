@@ -77,6 +77,36 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
   updates. Settings already applied by the earlier YT Morphe builds are not applied again.
   *RLX Extended → Restore RLX default settings* applies all of them again.
 
+## RLX patches
+
+| Patch | Code | Notes |
+| --- | --- | --- |
+| Voice over translation (Yandex), YouTube | `patches/.../app/rlx/patches/youtube/video/yandexvot/`, `extensions/youtube/.../app/rlx/extension/youtube/yandexvot/` | See below |
+
+### Voice over translation (Yandex)
+
+Based on [YaVoT](https://github.com/sashade8-ship-it/morphe-patches-yavot) 1.1.4 (sashade8, with
+earlier work of Jav1x, MarcaD, anddea and Sasha). Maintained here as RLX code, not as a subtree.
+
+- Built into the bundle instead of loaded as an add-on bundle: it subscribes to the player hooks
+  of Morphe's `AddOnApi` (a public contract of Morphe Patches) from the main activity, and only
+  hooks `AudioTrack.setVolume` itself, to lower the original audio.
+- Settings keys are unchanged (`morphe_yandex_vot_*`, `yandex_vot_*` in the settings export), so
+  the settings of YaVoT and YT Morphe carry over. They are on *RLX Extended → Voice over
+  translation (Yandex)*.
+- It does not conflict with Morphe's own Google-based voice over translation (`vot_*` keys):
+  starting one stops the other.
+- Changes to YaVoT: compiled against Morphe's current `Event` API (fixes the crash on long press
+  of the button, YT Morphe 1.49.0-dev.9); API client updated to vot.js 3.2.2 (component version,
+  user agent, browser client hints, session request signature, empty-audio file id); network and
+  API failures stop the translation with a short notice and never crash the app.
+- YouTube Music: not supported. Music has none of the player button and video hooks the
+  translation needs, and its content is mostly music, which Yandex usually does not translate.
+
+When updating from YaVoT or vot.js, compare `YandexVotApiClient` with
+`packages/shared/src/data/config.ts`, `secure.ts` and `packages/core/src/providers/yandex.ts`
+of vot.js.
+
 ## Versioning
 
 `gradle.properties` keeps Morphe's own version, which is the Morphe base version. The RLX

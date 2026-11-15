@@ -15,7 +15,8 @@ Morphe patches + VoT + extra features for YouTube and YouTube Music.
 RLX Patches is one patch bundle for **YouTube** and **YouTube Music**. It contains every
 patch of [Morphe Patches](https://github.com/MorpheApp/morphe-patches), plus:
 
-- **Voice-over translation (VoT)**, built in.
+- **Voice over translation (Yandex)**, built in: a player button that plays a Yandex voice-over
+  translation of the video (YouTube). Settings are in *RLX Extended*.
 - **Save to device**, a downloader for videos, audio, thumbnails and subtitles (off by default).
 - An **RLX Extended** section in the settings for everything RLX adds.
 
@@ -46,6 +47,8 @@ Every release names the Morphe version it is based on, for example
 | --- | --- |
 | [Morphe](https://github.com/MorpheApp/morphe-patches) | Morphe Patches, which RLX is based on |
 | [ReVanced](https://github.com/ReVanced) | Prior work Morphe Patches are based on |
+| [YaVoT](https://github.com/sashade8-ship-it/morphe-patches-yavot) by sashade8 | Yandex voice over translation, with earlier work of [Jav1x](https://github.com/Jav1x), MarcaD, [anddea](https://github.com/anddea) and Sasha |
+| [vot.js](https://github.com/FOSWLY/vot.js) | Reference for the Yandex voice over translation API |
 
 ## License
 
