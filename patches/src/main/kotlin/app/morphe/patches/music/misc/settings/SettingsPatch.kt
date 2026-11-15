@@ -54,6 +54,7 @@ import app.morphe.util.ResourceGroup
 import app.morphe.util.copyResources
 import app.morphe.util.inputStreamFromBundledResource
 import app.morphe.util.insertLiteralOverride
+import app.rlx.patches.music.settings.rlxSettingsPatch // RLX
 
 private const val MUSIC_ACTIVITY_HOOK_CLASS = "Lapp/morphe/extension/music/settings/MusicActivityHook;"
 
@@ -134,6 +135,8 @@ val settingsPatch = patch(
     description = "Adds settings for Morphe to YouTube Music."
 ) {
     dependsOn(
+        // RLX: RLX Extended settings, RLX default settings and attribution, see rlx/README.md.
+        rlxSettingsPatch,
         sharedExtensionPatch,
         settingsResourcePatch,
         addResourcesPatch,

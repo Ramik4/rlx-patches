@@ -80,6 +80,7 @@ import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethod
 import com.android.tools.smali.dexlib2.immutable.ImmutableMethodParameter
 import com.android.tools.smali.dexlib2.util.MethodUtil
+import app.rlx.patches.youtube.settings.rlxSettingsPatch // RLX
 
 private const val BASE_ACTIVITY_HOOK_CLASS = "Lapp/morphe/extension/shared/settings/BaseActivityHook;"
 private const val YOUTUBE_ACTIVITY_HOOK_CLASS = "Lapp/morphe/extension/youtube/settings/YouTubeActivityHook;"
@@ -205,6 +206,8 @@ val settingsPatch = patch(
     description = "Adds settings for Morphe to YouTube."
 ) {
     dependsOn(
+        // RLX: RLX Extended settings, RLX default settings and attribution, see rlx/README.md.
+        rlxSettingsPatch,
         sharedExtensionPatch,
         settingsResourcePatch,
         commandRouterHookPatch,

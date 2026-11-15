@@ -40,20 +40,42 @@ Any other conflict stops the script with the list of files and leaves the merge 
 
 RLX changes as few Morphe files as possible, so merges stay clean.
 
-- `rlx/`: build hooks, version, sync scripts and lists.
-- `patches/src/main/kotlin/app/rlx/`: RLX patches.
-- `extensions/*/src/main/java/app/rlx/`: RLX extension code.
+- `rlx/`: build hooks, version, default settings, sync scripts and lists.
+- `patches/src/main/kotlin/app/rlx/`: RLX patches (`app.rlx.patches`).
+- `patches/src/main/resources/addresources/values*/rlx/`: RLX strings.
+- `patches/src/main/resources/rlx/`: RLX resources copied into the apps.
+- `extensions/*/src/main/java/app/rlx/`: RLX extension code (`app.rlx.extension`).
 
-Hooks in Morphe files, each marked with an `RLX:` comment:
+Hooks in Morphe files, each marked with an `RLX` comment:
 
 | File | Hook |
 | --- | --- |
 | `build.gradle.kts` | applies `rlx/rlx.gradle.kts` (version) |
 | `patches/build.gradle.kts` | applies `rlx/patches.gradle.kts`; bundle name and description |
 | `settings.gradle.kts` | root project name |
+| `extensions/proguard-rules.pro` | keeps `app.rlx.**` |
+| `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube |
+| `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music |
 
 Patches of other apps (Reddit) stay in the tree untouched and are left out of the bundle by
 `rlx/patches.gradle.kts`, so deleting them never causes merge conflicts.
+
+## RLX core
+
+`app/rlx/patches/shared/RlxCorePatch.kt` is applied with the Morphe settings of each app
+(it cannot be left out, so the attribution is always there):
+
+- **RLX Extended**: a settings screen of its own; VoT, the downloader and all other RLX
+  settings go there.
+- **Attribution**: the "About" entry of the settings reads
+  *RLX Patches 2.3.7 · Based on Morphe Patches 2.3.0-dev.7* (GPLv3 section 7b) and opens the
+  RLX about dialog.
+- **Default settings**: every change RLX makes to Morphe's default settings is in
+  [`defaults.json`](defaults.json), one section per app, with the keys of the Morphe settings
+  export. Each default is applied once, on the first start of a build that has it, and only if
+  the setting still has Morphe's default value; whatever the user changes is kept, also across
+  updates. Settings already applied by the earlier YT Morphe builds are not applied again.
+  *RLX Extended → Restore RLX default settings* applies all of them again.
 
 ## Versioning
 

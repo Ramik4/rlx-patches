@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rlx_extended_screen_title">RLX Extended</string>
+    <string name="rlx_about_summary">RLX Patches %1$s · На основе Morphe Patches %2$s</string>
+    <string name="rlx_about_title">RLX Patches</string>
+    <string name="rlx_about_message">"Версия %1$s
+На основе Morphe Patches %2$s
+
+RLX Patches — независимо созданная изменённая версия Morphe Patches. Проект не связан с Morphe, Google или YouTube и не одобрен ими.
+
+Распространяется по лицензии GNU General Public License v3.0 с дополнительными условиями раздела 7 GPLv3 из файла NOTICE Morphe Patches.
+
+Благодарности: Morphe (Morphe Patches), ReVanced (предыдущая работа, на которой основаны Morphe Patches)."</string>
+    <string name="rlx_about_github">GitHub</string>
+    <string name="rlx_info_title">RLX Patches</string>
+    <string name="rlx_reset_defaults_title">Восстановить настройки RLX по умолчанию</string>
+    <string name="rlx_reset_defaults_summary">Возвращает настройки, которые меняет RLX, к значениям RLX по умолчанию. Остальные настройки сохраняются</string>
+    <string name="rlx_reset_defaults_confirm">Настройки, которые меняет RLX, будут возвращены к значениям RLX по умолчанию, в том числе изменённые вами. Остальные настройки сохраняются.</string>
+    <string name="rlx_reset_defaults_done">Восстановлено настроек: %d</string>
+    <string name="rlx_defaults_restart_message">Перезапустите, чтобы применить настройки RLX по умолчанию</string>
+</resources>

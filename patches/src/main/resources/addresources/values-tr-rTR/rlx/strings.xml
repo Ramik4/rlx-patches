@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="rlx_extended_screen_title">RLX Extended</string>
+    <string name="rlx_about_summary">RLX Patches %1$s · Morphe Patches %2$s tabanlı</string>
+    <string name="rlx_about_title">RLX Patches</string>
+    <string name="rlx_about_message">"Sürüm %1$s
+Morphe Patches %2$s tabanlı
+
+RLX Patches, Morphe Patches'in bağımsız olarak geliştirilen değiştirilmiş bir sürümüdür. Morphe, Google veya YouTube ile bağlantılı değildir ve onlar tarafından desteklenmez.
+
+GNU Genel Kamu Lisansı v3.0 ve Morphe Patches NOTICE dosyasındaki GPLv3 7. bölüm ek koşulları ile lisanslanmıştır.
+
+Katkıda bulunanlar: Morphe (Morphe Patches), ReVanced (Morphe Patches'in temel aldığı önceki çalışma)."</string>
+    <string name="rlx_about_github">GitHub</string>
+    <string name="rlx_info_title">RLX Patches</string>
+    <string name="rlx_reset_defaults_title">RLX varsayılan ayarlarını geri yükle</string>
+    <string name="rlx_reset_defaults_summary">"RLX'in değiştirdiği ayarları RLX varsayılanlarına döndürür. Diğer ayarlar korunur"</string>
+    <string name="rlx_reset_defaults_confirm">"RLX'in değiştirdiği ayarlar, sizin değiştirdikleriniz de dahil, RLX varsayılanlarına döndürülür. Diğer ayarlar korunur."</string>
+    <string name="rlx_reset_defaults_done">%d ayar geri yüklendi</string>
+    <string name="rlx_defaults_restart_message">RLX varsayılan ayarlarını uygulamak için yeniden başlatın</string>
+</resources>
