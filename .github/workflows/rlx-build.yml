@@ -45,7 +45,7 @@ jobs:
 
       - name: Check bundle
         run: |
-          mpp="$(ls patches/build/libs/patches-*.mpp)"
+          mpp="$(ls patches/build/libs/rlx-patches-*.mpp)"
           echo "$mpp"
           unzip -p "$mpp" META-INF/MANIFEST.MF
           if unzip -l "$mpp" | grep -E 'app/morphe/patches/reddit/|extensions/reddit\.mpe'; then
@@ -57,5 +57,5 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: rlx-patches
-          path: patches/build/libs/patches-*.mpp
+          path: patches/build/libs/rlx-patches-*.mpp
           if-no-files-found: error

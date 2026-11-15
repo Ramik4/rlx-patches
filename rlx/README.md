@@ -82,5 +82,5 @@ Morphe's Gradle plugin and libraries are on GitHub Packages, which needs a GitHu
 `GITHUB_ACTOR`/`GITHUB_TOKEN`. In GitHub Actions the workflow token is used.
 
 ```sh
-./gradlew :patches:buildAndroid    # patches/build/libs/patches-<version>.mpp
+./gradlew :patches:buildAndroid    # patches/build/libs/rlx-patches-<version>.mpp
 ```

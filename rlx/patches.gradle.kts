@@ -23,3 +23,8 @@ the<SourceSetContainer>().named("main") {
 tasks.withType<Jar>().configureEach {
     excludedApps.forEach { app -> exclude("extensions/$app.mpe", "$app.mpe") }
 }
+
+// The bundle file is named rlx-patches-<version>.mpp.
+tasks.withType<Jar>().configureEach {
+    archiveBaseName.set("rlx-patches")
+}
