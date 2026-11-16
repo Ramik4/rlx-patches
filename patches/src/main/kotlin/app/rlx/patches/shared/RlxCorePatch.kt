@@ -152,4 +152,9 @@ internal fun rlxCorePatch(
             ),
         )
     }
+
+    // RLX app icons and header logos, after Custom branding and Change header added theirs.
+    finalize {
+        applyRlxBranding(appId)
+    }
 }

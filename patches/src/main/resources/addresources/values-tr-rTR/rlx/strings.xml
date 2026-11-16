@@ -278,4 +278,11 @@ Seçilen altyazılar %3$s klasörüne kaydedilir"</string>
     <string name="morphe_offline_subtitles_font_monospace">Eş aralıklı</string>
     <string name="morphe_offline_subtitles_font_casual">Casual</string>
     <string name="morphe_offline_subtitles_font_cursive">El yazısı</string>
+
+    <!-- Names of the RLX app icons and header logos in the branding settings. -->
+    <string name="rlx_branding_red">RLX kırmızı</string>
+    <string name="rlx_branding_green">RLX yeşil</string>
+    <string name="rlx_branding_layered">RLX katmanlı</string>
+    <string name="rlx_branding_red_premium">RLX kırmızı Premium</string>
+    <string name="rlx_branding_green_premium">RLX yeşil Premium</string>
 </resources>

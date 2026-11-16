@@ -8,12 +8,15 @@
 package app.rlx.patches.shared
 
 /**
- * Morphe app icon styles that are not offered in the patch options of "Custom branding"
- * (GPLv3 section 7e, see NOTICE). Their resources stay in the app, so an icon selected with an
- * earlier YT Morphe build keeps working; the app settings hide them too (RlxBranding).
+ * The values the patch option "App icon" of "Custom branding" offers between "Original" and
+ * "Custom": the RLX icons, as label to icon style. The Morphe icons are not offered
+ * (GPLv3 section 7e, see NOTICE); their launch aliases stay, so an icon selected with an earlier
+ * YT Morphe build keeps working. The app settings hide them too (RlxBranding).
+ *
+ * @param names The icon styles of Morphe; an RLX icon whose style Morphe removed is left out.
  */
-private val hiddenMorpheIconStyles = setOf("black", "dark", "light", "play", "play_black")
+internal fun rlxPatchOptionIconStyles(names: Array<String>): Map<String, String> =
+    rlxIconStyles.filterValues { it in names }
 
-/** The icon styles of [names] that the patch option "App icon" offers. */
-internal fun rlxPatchOptionIconStyles(names: Array<String>): List<String> =
-    names.filterNot(hiddenMorpheIconStyles::contains)
+/** The icon style of the app when the patch option "App icon" is not set: RLX red. */
+internal const val RLX_DEFAULT_ICON_STYLE = "play"

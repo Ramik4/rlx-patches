@@ -35,6 +35,7 @@ public class ChangeHeaderPatch {
         REGULAR("ytWordmarkHeader", "yt_ringo2_wordmark_header"),
         PREMIUM("ytPremiumWordmarkHeader", "yt_ringo2_premium_wordmark_header"),
         MORPHE("morphe_header"),
+        RLX_RED("rlx_header_red_youtube"), RLX_GREEN("rlx_header_green_youtube"), RLX_RED_PREMIUM("rlx_header_red_premium"), RLX_GREEN_PREMIUM("rlx_header_green_premium"), // RLX
         CUSTOM("morphe_header_custom");
 
         @Nullable

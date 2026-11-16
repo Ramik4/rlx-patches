@@ -282,4 +282,11 @@ RLX Patches — независимо созданная изменённая в�
     <string name="morphe_offline_subtitles_font_monospace">Моноширинный</string>
     <string name="morphe_offline_subtitles_font_casual">Casual</string>
     <string name="morphe_offline_subtitles_font_cursive">Рукописный</string>
+
+    <!-- Names of the RLX app icons and header logos in the branding settings. -->
+    <string name="rlx_branding_red">RLX красный</string>
+    <string name="rlx_branding_green">RLX зелёный</string>
+    <string name="rlx_branding_layered">RLX многослойный</string>
+    <string name="rlx_branding_red_premium">RLX красный Premium</string>
+    <string name="rlx_branding_green_premium">RLX зелёный Premium</string>
 </resources>

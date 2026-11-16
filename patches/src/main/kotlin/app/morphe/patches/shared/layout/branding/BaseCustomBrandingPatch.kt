@@ -65,16 +65,14 @@ private const val ORIGINAL_USER_ICON_STYLE_NAME = "original"
 private const val CUSTOM_USER_ICON_STYLE_NAME = "custom"
 
 // The icon the app uses when no icon style was selected.
-private const val DEFAULT_ICON_STYLE_NAME = "original" // RLX: the original icon instead of the Morphe icon
+private const val DEFAULT_ICON_STYLE_NAME = app.rlx.patches.shared.RLX_DEFAULT_ICON_STYLE // RLX: the RLX icon instead of the Morphe icon
 
 // Derived from the bundled styles so a new style cannot be missing here.
 private val iconStyleValues = buildMap {
     put("Automatic", null)
     put("Original", ORIGINAL_USER_ICON_STYLE_NAME)
 
-    app.rlx.patches.shared.rlxPatchOptionIconStyles(iconStyleNames).forEach { style -> // RLX: no Morphe icons in the patch options
-        put(style.replace('_', ' ').replaceFirstChar(Char::uppercase), style)
-    }
+    putAll(app.rlx.patches.shared.rlxPatchOptionIconStyles(iconStyleNames)) // RLX: the RLX icons in place of the Morphe icons
 
     put("Custom", CUSTOM_USER_ICON_STYLE_NAME)
 }
