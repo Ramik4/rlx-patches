@@ -55,6 +55,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `settings.gradle.kts` | root project name |
 | `extensions/proguard-rules.pro` | keeps `app.rlx.**` |
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | default app icon `original` instead of the Morphe icon |
+| `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | patch option "App icon" without the Morphe icons (`RlxPatchOptions.kt`) |
 | `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube; title of the settings entry (`rlx_settings_title`) |
 | `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music; title of the settings entry (`rlx_settings_title`) |
 
@@ -89,6 +90,10 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
   hidden from the lists of the settings (`RlxBranding`, a hook of Morphe's
   `CustomDialogListPreference`); a hidden option that is still selected stays visible. The
   default app icon is the original one (a one-line RLX change in `BaseCustomBrandingPatch.kt`).
+  The patch option *App icon* of *Custom branding* (Morphe Manager) offers no Morphe icons
+  either, only *Automatic*, *Original* and *Custom* (`RlxPatchOptions.kt`). The Morphe icon
+  resources stay in the app, so an icon selected with an earlier YT Morphe build keeps working.
+  The other branding patch options (*Custom header logo*, *App name*) are not Morphe-branded.
 - **Theme**: the dark theme defaults to the custom color `#0F0F0F`, which Morphe also gives the
   menus and sheets (with *App default* they keep YouTube's grey). A user who selected another
   color, such as pure black, keeps it.

@@ -72,7 +72,7 @@ private val iconStyleValues = buildMap {
     put("Automatic", null)
     put("Original", ORIGINAL_USER_ICON_STYLE_NAME)
 
-    iconStyleNames.forEach { style ->
+    app.rlx.patches.shared.rlxPatchOptionIconStyles(iconStyleNames).forEach { style -> // RLX: no Morphe icons in the patch options
         put(style.replace('_', ' ').replaceFirstChar(Char::uppercase), style)
     }
 
