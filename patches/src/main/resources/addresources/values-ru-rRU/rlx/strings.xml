@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="rlx_customizations_screen_title">Персонализация RLX</string>
+    <string name="rlx_downloads_screen_title">Загрузки</string>
+    <string name="rlx_swipe_seekbar_screen_title">Жесты и полоса прогресса</string>
+    <string name="rlx_swipe_seekbar_screen_summary">Управление жестами, полоса прогресса</string>
+    <string name="rlx_community_screen_title">Сервисы сообщества</string>
+    <string name="rlx_vot_screen_title">Закадровый перевод видео</string>
+    <string name="rlx_vot_morphe_title">Озвучивание субтитров (Morphe)</string>
     <string name="rlx_about_title">RLX Patches</string>
     <string name="rlx_about_message">"Версия %1$s
 На основе Morphe Patches %2$s
@@ -67,7 +73,7 @@ RLX Patches — независимо созданная изменённая в�
     <string name="morphe_yandex_vot_lang_auto">Автоопределение</string>
     <string name="morphe_yandex_vot_oauth_token_title">Яндекс OAuth токен</string>
     <string name="morphe_yandex_vot_oauth_token_summary">Необходим для живых голосов.</string>
-    <string name="morphe_yandex_vot_auth_required">Требуется авторизация. Добавьте Яндекс OAuth токен в Настройки &gt; Персонализация RLX.</string>
+    <string name="morphe_yandex_vot_auth_required">Требуется авторизация. Добавьте Яндекс OAuth токен в RLX &gt; Видео &gt; Закадровый перевод видео &gt; Перевод озвучивания (Яндекс).</string>
     <string name="morphe_yandex_vot_oauth_not_signed_in_summary">Не авторизован</string>
     <string name="morphe_yandex_vot_oauth_signed_in_summary">Вошли как %s</string>
     <string name="morphe_yandex_vot_oauth_auth_method_title">Авторизация Яндекс</string>

@@ -38,7 +38,7 @@ import app.morphe.patches.youtube.misc.extension.sharedExtensionPatch
 import app.morphe.patches.youtube.misc.settings.settingsPatch
 import app.morphe.patches.youtube.shared.Constants.COMPATIBILITY_YOUTUBE
 import app.morphe.patches.youtube.shared.YouTubeActivityOnCreateFingerprint
-import app.rlx.patches.youtube.settings.RLX_CUSTOMIZATIONS_SCREEN
+import app.rlx.patches.youtube.settings.RLX_DOWNLOADS_SCREEN
 import app.morphe.util.indexOfFirstInstructionOrThrow
 import com.android.tools.smali.dexlib2.AccessFlags
 import com.android.tools.smali.dexlib2.Opcode
@@ -84,7 +84,7 @@ private val saveToDeviceResourcePatch = patch {
             ),
         )
 
-        RLX_CUSTOMIZATIONS_SCREEN.addPreferences(
+        RLX_DOWNLOADS_SCREEN.addPreferences(
             PreferenceScreenPreference(
                 key = "morphe_save_to_device_screen",
                 sorting = Sorting.UNSORTED,

@@ -24,9 +24,19 @@ tasks.withType<Jar>().configureEach {
     excludedApps.forEach { app -> exclude("extensions/$app.mpe", "$app.mpe") }
 }
 
-// The bundle file is named rlx-patches-<version>.mpp.
+// The bundle file is named rlx-patches-<version>.mpp. Test builds of the Build workflow set RLX_BUILD to the number
+// of the run and are named rlx-patches-<version>-build<number>.mpp; the About entry shows the same version.
+// Releases are built without it.
+val rlxBuild = providers.environmentVariable("RLX_BUILD").orNull?.trim()?.takeIf { it.isNotEmpty() }
+val rlxBuildSuffix = rlxBuild?.let { "build$it" }
+
 tasks.withType<Jar>().configureEach {
     archiveBaseName.set("rlx-patches")
+}
+if (rlxBuildSuffix != null) {
+    tasks.named<Jar>("jar") {
+        archiveClassifier.set(rlxBuildSuffix)
+    }
 }
 
 // Build information the RLX patches read while patching: the RLX version, the Morphe base
@@ -34,7 +44,7 @@ tasks.withType<Jar>().configureEach {
 val rlxBuildInfo = tasks.register("rlxBuildInfo") {
     description = "Bundles the RLX build information and default settings"
 
-    val rlxVersion = project.version.toString()
+    val rlxVersion = project.version.toString() + (rlxBuildSuffix?.let { "-$it" } ?: "")
     val morpheBaseVersion = project.extra["morpheBaseVersion"].toString()
     val defaults = rootProject.file("rlx/defaults.json")
     val output = layout.buildDirectory.dir("generated/rlx")

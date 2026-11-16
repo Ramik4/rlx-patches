@@ -84,11 +84,16 @@ internal fun applyRlxBranding(appId: String) {
     }
 
     // RLX startup animation, in place of both Morphe animations (the play icons use one, all other icons
-    // the other). Shown by the splash screen style "RLX" (Morphe's MORPHE_COLOR).
+    // the other), and the green one of RLX Green. Shown by the splash screen style "RLX" (Morphe's MORPHE_COLOR).
     if (hasResource("res/raw/morphe_startup_animation_play.json")) {
         listOf("morphe_startup_animation.json", "morphe_startup_animation_play.json").forEach {
             writeResource("res/raw/$it", "rlx/branding/$appId/raw/rlx_startup_animation.json")
         }
+        // RLX Green plays the green one (RlxBranding.startupAnimation of the extension, hooked by the RLX core).
+        writeResource(
+            "res/raw/rlx_startup_animation_green.json",
+            "rlx/branding/$appId/raw/rlx_startup_animation_green.json",
+        )
     }
 
     // Icon of the RLX settings entry in the YouTube settings, in place of the Morphe icon (YouTube Music shows

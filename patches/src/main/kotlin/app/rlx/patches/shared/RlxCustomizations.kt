@@ -13,15 +13,19 @@ import app.morphe.patches.shared.misc.settings.preference.BasePreferenceScreen
 import app.morphe.patches.shared.misc.settings.preference.PreferenceCategory
 import app.morphe.patches.shared.misc.settings.preference.PreferenceScreenPreference.Sorting
 import app.morphe.patches.shared.misc.settings.preference.noTitleUnsortedPreferenceCategory
+import java.util.logging.Logger
+
+/** Logger of the RLX patches; its warnings are in the log of the patching. */
+internal val rlxLogger: Logger = Logger.getLogger("RLX Patches")
 
 /** Key of the "Restore RLX default settings" preference, the last of RLX Customizations. */
 internal const val RLX_RESET_DEFAULTS_KEY = "rlx_reset_defaults"
 
 /**
  * The Morphe settings shown on RLX Customizations, in groups, in this order. A setting is found by its key,
- * or by its title for a preference without a key. A setting of a patch that is not applied is left out.
- * The settings of the RLX patches (Save to device, voice over translation) come after the [RLX_GROUPS_BEFORE]
- * groups.
+ * or by its title for a preference without a key. A setting of a patch that is not applied is left out, with a
+ * warning in the log of the patching (so a setting Morphe renamed is noticed). Settings added to the screen directly
+ * come after the [RLX_GROUPS_BEFORE] groups.
  */
 private val customizations = listOf(
     // Branding.
@@ -54,7 +58,7 @@ private val customizations = listOf(
     ),
 )
 
-/** The number of [customizations] groups before the settings of the RLX patches. */
+/** The number of [customizations] groups before the settings added to the screen directly. */
 private const val RLX_GROUPS_BEFORE = 3
 
 /**
@@ -66,11 +70,18 @@ internal fun moveToRlxCustomizations(
     sources: List<BasePreferenceScreen.Screen>,
     target: BasePreferenceScreen.Screen,
 ) {
+    val missing = mutableListOf<String>()
     val groups = customizations.map { ids ->
-        ids.mapNotNull { id -> sources.firstNotNullOfOrNull { take(it, id) } }
+        ids.mapNotNull { id -> sources.firstNotNullOfOrNull { takeSetting(it, id) }.also { if (it == null) missing += id } }
+    }
+    if (missing.isNotEmpty()) {
+        rlxLogger.warning(
+            "RLX Customizations: settings not found, left out (their patch is not applied, or Morphe renamed them): " +
+                missing.joinToString(),
+        )
     }
 
-    // The settings of the RLX patches, which were added to the screen directly.
+    // Settings added to the screen directly.
     val own = target.preferences.toList()
     val (reset, patches) = own.partition { it.key == RLX_RESET_DEFAULTS_KEY }
     target.preferences.clear()
@@ -90,7 +101,7 @@ internal fun moveToRlxCustomizations(
 private fun BasePreference.isSetting(id: String) = key == id || (key == null && titleKey == id)
 
 /** Removes the setting [id] from [screen] (also from a category of it) and returns it, or null if not found. */
-private fun take(screen: BasePreferenceScreen.Screen, id: String): BasePreference? =
+internal fun takeSetting(screen: BasePreferenceScreen.Screen, id: String): BasePreference? =
     take(screen.preferences, id) ?: screen.categories.firstNotNullOfOrNull { take(it.preferences, id) }
 
 private fun take(preferences: MutableSet<BasePreference>, id: String): BasePreference? {

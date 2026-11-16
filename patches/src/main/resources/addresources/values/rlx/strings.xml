@@ -3,6 +3,14 @@
 <resources>
     <!-- Settings screen. -->
     <string name="rlx_customizations_screen_title">RLX Customizations</string>
+    <!-- Screens of the RLX settings layout (RlxSettingsLayout.kt). -->
+    <string name="rlx_downloads_screen_title">Downloads</string>
+    <string name="rlx_swipe_seekbar_screen_title">Swipe and seekbar</string>
+    <string name="rlx_swipe_seekbar_screen_summary">Swipe controls, seekbar</string>
+    <string name="rlx_community_screen_title">Community services</string>
+    <string name="rlx_community_screen_summary" translatable="false">Return YouTube Dislike, SponsorBlock, DeArrow</string>
+    <string name="rlx_vot_screen_title">Voice over translation</string>
+    <string name="rlx_vot_morphe_title">Captions read aloud (Morphe)</string>
     <!-- Name of the settings entry in the app settings and of its toolbar, in place of "Morphe". -->
     <string name="rlx_settings_title" translatable="false">RLX</string>
 
@@ -76,7 +84,7 @@ Credits: Morphe (Morphe Patches), ReVanced (prior work of Morphe Patches)."</str
     <string name="morphe_yandex_vot_lang_auto">Auto-detect</string>
     <string name="morphe_yandex_vot_oauth_token_title">Yandex OAuth token</string>
     <string name="morphe_yandex_vot_oauth_token_summary">Required for live voices.</string>
-    <string name="morphe_yandex_vot_auth_required">Authorization required. Add a Yandex OAuth token in Settings &gt; RLX Customizations.</string>
+    <string name="morphe_yandex_vot_auth_required">Authorization required. Add a Yandex OAuth token in RLX &gt; Video &gt; Voice over translation &gt; Voice over translation (Yandex).</string>
     <string name="morphe_yandex_vot_oauth_not_signed_in_summary">Not authorized</string>
     <string name="morphe_yandex_vot_oauth_signed_in_summary">Signed in as %s</string>
     <string name="morphe_yandex_vot_oauth_auth_method_title">Yandex authorization</string>

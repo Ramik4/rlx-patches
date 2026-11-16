@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="rlx_customizations_screen_title">Персоналізація RLX</string>
+    <string name="rlx_downloads_screen_title">Завантаження</string>
+    <string name="rlx_swipe_seekbar_screen_title">Жести та смуга відтворення</string>
+    <string name="rlx_swipe_seekbar_screen_summary">Керування жестами, смуга відтворення</string>
+    <string name="rlx_community_screen_title">Сервіси спільноти</string>
+    <string name="rlx_vot_screen_title">Закадровий переклад відео</string>
+    <string name="rlx_vot_morphe_title">Озвучування субтитрів (Morphe)</string>
 
     <!-- Voice over translation (Yandex). Based on YaVoT (github.com/sashade8-ship-it/morphe-patches-yavot)
          by sashade8, with work of Jav1x, anddea, MarcaDian and Ramik4. Keys are kept, so the settings of
@@ -52,7 +58,7 @@
     <string name="morphe_yandex_vot_lang_auto">Автовизначення</string>
     <string name="morphe_yandex_vot_oauth_token_title">Токен Yandex OAuth</string>
     <string name="morphe_yandex_vot_oauth_token_summary">Потрібен для живих голосів.</string>
-    <string name="morphe_yandex_vot_auth_required">Потрібна авторизація. Додайте OAuth-токен Яндекса в Налаштування &gt; Персоналізація RLX.</string>
+    <string name="morphe_yandex_vot_auth_required">Потрібна авторизація. Додайте OAuth-токен Яндекса в RLX &gt; Відео &gt; Закадровий переклад відео &gt; Голосовий переклад (Яндекс).</string>
     <string name="morphe_yandex_vot_oauth_not_signed_in_summary">Не авторизовано</string>
     <string name="morphe_yandex_vot_oauth_signed_in_summary">Вхід виконано як %s</string>
     <string name="morphe_yandex_vot_oauth_auth_method_title">Авторизація Yandex</string>
