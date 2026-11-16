@@ -161,6 +161,25 @@ Examples: Morphe 1.50.0 → RLX 1.51.0, Morphe 1.51.0-dev.2 → RLX 1.51.2.
 python3 -m unittest discover -s rlx/scripts
 ```
 
+## GitHub Actions
+
+| Workflow | When | What |
+| --- | --- | --- |
+| `rlx-build.yml` | every push and pull request | builds the bundle and checks its RLX parts |
+| `rlx-sync.yml` | every 6 hours, or by hand | mirrors Morphe's `dev` to `upstream`, merges a new Morphe release into `main` with `merge_upstream.sh`, builds it, pushes it and starts the release |
+| `rlx-release.yml` | by hand, or by the sync | releases the version of `rlx.properties` as `vX.Y.Z` with the `.mpp` file, then updates `patches-bundle.json` and `patches-list.json` on `main` |
+
+- **Sync**: nothing is pushed to `main` when the merge has a conflict the script does not resolve
+  or the build fails; an issue lists the conflicts instead. A Morphe tag can be given by hand.
+  Morphe's commits change Morphe's workflows, which GitHub does not let the workflow token push,
+  so the sync needs a fine-grained token with the *Contents* and *Workflows* (read and write)
+  permissions of this repository as the `RLX_SYNC_TOKEN` secret.
+- **Release**: when the version of `rlx.properties` is already released, it is an RLX-only
+  release and the version is raised by one first. The release notes name the Morphe base version
+  and list the RLX commits since the last release (first parents of `main`, so without Morphe's
+  history). The tag and the `.mpp` file are published before `patches-bundle.json` points to
+  them, so Morphe Manager never gets a link to a missing file.
+
 ## Building
 
 Morphe's Gradle plugin and libraries are on GitHub Packages, which needs a GitHub token with
