@@ -16,6 +16,7 @@ import android.util.Base64;
 
 import androidx.annotation.Nullable;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -36,12 +37,20 @@ import app.morphe.extension.shared.ui.CustomDialog;
  * still has the Morphe default value. A setting the user has changed is never touched, and
  * whatever the user selects afterwards is kept, also across updates. Defaults added to a later
  * build are applied once on the update that adds them.
+ * <p>
+ * When RLX changes a default, the earlier RLX defaults of the setting are listed in the
+ * "replaced" section. A setting that still has one of them gets the new default once.
  */
 @SuppressWarnings("unused")
 public final class RlxDefaults {
 
     private static final String PREFERENCES_NAME = "rlx_defaults";
     private static final String APPLIED_KEYS = "applied_keys";
+    /**
+     * Entries "key=value" of the defaults that were applied or checked against the
+     * replaced defaults of the setting, so each new default replaces an earlier one only once.
+     */
+    private static final String APPLIED_VALUES = "applied_values";
 
     /**
      * Preferences of earlier builds that applied the same defaults (the YT Morphe and
@@ -63,6 +72,7 @@ public final class RlxDefaults {
             "app.morphe.extension.music.settings.Settings",
             // RLX patches.
             "app.rlx.extension.youtube.yandexvot.YandexVotSettings",
+            "app.rlx.extension.youtube.savetodevice.SaveToDeviceSettings",
     };
 
     /**
@@ -97,6 +107,13 @@ public final class RlxDefaults {
     public static void onActivityCreated(Activity activity) {
         if (done) return;
         done = true;
+
+        try {
+            loadSettingsClasses();
+            RlxWhitelistKeeper.register();
+        } catch (Exception ex) {
+            Logger.printException(() -> "Could not keep the channel whitelists on import", ex);
+        }
 
         try {
             final boolean firstRun = !SharedYouTubeSettings.SETTINGS_INITIALIZED.get();
@@ -143,11 +160,14 @@ public final class RlxDefaults {
     private static Changes apply(Context context, boolean all) throws Exception {
         Changes result = new Changes();
 
-        JSONObject defaults = defaultsOfThisApp();
+        JSONObject json = defaultsJson();
+        JSONObject defaults = sectionOfThisApp(json, null);
         if (defaults.length() == 0) return result;
+        JSONObject replaced = sectionOfThisApp(json, "replaced");
 
         SharedPreferences preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
         Set<String> applied = new HashSet<>(preferences.getStringSet(APPLIED_KEYS, new HashSet<>()));
+        Set<String> appliedValues = new HashSet<>(preferences.getStringSet(APPLIED_VALUES, new HashSet<>()));
         if (!all) {
             for (String legacyName : LEGACY_PREFERENCES_NAMES) {
                 applied.addAll(context.getSharedPreferences(legacyName, Context.MODE_PRIVATE)
@@ -160,7 +180,11 @@ public final class RlxDefaults {
         boolean appliedChanged = false;
         for (Iterator<String> keys = defaults.keys(); keys.hasNext(); ) {
             String key = keys.next();
-            if (!all && applied.contains(key)) continue;
+            final String value = String.valueOf(defaults.get(key));
+            final String appliedValue = key + "=" + value;
+            final boolean replacesEarlier = !all && applied.contains(key)
+                    && !appliedValues.contains(appliedValue) && replaced.has(key);
+            if (!all && applied.contains(key) && !replacesEarlier) continue;
 
             Setting<?> setting = findSetting(key);
             if (setting == null) {
@@ -168,8 +192,9 @@ public final class RlxDefaults {
                 continue;
             }
 
-            if (all || setting.isSetToDefault()) {
-                final String value = String.valueOf(defaults.get(key));
+            final boolean apply = all
+                    || (replacesEarlier ? hasValue(setting, replaced.optJSONArray(key)) : setting.isSetToDefault());
+            if (apply) {
                 try {
                     final Object before = setting.get();
                     setting.saveFromString(value);
@@ -183,10 +208,14 @@ public final class RlxDefaults {
             }
 
             appliedChanged |= applied.add(key);
+            appliedChanged |= appliedValues.add(appliedValue);
         }
 
         if (appliedChanged) {
-            preferences.edit().putStringSet(APPLIED_KEYS, applied).apply();
+            preferences.edit()
+                    .putStringSet(APPLIED_KEYS, applied)
+                    .putStringSet(APPLIED_VALUES, appliedValues)
+                    .apply();
         }
 
         final int changed = result.changed;
@@ -194,13 +223,32 @@ public final class RlxDefaults {
         return result;
     }
 
-    private static JSONObject defaultsOfThisApp() throws Exception {
+    private static JSONObject defaultsJson() throws Exception {
         final String encoded = defaultsBase64();
         if (encoded.isEmpty()) return new JSONObject();
 
-        String json = new String(Base64.decode(encoded, Base64.DEFAULT), StandardCharsets.UTF_8);
-        JSONObject section = new JSONObject(json).optJSONObject(appId());
+        return new JSONObject(new String(Base64.decode(encoded, Base64.DEFAULT), StandardCharsets.UTF_8));
+    }
+
+    /**
+     * @param parent Name of the section that holds the sections of the apps, or null for the defaults.
+     */
+    private static JSONObject sectionOfThisApp(JSONObject json, @Nullable String parent) {
+        JSONObject apps = parent == null ? json : json.optJSONObject(parent);
+        JSONObject section = apps != null ? apps.optJSONObject(appId()) : null;
         return section != null ? section : new JSONObject();
+    }
+
+    /**
+     * @return If the setting has one of the values, compared as in the settings export (enum names in any case).
+     */
+    private static boolean hasValue(Setting<?> setting, @Nullable JSONArray values) {
+        if (values == null) return false;
+        final String current = String.valueOf(setting.get());
+        for (int i = 0, length = values.length(); i < length; i++) {
+            if (current.equalsIgnoreCase(String.valueOf(values.opt(i)))) return true;
+        }
+        return false;
     }
 
     private static void loadSettingsClasses() {

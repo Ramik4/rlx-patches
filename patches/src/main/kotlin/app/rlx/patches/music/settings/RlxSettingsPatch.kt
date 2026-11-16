@@ -17,7 +17,8 @@ import app.rlx.patches.shared.rlxCorePatch
  * The "RLX Extended" screen of the YouTube Music settings. RLX patches add their settings here.
  */
 val RLX_EXTENDED_SCREEN = PreferenceScreen.Screen(
-    key = "rlx_extended_screen",
+    // The settings root is sorted by key: right below "About", above the Morphe screens.
+    key = "morphe_settings_music_screen_00_rlx_extended",
     titleKey = "rlx_extended_screen_title",
     summaryKey = null,
     icon = "@drawable/rlx_settings_screen_extended",

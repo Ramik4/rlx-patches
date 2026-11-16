@@ -1,0 +1,177 @@
+name: Sync with Morphe
+
+# Checks Morphe Patches for a new release, mirrors Morphe's dev branch to `upstream`, merges the
+# release into main with rlx/scripts/merge_upstream.sh (never rebases, no force pushes) and, when
+# started by hand with 'release', starts the release workflow (a draft release). When the merge needs a person (a conflict the script does not resolve) or
+# the build fails, nothing is pushed to main and an issue lists what to do.
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      morphe_tag:
+        description: "Morphe tag to merge, such as v2.3.0-dev.8 (default: the latest one)"
+        type: string
+        default: ""
+      release:
+        description: "Start the release workflow (draft release) after the merge"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  packages: read
+  issues: write
+  actions: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+env:
+  MORPHE_REPOSITORY: https://github.com/MorpheApp/morphe-patches.git
+
+jobs:
+  sync:
+    name: Sync
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          # Morphe commits change Morphe's workflows, and GitHub refuses to take such commits from
+          # the workflow token. A token with the Contents and Workflows permissions is needed.
+          token: ${{ secrets.RLX_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Git user
+        env:
+          HAS_SYNC_TOKEN: ${{ secrets.RLX_SYNC_TOKEN != '' }}
+        run: |
+          if [[ "$HAS_SYNC_TOKEN" != "true" ]]; then
+            echo "::warning::The RLX_SYNC_TOKEN secret is missing: pushing Morphe commits that change workflows will fail"
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch Morphe
+        id: morphe
+        env:
+          REQUESTED_TAG: ${{ inputs.morphe_tag }}
+        run: |
+          # Morphe tags go to refs/upstream-tags/*, so they never mix with the RLX tags (vX.Y.Z).
+          git fetch --no-tags "$MORPHE_REPOSITORY" \
+            '+refs/heads/dev:refs/remotes/upstream/dev' \
+            '+refs/tags/*:refs/upstream-tags/*'
+
+          # Mirror of Morphe's dev branch, only ever fast-forwarded.
+          git push origin refs/remotes/upstream/dev:refs/heads/upstream \
+            || echo "::warning::The upstream branch could not be fast-forwarded to Morphe's dev branch"
+
+          if [[ -n "$REQUESTED_TAG" ]]; then
+            tag="$REQUESTED_TAG"
+            git rev-parse -q --verify "refs/upstream-tags/$tag" >/dev/null \
+              || { echo "::error::Morphe has no tag $tag"; exit 1; }
+          else
+            # The latest Morphe release on the dev branch.
+            tag="$(git for-each-ref --format='%(refname:strip=2)' 'refs/upstream-tags/v*' \
+              | while read -r t; do
+                  git merge-base --is-ancestor "refs/upstream-tags/$t" refs/remotes/upstream/dev && echo "$t"
+                done | sort -V | tail -n 1)"
+          fi
+          if [[ -z "$tag" ]]; then
+            echo "::error::No Morphe release found"
+            exit 1
+          fi
+
+          if git merge-base --is-ancestor "refs/upstream-tags/$tag" HEAD; then
+            echo "main is already based on Morphe $tag"
+            echo "merge=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "New Morphe release: $tag"
+            echo "merge=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Merge
+        id: merge
+        if: steps.morphe.outputs.merge == 'true'
+        run: |
+          set +e
+          rlx/scripts/merge_upstream.sh "refs/upstream-tags/${{ steps.morphe.outputs.tag }}" 2> "$RUNNER_TEMP/merge.log" | tee "$RUNNER_TEMP/merge.out"
+          status=${PIPESTATUS[0]}
+          cat "$RUNNER_TEMP/merge.log" >&2
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          if (( status != 0 )); then
+            git merge --abort 2>/dev/null || true
+            exit "$status"
+          fi
+          grep '^rlx_version=' "$RUNNER_TEMP/merge.out" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java
+        if: steps.morphe.outputs.merge == 'true'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cache Gradle
+        if: steps.morphe.outputs.merge == 'true'
+        uses: burrunan/gradle-cache-action@v3
+
+      - name: Build
+        if: steps.morphe.outputs.merge == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 -m unittest discover -s rlx/scripts
+          ./gradlew -q printVersions --no-daemon
+          ./gradlew :patches:buildAndroid --no-daemon
+
+      - name: Push
+        if: steps.morphe.outputs.merge == 'true'
+        run: git push origin HEAD:main
+
+      - name: Start the release
+        # Not on the schedule: releases are started by hand for now.
+        if: steps.morphe.outputs.merge == 'true' && inputs.release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run rlx-release.yml --ref main
+
+      - name: Report a failed sync
+        if: failure() && steps.morphe.outputs.merge == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.morphe.outputs.tag }}
+          MERGE_STATUS: ${{ steps.merge.outputs.status }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Sync with Morphe $TAG needs a person"
+          if [[ -n "$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[].number')" ]]; then
+            echo "An issue is already open"
+            exit 0
+          fi
+          {
+            if [[ "$MERGE_STATUS" == "1" ]]; then
+              echo "Merging Morphe $TAG has conflicts that rlx/scripts/merge_upstream.sh does not resolve:"
+              echo
+              echo '```'
+              cat "$RUNNER_TEMP/merge.log" 2>/dev/null
+              echo '```'
+            else
+              echo "The merge of Morphe $TAG or its build failed. Nothing was pushed to main."
+            fi
+            echo
+            echo "Run: $RUN_URL"
+            echo
+            echo "To merge by hand (see rlx/README.md):"
+            echo
+            echo '```sh'
+            echo "git fetch upstream"
+            echo "rlx/scripts/merge_upstream.sh refs/upstream-tags/$TAG"
+            echo '```'
+          } > "$RUNNER_TEMP/issue.md"
+          gh issue create --title "$title" --body-file "$RUNNER_TEMP/issue.md"

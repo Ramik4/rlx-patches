@@ -66,7 +66,7 @@ private val settingsResourcePatch = patch {
             rootPreferences = listOf(
                 IntentPreference(
                     key = SETTINGS_NAME_PREFERENCE_KEY,
-                    titleKey = "morphe_settings_title",
+                    titleKey = "rlx_settings_title", // RLX
                     summaryKey = null,
                     intent = newIntent(MORPHE_SETTINGS_INTENT),
                 ) to "settings_headers"

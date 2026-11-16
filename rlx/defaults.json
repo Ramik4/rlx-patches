@@ -3,7 +3,9 @@
     "RLX Patches: every change RLX makes to the default settings of Morphe, in one file.",
     "Keys are the keys of the Morphe settings export (Settings > Other > Import / export).",
     "Each setting is applied once, on the first start of a build that has it, and only if the",
-    "user has not changed it. Later changes of the user are kept, also across updates."
+    "user has not changed it. Later changes of the user are kept, also across updates.",
+    "'replaced' lists earlier RLX defaults of a setting. A setting that still has one of them gets",
+    "the current default once, so users of earlier builds get it too."
   ],
   "youtube": {
     "ads_channel_whitelist_flyout_menu": true,
@@ -30,7 +32,6 @@
     "feed_watch_later_button": true,
     "fix_transcript": false,
     "force_original_audio": false,
-    "header_logo": "custom",
     "hide_autoplay_button": false,
     "hide_comments_channel_guidelines": false,
     "hide_comments_community_guidelines": false,
@@ -122,7 +123,8 @@
     "swipe_left_zone": "brightness",
     "swipe_right_zone": "volume",
     "swipe_top_zone": "speed",
-    "theme_color_dark": "app_default",
+    "theme_color_dark": "custom",
+    "theme_color_dark_custom": "#0F0F0F",
     "video_quality_dialog_button": true,
     "vot_caption_language": "ru-RU",
     "vot_enabled": true,
@@ -141,7 +143,6 @@
     "external_downloader_name": "com.rl.ytindr",
     "external_downloader_quick_menu": true,
     "external_potoken_provider": true,
-    "header_logo": "custom",
     "music_change_miniplayer_color": true,
     "music_enable_audio_video_switch": true,
     "music_enable_forced_miniplayer": true,
@@ -162,5 +163,13 @@
     "sb_enabled": false,
     "settings_search_history": false,
     "splash_screen_style": "fps_60_one_second"
+  },
+  "replaced": {
+    "youtube": {
+      "theme_color_dark": [
+        "app_default"
+      ]
+    },
+    "music": {}
   }
 }

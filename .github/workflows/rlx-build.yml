@@ -55,7 +55,8 @@ jobs:
           for entry in app/rlx/build.properties app/rlx/defaults.json \
                        rlx/drawable/rlx_settings_screen_extended.xml \
                        addresources/values/rlx/strings.xml addresources/values/rlx/arrays.xml \
-                       rlx/drawable/morphe_yt_yandex_vot.xml rlx/drawable/morphe_yt_yandex_vot_bold.xml; do
+                       rlx/drawable/morphe_yt_yandex_vot.xml rlx/drawable/morphe_yt_yandex_vot_bold.xml \
+                       rlx/drawable/morphe_offline_play.xml; do
             unzip -l "$mpp" | grep -q " $entry$" || { echo "::error::Missing in the bundle: $entry"; exit 1; }
           done
           # RLX patches and extension classes. The .mpp and .mpe files hold DEX, so look for class names.
@@ -65,6 +66,12 @@ jobs:
           unzip -p "$mpp" extensions/youtube.mpe > "$RUNNER_TEMP/youtube.mpe"
           contains "$RUNNER_TEMP/youtube.mpe" "Lapp/rlx/extension/youtube/yandexvot/YandexVot;" \
             || { echo "::error::Missing in the YouTube extension: Yandex voice over translation"; exit 1; }
+          contains "$mpp" "app/rlx/patches/youtube/interaction/savetodevice" \
+            || { echo "::error::Missing in the bundle: Save to device patch"; exit 1; }
+          contains "$RUNNER_TEMP/youtube.mpe" "Lapp/rlx/extension/youtube/savetodevice/SaveToDevicePatch;" \
+            || { echo "::error::Missing in the YouTube extension: Save to device"; exit 1; }
+          contains "$RUNNER_TEMP/youtube.mpe" "Lapp/rlx/extension/youtube/savetodevice/SaveToDeviceResponse" \
+            || { echo "::error::Missing in the YouTube extension: Save to device protobuf"; exit 1; }
           unzip -p "$mpp" app/rlx/build.properties
 
       - name: Upload patches

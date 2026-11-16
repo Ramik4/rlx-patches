@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package app.rlx.extension.youtube.savetodevice;
+
+option optimize_for = LITE_RUNTIME;
+option java_package = "app.rlx.extension.youtube.savetodevice";
+option java_outer_classname = "SaveToDeviceResponse";
+
+// The parts of a player response read by the device downloader.
+// Only the fields that are read are declared.
+
+message DownloadPlayerResponse {
+  optional DownloadStreamingData streamingData = 4;
+  optional DownloadCaptions captions = 10;
+  optional DownloadVideoDetails videoDetails = 11;
+}
+
+// The caption tracks offered for subtitle downloads.
+message DownloadCaptions {
+  optional DownloadCaptionTrackList playerCaptionsTracklistRenderer = 51621377;
+}
+
+message DownloadCaptionTrackList {
+  repeated DownloadCaptionTrack captionTracks = 1;
+  repeated DownloadCaptionTranslationLanguage translationLanguages = 3;
+  repeated int32 defaultTranslationSourceTrackIndices = 6;
+}
+
+message DownloadCaptionText {
+  repeated DownloadCaptionTextRun runs = 1;
+}
+
+message DownloadCaptionTextRun {
+  optional string text = 1;
+}
+
+message DownloadCaptionTrack {
+  optional string baseUrl = 1;
+  optional DownloadCaptionText name = 2;
+  optional string vssId = 3;
+  optional string languageCode = 4;
+  optional string kind = 5;
+  optional bool isTranslatable = 7;
+}
+
+message DownloadCaptionTranslationLanguage {
+  optional string languageCode = 1;
+  optional DownloadCaptionText languageName = 2;
+  repeated int32 translationSourceTrackIndices = 3;
+}
+
+message DownloadVideoDetails {
+  optional string videoId = 1;
+  optional string title = 15;
+  optional int32 lengthSeconds = 16;
+  optional string channelId = 19;
+  optional DownloadThumbnailList thumbnail = 25;
+  optional string ownerChannelName = 33;
+}
+
+message DownloadThumbnailList {
+  repeated DownloadThumbnail thumbnails = 1;
+}
+
+message DownloadThumbnail {
+  optional string url = 1;
+  optional int32 width = 2;
+  optional int32 height = 3;
+}
+
+message DownloadStreamingData {
+  repeated DownloadFormat adaptiveFormats = 3;
+  // The 1080p Premium (itag 616) HLS stream is read from it.
+  optional string hlsManifestUrl = 5;
+}
+
+message DownloadFormat {
+  optional int32 itag = 1;
+  optional string url = 2;
+  optional string mimeType = 5;
+  optional int32 bitrate = 6;
+  optional int32 width = 7;
+  optional int32 height = 8;
+  optional int64 contentLength = 12;
+  optional int32 fps = 25;
+  optional string qualityLabel = 26;
+}

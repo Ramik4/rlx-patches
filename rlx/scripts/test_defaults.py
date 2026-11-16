@@ -24,6 +24,25 @@ class DefaultsTest(unittest.TestCase):
                 self.assertRegex(key, r"^[a-z0-9_]+$", f"{app}: {key}")
                 self.assertIsInstance(value, (bool, int, float, str), f"{app}: {key}")
 
+    def test_replaced(self):
+        # Earlier RLX defaults of a setting, which a later default replaces once.
+        replaced = self.defaults.get("replaced", {})
+        for app, settings in replaced.items():
+            self.assertIn(app, APPS)
+            for key, values in settings.items():
+                self.assertIn(key, self.defaults[app], f"{app}: {key} has no current default")
+                self.assertIsInstance(values, list, f"{app}: {key}")
+                current = str(self.defaults[app][key]).lower()
+                for value in values:
+                    self.assertIsInstance(value, (bool, int, float, str), f"{app}: {key}")
+                    self.assertNotEqual(str(value).lower(), current, f"{app}: {key}")
+
+    def test_theme_color(self):
+        # Menus in #0F0F0F as well; a user who selected another color, such as pure black, keeps it.
+        youtube = self.defaults["youtube"]
+        self.assertEqual(youtube["theme_color_dark"], "custom")
+        self.assertEqual(youtube["theme_color_dark_custom"], "#0F0F0F")
+
     def test_patches_update_notice_off(self):
         for app in APPS:
             self.assertEqual(self.defaults[app].get("patches_update_notice"), "off", app)

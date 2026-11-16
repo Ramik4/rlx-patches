@@ -1,0 +1,182 @@
+name: Release
+
+# Builds RLX Patches from main and publishes the release vX.Y.Z with the .mpp file, then points
+# patches-bundle.json (read by Morphe Manager) and patches-list.json on main to it.
+#
+# The version is the one in rlx/rlx.properties. When that version is already released, the
+# release is an RLX-only release: the version is raised by one first (rlx/scripts/next_version.py).
+# Started by hand, or by the Morphe sync workflow after it merged a Morphe release.
+#
+# Unless 'publish' is selected, the release is a draft: only visible to the maintainers, no tag,
+# and patches-bundle.json is not changed, so Morphe Manager users do not get it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish the release for everyone (otherwise a draft, and Morphe Manager is not updated)"
+        type: boolean
+        default: false
+      notes:
+        description: "Extra release notes (optional, Markdown)"
+        type: string
+        default: ""
+
+permissions:
+  contents: write
+  packages: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Cache Gradle
+        uses: burrunan/gradle-cache-action@v3
+
+      - name: Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Version
+        id: version
+        run: |
+          python3 -m unittest discover -s rlx/scripts
+          version="$(sed -n 's/^version=//p' rlx/rlx.properties)"
+          if git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
+            previous="$version"
+            version="$(python3 rlx/scripts/next_version.py rlx "$previous" --tags-from-git)"
+            echo "v$previous is already released, RLX-only release $version"
+            sed -i "s/^version=.*/version=$version/" rlx/rlx.properties
+            git add rlx/rlx.properties
+            git commit -q -m "RLX $version"
+          fi
+          morphe="$(sed -n 's/^version *= *//p' gradle.properties | tr -d '[:space:]')"
+          previous_tag="$(git tag --list 'v*' --sort=-v:refname | head -n 1)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "morphe=$morphe" >> "$GITHUB_OUTPUT"
+          echo "previous_tag=$previous_tag" >> "$GITHUB_OUTPUT"
+          echo "RLX $version, based on Morphe $morphe (previous release: ${previous_tag:-none})"
+
+      - name: Build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew -q printVersions --no-daemon
+          ./gradlew :patches:generatePatchesList --no-daemon
+          ./gradlew :patches:buildAndroid --no-daemon
+          mpp="patches/build/libs/rlx-patches-${{ steps.version.outputs.version }}.mpp"
+          test -f "$mpp" || { echo "::error::$mpp was not built"; ls patches/build/libs; exit 1; }
+          if unzip -l "$mpp" | grep -E 'app/morphe/patches/reddit/|extensions/reddit\.mpe'; then
+            echo "::error::Reddit is not excluded from the bundle"
+            exit 1
+          fi
+
+      - name: Release notes
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          MORPHE: ${{ steps.version.outputs.morphe }}
+          PREVIOUS_TAG: ${{ steps.version.outputs.previous_tag }}
+          EXTRA_NOTES: ${{ inputs.notes }}
+        run: |
+          {
+            echo "**Based on Morphe $MORPHE** · [Morphe release notes](https://github.com/MorpheApp/morphe-patches/releases/tag/v$MORPHE)"
+            echo
+            if [[ -n "$EXTRA_NOTES" ]]; then
+              printf '%s\n\n' "$EXTRA_NOTES"
+            fi
+            # RLX commits only: the first parents of main, without the Morphe history of merges.
+            range="${PREVIOUS_TAG:+$PREVIOUS_TAG..}HEAD"
+            changes="$(git log --first-parent --no-merges --format='* %s' "$range" \
+              | grep -v -E '^\* (RLX [0-9.]+|Release v[0-9.]+.*)$' || true)"
+            if [[ -n "$changes" ]]; then
+              echo "### RLX changes"
+              echo
+              echo "$changes"
+              echo
+            fi
+            echo "Add the source to Morphe Manager: https://github.com/Ramik4/rlx-patches"
+          } > "$RUNNER_TEMP/notes.md"
+          cat "$RUNNER_TEMP/notes.md"
+
+      - name: Draft release
+        if: ${{ !inputs.publish }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git push origin HEAD:main
+          # An earlier draft of the same version is replaced.
+          if gh release view "v$VERSION" --json isDraft --jq .isDraft 2>/dev/null | grep -qx true; then
+            gh release delete "v$VERSION" --yes
+          fi
+          gh release create "v$VERSION" \
+            "patches/build/libs/rlx-patches-$VERSION.mpp" \
+            --draft \
+            --target "$(git rev-parse HEAD)" \
+            --title "RLX Patches $VERSION" \
+            --notes-file "$RUNNER_TEMP/notes.md"
+          echo "Draft release v$VERSION created; patches-bundle.json is unchanged" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Publish the release
+        if: ${{ inputs.publish }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+          MORPHE: ${{ steps.version.outputs.morphe }}
+        run: |
+          if gh release view "v$VERSION" --json isDraft --jq .isDraft 2>/dev/null | grep -qx true; then
+            gh release delete "v$VERSION" --yes
+          fi
+          # The tag is the commit that was built. The bundle files on main are updated after the
+          # file is uploaded, so Morphe Manager never sees a link to a missing file.
+          git tag -a "v$VERSION" -m "RLX Patches $VERSION, based on Morphe $MORPHE"
+          git push origin HEAD:main "v$VERSION"
+          gh release create "v$VERSION" \
+            "patches/build/libs/rlx-patches-$VERSION.mpp" \
+            --verify-tag \
+            --title "RLX Patches $VERSION" \
+            --notes-file "$RUNNER_TEMP/notes.md"
+
+      - name: Update patches-bundle.json and patches-list.json
+        if: ${{ inputs.publish }}
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          MORPHE: ${{ steps.version.outputs.morphe }}
+        run: |
+          python3 - <<'EOF'
+          import datetime, json, os, pathlib
+          version, morphe = os.environ["VERSION"], os.environ["MORPHE"]
+          bundle = {
+              "created_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
+              "description": f"RLX Patches {version}\n\nBased on Morphe {morphe}",
+              "download_url": f"https://github.com/Ramik4/rlx-patches/releases/download/v{version}/rlx-patches-{version}.mpp",
+              "signature_download_url": "",
+              "version": version,
+          }
+          pathlib.Path("patches-bundle.json").write_text(json.dumps(bundle, indent=2, ensure_ascii=False) + "\n")
+          EOF
+          git add patches-bundle.json patches-list.json
+          if git diff --cached --quiet; then
+            echo "Nothing to update"
+            exit 0
+          fi
+          git commit -q -m "Release v$VERSION [skip ci]" -m "Based on Morphe $MORPHE"
+          git push origin HEAD:main
