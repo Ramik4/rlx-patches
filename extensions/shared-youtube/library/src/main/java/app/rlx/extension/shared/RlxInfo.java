@@ -35,9 +35,9 @@ public final class RlxInfo {
     }
 
     /**
-     * @return "RLX Patches 2.3.7 · Based on Morphe Patches 2.3.0-dev.7", localized.
+     * @return "RLX Patches 2.3.7" (the Morphe Patches base version is in the RLX about dialog).
      */
     public static String aboutSummary() {
-        return str("rlx_about_summary", rlxVersion(), morpheBaseVersion());
+        return str("rlx_about_summary", rlxVersion());
     }
 }

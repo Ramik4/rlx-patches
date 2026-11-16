@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RLX Patches: the names of "RLX settings name", Morphe's names and the RLX names 5 to 8
+    (morphe_settings_name_entry_5 to 8 in values/rlx). SettingsNamePatch reads the name of a value by its
+    position, so the Morphe values keep theirs. RlxBranding hides the Morphe names in the settings.
+-->
+<resources>
+    <string-array name="morphe_settings_name_entries">
+        <item>@string/morphe_settings_name_default_item</item>
+        <item>@string/morphe_settings_name_entry_1</item>
+        <item>@string/morphe_settings_name_entry_2</item>
+        <item>@string/morphe_settings_name_entry_3</item>
+        <item>@string/morphe_settings_name_entry_4</item>
+        <item>@string/morphe_settings_name_entry_5</item>
+        <item>@string/morphe_settings_name_entry_6</item>
+        <item>@string/morphe_settings_name_entry_7</item>
+        <item>@string/morphe_settings_name_entry_8</item>
+        <item>@string/morphe_settings_name_custom_item</item>
+    </string-array>
+    <string-array name="morphe_settings_name_entry_values">
+        <item>DEFAULT</item>
+        <item>PREMIUM</item>
+        <item>EXTRAS</item>
+        <item>TWEAKS</item>
+        <item>MORPHING_TIME</item>
+        <item>RLX_SETTINGS</item>
+        <item>MORPHE_SETTINGS</item>
+        <item>EXTENDED</item>
+        <item>RLX</item>
+        <item>CUSTOM</item>
+    </string-array>
+</resources>

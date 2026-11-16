@@ -56,6 +56,8 @@ jobs:
                        rlx/drawable/rlx_settings_screen_extended.xml \
                        addresources/values/rlx/strings.xml addresources/values/rlx/arrays.xml \
                        addresources/values/rlx-youtube/strings.xml addresources/values/rlx-music/strings.xml \
+                       addresources/values/rlx-shared/strings.xml addresources/values/rlx-shared/arrays.xml \
+                       rlx/branding/youtube/raw/rlx_startup_animation.json rlx/branding/music/raw/rlx_startup_animation.json \
                        rlx/drawable/morphe_yt_yandex_vot.xml rlx/drawable/morphe_yt_yandex_vot_bold.xml \
                        rlx/drawable/morphe_offline_play.xml \
                        rlx/drawable/rlx_header_red_youtube_light.xml rlx/drawable/rlx_header_music_red_dark.xml \

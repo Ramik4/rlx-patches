@@ -7,7 +7,7 @@
     <string name="rlx_settings_title" translatable="false">RLX</string>
 
     <!-- About. %1$s is the RLX version, %2$s the Morphe Patches version RLX is based on. -->
-    <string name="rlx_about_summary">RLX Patches %1$s · Based on Morphe Patches %2$s</string>
+    <string name="rlx_about_summary" translatable="false">RLX Patches %1$s</string>
     <string name="rlx_about_title">RLX Patches</string>
     <string name="rlx_about_message">"Version %1$s
 Based on Morphe Patches %2$s
@@ -303,10 +303,30 @@ Subtitles, if chosen, are saved to %3$s"</string>
     <string name="morphe_offline_subtitles_font_casual">Casual</string>
     <string name="morphe_offline_subtitles_font_cursive">Cursive</string>
 
-    <!-- Names of the RLX app icons and header logos in the branding settings. -->
-    <string name="rlx_branding_red">RLX red</string>
-    <string name="rlx_branding_green">RLX green</string>
-    <string name="rlx_branding_layered">RLX layered</string>
-    <string name="rlx_branding_red_premium">RLX red Premium</string>
-    <string name="rlx_branding_green_premium">RLX green Premium</string>
+    <!-- Names in the branding settings (RlxBranding). The RLX names are not translated. -->
+    <string name="rlx_branding_red" translatable="false">RLX Red</string>
+    <string name="rlx_branding_green" translatable="false">RLX Green</string>
+    <string name="rlx_branding_layered" translatable="false">RLX Layered</string>
+    <string name="rlx_branding_red_music" translatable="false">RLX Red Music</string>
+    <string name="rlx_branding_green_music" translatable="false">RLX Green Music</string>
+    <string name="rlx_branding_layered_music" translatable="false">RLX Layered Music</string>
+    <string name="rlx_branding_red_youtube" translatable="false">RLX Red YouTube</string>
+    <string name="rlx_branding_green_youtube" translatable="false">RLX Green YouTube</string>
+    <string name="rlx_branding_red_premium" translatable="false">RLX Red Premium</string>
+    <string name="rlx_branding_green_premium" translatable="false">RLX Green Premium</string>
+    <string name="rlx_branding_rlx" translatable="false">RLX</string>
+    <string name="rlx_branding_rlx_music" translatable="false">RLX Music</string>
+    <string name="rlx_branding_original_youtube">YouTube (Original)</string>
+    <string name="rlx_branding_original_music">YouTube Music (Original)</string>
+    <string name="rlx_branding_original_premium">Premium (Original)</string>
+    <string name="rlx_branding_original_analog">Original Analog</string>
+    <string name="rlx_branding_original_cake">Original Cake</string>
+    <string name="rlx_branding_original_metal">Original Metal</string>
+    <string name="rlx_branding_notification_original_youtube">Original (YouTube)</string>
+    <string name="rlx_branding_header_default_original">Default (Original)</string>
+    <!-- Names of the settings that RLX adds to "RLX settings name" (SettingsNamePatch reads them by position). -->
+    <string name="morphe_settings_name_entry_5">RLX Settings</string>
+    <string name="morphe_settings_name_entry_6">Morphe Settings</string>
+    <string name="morphe_settings_name_entry_7" translatable="false">Extended</string>
+    <string name="morphe_settings_name_entry_8" translatable="false">RLX</string>
 </resources>

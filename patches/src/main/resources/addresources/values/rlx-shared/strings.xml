@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RLX Patches: Morphe strings that RLX replaces. Added by the RLX core after the strings of the app,
+    so these replace the Morphe strings of the same name, also in the translations here.
+-->
+<resources>
+    <string name="morphe_settings_name_title">RLX settings name</string>
+</resources>

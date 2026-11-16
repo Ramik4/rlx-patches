@@ -81,10 +81,15 @@
     <string name="morphe_yandex_vot_audio_uploading">Надсилання аудіо до Яндекса… %1$d/%2$d</string>
     <string name="morphe_yandex_vot_request_error">Переклад зараз недоступний. Спробуйте пізніше</string>
 
-    <!-- Names of the RLX app icons and header logos in the branding settings. -->
-    <string name="rlx_branding_red">RLX червоний</string>
-    <string name="rlx_branding_green">RLX зелений</string>
-    <string name="rlx_branding_layered">RLX багатошаровий</string>
-    <string name="rlx_branding_red_premium">RLX червоний Premium</string>
-    <string name="rlx_branding_green_premium">RLX зелений Premium</string>
+    <!-- Names in the branding settings (RlxBranding). -->
+    <string name="rlx_branding_original_youtube">YouTube (оригінал)</string>
+    <string name="rlx_branding_original_music">YouTube Music (оригінал)</string>
+    <string name="rlx_branding_original_premium">Premium (оригінал)</string>
+    <string name="rlx_branding_original_analog">Оригінальний аналоговий</string>
+    <string name="rlx_branding_original_cake">Оригінальний торт</string>
+    <string name="rlx_branding_original_metal">Оригінальний метал</string>
+    <string name="rlx_branding_notification_original_youtube">Оригінал (YouTube)</string>
+    <string name="rlx_branding_header_default_original">За замовчуванням (оригінал)</string>
+    <string name="morphe_settings_name_entry_5">Налаштування RLX</string>
+    <string name="morphe_settings_name_entry_6">Налаштування Morphe</string>
 </resources>

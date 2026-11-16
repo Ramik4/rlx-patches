@@ -42,8 +42,9 @@ RLX changes as few Morphe files as possible, so merges stay clean.
 
 - `rlx/`: build hooks, version, default settings, sync scripts and lists.
 - `patches/src/main/kotlin/app/rlx/`: RLX patches (`app.rlx.patches`).
-- `patches/src/main/resources/addresources/values*/rlx/`: RLX strings (`values/rlx-youtube/` and
-  `values/rlx-music/`: RLX names of the app).
+- `patches/src/main/resources/addresources/values*/rlx/`: RLX strings.
+- `patches/src/main/resources/addresources/values*/rlx-shared/`, `values/rlx-youtube/`,
+  `values/rlx-music/`: Morphe strings and arrays that RLX replaces (settings names, app names).
 - `patches/src/main/resources/rlx/`: RLX resources copied into the apps.
 - `extensions/*/src/main/java/app/rlx/`: RLX extension code (`app.rlx.extension`).
 
@@ -58,6 +59,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | default app icon RLX red (`RLX_DEFAULT_ICON_STYLE`) |
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | patch option "App icon" with the RLX icons in place of the Morphe icons (`RlxPatchOptions.kt`) |
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | default app name "YouTube RLX" / "YT Music RLX" (`RLX_DEFAULT_APP_NAME_INDEX`) |
+| `patches/.../youtube/layout/branding/CustomBrandingPatch.kt`, `patches/.../music/layout/branding/CustomBrandingPatch.kt` | number of app names (`RLX_APP_NAME_COUNT`) |
 | `extensions/shared-youtube/.../shared/patches/CustomBrandingPatch.java` | default app name (`RlxBranding.DEFAULT_APP_NAME_INDEX`); no placeholder name "Custom" without a custom name (`RlxBranding.checkAppName`) |
 | `extensions/youtube/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
 | `extensions/music/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
@@ -76,10 +78,11 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
   sorted by key, so its key starts with `morphe_settings_screen_00_`); VoT, the downloader and
   all other RLX settings go there.
 - **Settings name**: the entry in the app settings and the toolbar read *RLX* instead of
-  *Morphe* (GPLv3 section 7c and 7e). The user can still rename it with Morphe's settings name.
-- **Attribution**: the "About" entry of the settings reads
-  *RLX Patches 2.3.7 · Based on Morphe Patches 2.3.0-dev.7* (GPLv3 section 7b) and opens the
-  RLX about dialog.
+  *Morphe* (GPLv3 section 7c and 7e). The setting to rename it reads *RLX settings name* and offers
+  *Default*, *RLX Settings* (the RLX default), *Morphe Settings*, *Extended*, *RLX* and *Custom*; the
+  Morphe names are hidden (arrays in `addresources/values/rlx-shared`, names 5 to 8 in `values/rlx`).
+- **Attribution**: the "About" entry of the settings reads *RLX Patches 2.3.7* and opens the RLX
+  about dialog, which names the Morphe Patches base version (GPLv3 section 7b).
 - **Default settings**: every change RLX makes to Morphe's default settings is in
   [`defaults.json`](defaults.json), one section per app, with the keys of the Morphe settings
   export. Each default is applied once, on the first start of a build that has it, and only if
@@ -91,29 +94,43 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
 - **Channel whitelists**: importing settings keeps the ad, playback speed and SponsorBlock
   channel whitelists when the imported text does not contain them (preset files), instead of
   clearing them (`RlxWhitelistKeeper`, an import/export callback of Morphe's `Setting`).
-- **Branding** (GPLv3 section 7e): the Morphe app icons, notification icons, header logo and
-  splash animations are hidden from the lists of the settings (`RlxBranding`, a hook of Morphe's
-  `CustomDialogListPreference`); a hidden option that is still selected stays visible.
-  - App icons: *RLX red* (default), *RLX green* and *RLX layered*, square for YouTube and round
-    for YouTube Music, on a white background, with monochrome (themed) and notification icons.
-    They take the place of the Morphe icon styles `play`, `play_black` and `light`: when all
-    patches have run, the RLX core writes them over the Morphe files of these styles
-    (`RlxBranding.kt`, only if *Custom branding* is applied). So the launch aliases, setting values
-    and patch options of Morphe stay as they are, and an icon selected with an earlier YT Morphe
-    build keeps working. The patch option *App icon* offers *Automatic*, *Original*, the RLX icons
-    and *Custom*; the app settings show the RLX names.
-  - App names: *YouTube RLX* (default) and *YT RLX*, *YT Music RLX* (default) and *Music RLX*, in
-    place of the Morphe names (strings `morphe_custom_branding_name_entry_2/3` in
+- **Branding** (GPLv3 section 7e): `RlxBranding`, a hook of Morphe's `CustomDialogListPreference`,
+  rebuilds the branding lists of the settings in the RLX order and with the RLX names. Options that are
+  not in a list (the Morphe icons, header logo and animations, some Morphe names) are hidden; a hidden
+  option that is still selected stays at the end of the list.
+  - App icons: *YouTube (Original)*, the original icons of YouTube 21.41+ (*Original Analog*, *Cake*,
+    *Metal*), *RLX Red* (default), *RLX Green*, *RLX Layered* and, with a custom icon, *Custom*. For
+    YouTube Music: *YouTube Music (Original)*, *RLX Red Music* (default), *RLX Green Music*, *RLX
+    Layered Music*. Square for YouTube and round for YouTube Music, on a white background, with
+    monochrome (themed) and notification icons. They take the place of the Morphe icon styles `play`,
+    `play_black` and `light`: when all patches have run, the RLX core writes them over the Morphe files
+    of these styles (`RlxBranding.kt`, only if *Custom branding* is applied). So the launch aliases,
+    setting values and patch options of Morphe stay as they are, and an icon selected with an earlier
+    YT Morphe build keeps working. The patch option *App icon* offers *Automatic*, *Original*, the RLX
+    icons and *Custom*.
+  - Notification icons: *Match app icon* (default), *Original (YouTube)*, *RLX* (`PLAY`) and *RLX
+    Layered* (`LIGHT`); for YouTube Music *YouTube Music (Original)* and *RLX Music*.
+  - App names (launch aliases, `RLX_APP_NAME_COUNT` = 9, the last is the custom name):
+    YouTube: *YouTube* (original, 1), *YouTube Premium* (5), *YouTube RLX* (2, default), *YouTube X*
+    (6), *YouTube Morphe* (7), *YT Morphe* (8), *YT RLX* (3); Morphe's *YT* (4) is hidden.
+    YouTube Music: *YouTube Music* (5), *YT Music* (original, 1), *YT Music RLX* (2, default), *YT Music
+    X* (6), *YT Music Morphe* (7), *RLX Music* (3); Morphe's *Music* (4) and *Music Morphe* (8) are
+    hidden. The names are the strings `morphe_custom_branding_name_entry_N` in
     `addresources/values/rlx-youtube` and `rlx-music`, added by the RLX core after the strings of the
-    app, so they replace the Morphe strings). Without a custom name given while patching, the last
-    name (Morphe's placeholder *Custom*) is never selected: a selection left from an earlier install or
-    an imported settings file goes back to the default name.
-  - Header logos: the RLX icon with "YouTube" or "Premium" (red or green, light and dark theme),
-    and with "Music" for YouTube Music. Added by the RLX core when *Change header* is applied, as
-    values `RLX_*` of the header logo setting; RLX red is the RLX default.
+    app, so they replace the Morphe strings. Names can be added, but no alias removed. Without a custom
+    name given while patching, the custom name (Morphe's placeholder *Custom*) is never selected: a
+    selection left from an earlier install or an imported settings file goes back to the default name.
+  - Header logos: *Default*, *YouTube (Original)*, *Premium (Original)*, *RLX Red YouTube* (default),
+    *RLX Green YouTube*, *RLX Red Premium*, *RLX Green Premium*, *Custom*; for YouTube Music *Default
+    (Original)*, *RLX Red Music* (default), *RLX Green Music*. The RLX logos (the RLX icon with
+    "YouTube", "Premium" or "Music", light and dark theme) are added by the RLX core when *Change
+    header* is applied, as values `RLX_*` of the header logo setting.
+  - Startup animation: the splash screen style *RLX* (Morphe's `MORPHE_COLOR`, the RLX default) plays
+    the RLX red icon popping in, square or round. The RLX core writes it over both Morphe animations.
   - The drawables are generated by [`branding/generate.py`](branding/generate.py), which also
-    holds the proportions. The letters are Roboto Condensed Bold (SIL Open Font License 1.1),
-    written as paths, so the app does not need the font.
+    holds the proportions, and the animation by [`branding/animation.py`](branding/animation.py). The
+    letters are Roboto Condensed Bold (SIL Open Font License 1.1), written as paths, so the app does
+    not need the font.
 - **Theme**: the dark theme defaults to the custom color `#0F0F0F`, which Morphe also gives the
   menus and sheets (with *App default* they keep YouTube's grey). A user who selected another
   color, such as pure black, keeps it.
