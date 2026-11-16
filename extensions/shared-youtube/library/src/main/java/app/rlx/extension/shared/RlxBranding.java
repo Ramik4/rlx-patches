@@ -20,6 +20,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.ResourceType;
 import app.morphe.extension.shared.ResourceUtils;
 import app.morphe.extension.shared.Utils;
+import app.morphe.extension.shared.patches.CustomBrandingPatch;
 import app.morphe.extension.shared.settings.Setting;
 import app.morphe.extension.shared.settings.SharedYouTubeSettings;
 
@@ -125,12 +126,14 @@ public final class RlxBranding {
             option("CUSTOM", null),
     };
 
-    /** The red and green RLX icons have the same notification icon. */
+    /**
+     * All RLX icons have the same notification icon (RLX layered too, LIGHT, which is not offered: an earlier
+     * selection of it becomes PLAY, see {@link #onListPreferenceAttached}).
+     */
     private static final Option[] YOUTUBE_NOTIFICATION_ICONS = {
             option("FOLLOW", null),
             option("ORIGINAL", "str:rlx_branding_notification_original_youtube"),
             option("PLAY", "str:rlx_branding_rlx"),
-            added("LIGHT", "str:rlx_branding_layered"),
             option("CUSTOM", null),
     };
 
@@ -239,6 +242,13 @@ public final class RlxBranding {
             if (key == null) return;
             Option[] spec = specFor(key);
             if (spec == null) return;
+
+            // The RLX layered notification icon is the RLX notification icon, which is offered as PLAY.
+            if (key.equals(NOTIFICATION_ICON_KEY) && SharedYouTubeSettings.CUSTOM_BRANDING_NOTIFICATION_ICON.get()
+                    == CustomBrandingPatch.NotificationIconTheme.LIGHT) {
+                SharedYouTubeSettings.CUSTOM_BRANDING_NOTIFICATION_ICON.save(
+                        CustomBrandingPatch.NotificationIconTheme.PLAY);
+            }
 
             CharSequence[] entries = preference.getEntries();
             CharSequence[] values = preference.getEntryValues();

@@ -269,6 +269,7 @@ val settingsPatch = patch(
     }
 
     finalize {
+        app.rlx.patches.music.settings.moveRlxCustomizations() // RLX: settings moved to RLX Customizations
         PreferenceScreen.close()
     }
 }

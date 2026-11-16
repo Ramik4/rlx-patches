@@ -366,6 +366,7 @@ val settingsPatch = patch(
     }
 
     finalize {
+        app.rlx.patches.youtube.settings.moveRlxCustomizations() // RLX: settings moved to RLX Customizations
         PreferenceScreen.close()
     }
 }

@@ -2,7 +2,7 @@
 <!-- RLX Patches strings. Kept apart from the Morphe strings so merges never conflict. -->
 <resources>
     <!-- Settings screen. -->
-    <string name="rlx_extended_screen_title">RLX Extended</string>
+    <string name="rlx_customizations_screen_title">RLX Customizations</string>
     <!-- Name of the settings entry in the app settings and of its toolbar, in place of "Morphe". -->
     <string name="rlx_settings_title" translatable="false">RLX</string>
 
@@ -18,8 +18,6 @@ Licensed under the GNU General Public License v3.0, with the additional terms of
 
 Credits: Morphe (Morphe Patches), ReVanced (prior work of Morphe Patches)."</string>
     <string name="rlx_about_github">GitHub</string>
-
-    <string name="rlx_info_title">RLX Patches</string>
 
     <!-- Default settings. -->
     <string name="rlx_reset_defaults_title">Restore RLX default settings</string>
@@ -78,7 +76,7 @@ Credits: Morphe (Morphe Patches), ReVanced (prior work of Morphe Patches)."</str
     <string name="morphe_yandex_vot_lang_auto">Auto-detect</string>
     <string name="morphe_yandex_vot_oauth_token_title">Yandex OAuth token</string>
     <string name="morphe_yandex_vot_oauth_token_summary">Required for live voices.</string>
-    <string name="morphe_yandex_vot_auth_required">Authorization required. Add a Yandex OAuth token in Settings &gt; RLX Extended.</string>
+    <string name="morphe_yandex_vot_auth_required">Authorization required. Add a Yandex OAuth token in Settings &gt; RLX Customizations.</string>
     <string name="morphe_yandex_vot_oauth_not_signed_in_summary">Not authorized</string>
     <string name="morphe_yandex_vot_oauth_signed_in_summary">Signed in as %s</string>
     <string name="morphe_yandex_vot_oauth_auth_method_title">Yandex authorization</string>

@@ -51,20 +51,21 @@ internal const val RLX_PREFERENCE_PACKAGE = "app.rlx.extension.shared.settings.p
 /**
  * The RLX core of an app, applied with the Morphe settings of the app:
  *
- * - The "RLX Extended" settings screen, which the other RLX patches add their settings to.
+ * - The "RLX Customizations" settings screen, which the other RLX patches add their settings to, and the Morphe
+ *   branding, theme and settings options are moved to (RlxCustomizations.kt).
  * - The RLX default settings of rlx/defaults.json, applied once per setting.
  * - The "Based on Morphe Patches" attribution on the "About" entry of the settings (GPLv3 section 7b).
  *
  * @param appId Section of rlx/defaults.json for the app, "youtube" or "music".
- * @param extendedScreen The "RLX Extended" screen of the app.
+ * @param customizationsScreen The "RLX Customizations" screen of the app.
  */
 internal fun rlxCorePatch(
     appId: String,
     sharedExtensionPatch: Patch,
     mainActivityOnCreateFingerprint: Fingerprint,
-    extendedScreen: BasePreferenceScreen.Screen,
+    customizationsScreen: BasePreferenceScreen.Screen,
 ) = patch(
-    description = "Adds the RLX Extended settings, the RLX default settings and the Morphe Patches attribution.",
+    description = "Adds the RLX Customizations settings, the RLX default settings and the Morphe Patches attribution.",
 ) {
     dependsOn(
         sharedExtensionPatch,
@@ -78,8 +79,8 @@ internal fun rlxCorePatch(
             "rlx",
             ResourceGroup(
                 "drawable",
-                "rlx_settings_screen_extended.xml",
-                "rlx_settings_screen_extended_bold.xml",
+                "rlx_settings_screen_customizations.xml",
+                "rlx_settings_screen_customizations_bold.xml",
             ),
         )
 
@@ -138,15 +139,10 @@ internal fun rlxCorePatch(
                     }
             }
 
-        extendedScreen.addPreferences(
+        // The last setting of RLX Customizations (RlxCustomizations.kt).
+        customizationsScreen.addPreferences(
             NonInteractivePreference(
-                key = "rlx_info",
-                summaryKey = null,
-                tag = "$RLX_PREFERENCE_PACKAGE.RlxInfoPreference",
-                selectable = true,
-            ),
-            NonInteractivePreference(
-                key = "rlx_reset_defaults",
+                key = RLX_RESET_DEFAULTS_KEY,
                 tag = "$RLX_PREFERENCE_PACKAGE.RlxResetDefaultsPreference",
                 selectable = true,
             ),
