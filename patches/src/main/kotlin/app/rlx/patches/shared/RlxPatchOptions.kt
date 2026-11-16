@@ -30,7 +30,9 @@ internal const val RLX_DEFAULT_APP_NAME_INDEX = 2
 /**
  * The number of app names of Custom branding, the custom name (the last) included. Morphe has 5;
  * RLX adds names 5 to 8 (addresources values/rlx-youtube and values/rlx-music), so the custom name is
- * name 9. More names can be added later, but none removed, as each has launch aliases.
+ * name 9. More names can be added later, but none removed, as each has launch aliases. Each name N
+ * from 2 to RLX_APP_NAME_COUNT needs the string morphe_custom_branding_name_entry_N (the last is the
+ * placeholder of the custom name, in values/rlx-shared), or the manifest cannot be compiled.
  * Must match RlxBranding.APP_NAME_COUNT of the extension.
  */
 internal const val RLX_APP_NAME_COUNT = 9

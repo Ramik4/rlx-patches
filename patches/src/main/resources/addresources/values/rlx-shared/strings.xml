@@ -5,4 +5,9 @@
 -->
 <resources>
     <string name="morphe_settings_name_title">RLX settings name</string>
+    <!--
+        Name of the launch aliases of the custom app name (the last, RLX_APP_NAME_COUNT) when no custom name
+        was given while patching. Never shown (RlxBranding.checkAppName), but each alias needs a name.
+    -->
+    <string name="morphe_custom_branding_name_entry_9" translatable="false">Custom</string>
 </resources>
