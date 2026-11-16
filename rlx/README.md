@@ -93,6 +93,7 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
 | Patch | Code | Notes |
 | --- | --- | --- |
 | Voice over translation (Yandex), YouTube | `patches/.../app/rlx/patches/youtube/video/yandexvot/`, `extensions/youtube/.../app/rlx/extension/youtube/yandexvot/` | See below |
+| Save to device, YouTube | `patches/.../app/rlx/patches/youtube/interaction/savetodevice/`, `extensions/youtube/.../app/rlx/extension/youtube/savetodevice/` | See below |
 
 ### Voice over translation (Yandex)
 
@@ -120,6 +121,25 @@ Translation (ilyhalight). Maintained here as RLX code, not as a subtree.
 When updating from YaVoT or vot.js, compare `YandexVotApiClient` with
 `packages/shared/src/data/config.ts`, `secure.ts` and `packages/core/src/providers/yandex.ts`
 of vot.js.
+
+### Save to device
+
+Based on the downloader of [lavinhoque33](https://github.com/lavinhoque33)
+([anddea/revanced-patches#1883](https://github.com/anddea/revanced-patches/pull/1883)), as adapted
+for Morphe in YT Morphe (2.1.0 to 2.3.0-dev.5). Every file keeps the copyright notice of
+lavinhoque33. Maintained here as RLX code.
+
+- Download buttons of the app (below the video, feed menus, Shorts menu of Morphe) open a quality
+  picker and save videos, audio, thumbnails and subtitles to `Download/YouTube`. Off by default
+  (`morphe_save_to_device`); when off, Morphe's download mode is used.
+- Library of the saved videos and an offline player with subtitles and offline SponsorBlock,
+  shown in the activity of the settings. It can replace the Downloads page of the app.
+- The offline player uses the stock `BackgroundPlayerService`, the downloads keep the process
+  alive with the stock `OfflineKeepAliveService` (both hooked, each hook optional).
+- The player response is read with `save_to_device.proto` (only the fields that are used).
+- Settings keys are unchanged (`morphe_save_to_device`, `morphe_offline_*`), so the settings of
+  YT Morphe carry over. They are on *RLX Extended → Save to device*.
+
 
 ## Versioning
 

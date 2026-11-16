@@ -72,6 +72,7 @@ public final class RlxDefaults {
             "app.morphe.extension.music.settings.Settings",
             // RLX patches.
             "app.rlx.extension.youtube.yandexvot.YandexVotSettings",
+            "app.rlx.extension.youtube.savetodevice.SaveToDeviceSettings",
     };
 
     /**

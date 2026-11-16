@@ -17,7 +17,9 @@ patch of [Morphe Patches](https://github.com/MorpheApp/morphe-patches), plus:
 
 - **Voice over translation (Yandex)**, built in: a player button that plays a Yandex voice-over
   translation of the video (YouTube). Settings are in *RLX Extended*.
-- **Save to device**, a downloader for videos, audio, thumbnails and subtitles (off by default).
+- **Save to device**, a downloader for videos, audio, thumbnails and subtitles, with a quality
+  picker, a library of the saved videos and an offline player with SponsorBlock (YouTube, off by
+  default). Settings are in *RLX Extended*.
 - An **RLX Extended** section in the settings for everything RLX adds.
 
 RLX is an independent project. It is not affiliated with, or endorsed by, Morphe, Google or
@@ -48,6 +50,7 @@ Every release names the Morphe version it is based on, for example
 | [Morphe](https://github.com/MorpheApp/morphe-patches) | Morphe Patches, which RLX is based on |
 | [ReVanced](https://github.com/ReVanced) | Prior work Morphe Patches are based on |
 | [YaVoT](https://github.com/sashade8-ship-it/morphe-patches-yavot) by [sashade8](https://github.com/sashade8-ship-it) | Yandex voice over translation, with work of [Jav1x](https://github.com/Jav1x), [anddea](https://github.com/anddea), [MarcaDian](https://github.com/MarcaDian) and [Ramik4](https://github.com/Ramik4); timing and Morphe VoT coordination from the Dual VoT maintainers |
+| [lavinhoque33](https://github.com/lavinhoque33) ([anddea/revanced-patches#1883](https://github.com/anddea/revanced-patches/pull/1883)) | Save to device, the downloader and offline player RLX's downloader is based on |
 | [vot.js](https://github.com/FOSWLY/vot.js) by FOSWLY, [Voice Over Translation](https://github.com/ilyhalight/voice-over-translation) by ilyhalight | Reference for the Yandex voice over translation API |
 
 ## License
