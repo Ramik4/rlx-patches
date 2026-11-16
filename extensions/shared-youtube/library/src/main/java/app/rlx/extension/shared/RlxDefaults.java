@@ -97,7 +97,7 @@ public final class RlxDefaults {
     /**
      * @return The section of rlx/defaults.json for this app, "youtube" or "music". Replaced while patching.
      */
-    private static String appId() {
+    static String appId() {
         return "";
     }
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="rlx_extended_screen_title">RLX Extended</string>
-    <string name="rlx_about_summary">RLX Patches %1$s · На основе Morphe Patches %2$s</string>
     <string name="rlx_about_title">RLX Patches</string>
     <string name="rlx_about_message">"Версия %1$s
 На основе Morphe Patches %2$s
@@ -283,10 +282,15 @@ RLX Patches — независимо созданная изменённая в�
     <string name="morphe_offline_subtitles_font_casual">Casual</string>
     <string name="morphe_offline_subtitles_font_cursive">Рукописный</string>
 
-    <!-- Names of the RLX app icons and header logos in the branding settings. -->
-    <string name="rlx_branding_red">RLX красный</string>
-    <string name="rlx_branding_green">RLX зелёный</string>
-    <string name="rlx_branding_layered">RLX многослойный</string>
-    <string name="rlx_branding_red_premium">RLX красный Premium</string>
-    <string name="rlx_branding_green_premium">RLX зелёный Premium</string>
+    <!-- Names in the branding settings (RlxBranding). -->
+    <string name="rlx_branding_original_youtube">YouTube (оригинал)</string>
+    <string name="rlx_branding_original_music">YouTube Music (оригинал)</string>
+    <string name="rlx_branding_original_premium">Premium (оригинал)</string>
+    <string name="rlx_branding_original_analog">Оригинальный аналоговый</string>
+    <string name="rlx_branding_original_cake">Оригинальный торт</string>
+    <string name="rlx_branding_original_metal">Оригинальный металл</string>
+    <string name="rlx_branding_notification_original_youtube">Оригинал (YouTube)</string>
+    <string name="rlx_branding_header_default_original">По умолчанию (оригинал)</string>
+    <string name="morphe_settings_name_entry_5">Настройки RLX</string>
+    <string name="morphe_settings_name_entry_6">Настройки Morphe</string>
 </resources>

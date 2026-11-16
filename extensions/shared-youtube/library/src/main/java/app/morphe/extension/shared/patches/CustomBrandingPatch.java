@@ -411,7 +411,7 @@ public class CustomBrandingPatch {
     public static int getDefaultAppNameIndex() {
         return userProvidedCustomName()
                 ? numberOfPresetAppNames()
-                : 1;
+                : app.rlx.extension.shared.RlxBranding.DEFAULT_APP_NAME_INDEX; // RLX: the RLX name instead of the original name
     }
 
     public static BrandingTheme getDefaultIconStyle() {
@@ -493,6 +493,7 @@ public class CustomBrandingPatch {
             PackageManager pm = context.getPackageManager();
             String packageName = context.getPackageName();
 
+            app.rlx.extension.shared.RlxBranding.checkAppName(userProvidedCustomName(), numberOfPresetAppNames()); // RLX: no "Custom" name without a custom name
             BrandingTheme selectedBranding = SharedYouTubeSettings.CUSTOM_BRANDING_ICON.get();
             final int selectedNameIndex = SharedYouTubeSettings.CUSTOM_BRANDING_NAME.get();
             ComponentName componentToEnable = null;

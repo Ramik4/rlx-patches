@@ -375,7 +375,7 @@ internal fun baseCustomBrandingPatch(
                         }
                     }
 
-                    val enabledNameIndex = if (useCustomName) numberOfPresetAppNames else 1 // 1 indexing
+                    val enabledNameIndex = if (useCustomName) numberOfPresetAppNames else app.rlx.patches.shared.RLX_DEFAULT_APP_NAME_INDEX // RLX: the RLX name instead of the original name
                     val enabledIconStyle = resolveIconStyle(appIconStyle, customIcon)
 
                     // The application icon ('static' icon) is used wherever a launch alias is not,

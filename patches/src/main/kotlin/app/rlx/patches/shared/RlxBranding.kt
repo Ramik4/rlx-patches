@@ -17,9 +17,9 @@ import app.morphe.patcher.patch.resourceXml
  * label in the patch option "App icon" to Morphe icon style.
  */
 internal val rlxIconStyles = linkedMapOf(
-    "RLX red" to "play",
-    "RLX green" to "play_black",
-    "RLX layered" to "light",
+    "RLX Red" to "play",
+    "RLX Green" to "play_black",
+    "RLX Layered" to "light",
 )
 
 private val iconFilePrefixes = listOf(
@@ -60,7 +60,7 @@ private fun writeResource(path: String, bundledPath: String) {
 private fun hasResource(path: String) = resourceFile(path, false).exists()
 
 /**
- * Puts the RLX icons and header logos in the app. Called when all patches have run, so Custom
+ * Puts the RLX icons, startup animation and header logos in the app. Called when all patches have run, so Custom
  * branding and Change header have added their resources; does nothing for a patch that is excluded.
  *
  * @param appId "youtube" (square icons) or "music" (round icons).
@@ -72,6 +72,14 @@ internal fun applyRlxBranding(appId: String) {
                 val name = "$prefix$style.xml"
                 writeResource("res/drawable/$name", "rlx/branding/$appId/drawable/$name")
             }
+        }
+    }
+
+    // RLX startup animation, in place of both Morphe animations (the play icons use one, all other icons
+    // the other). Shown by the splash screen style "RLX" (Morphe's MORPHE_COLOR).
+    if (hasResource("res/raw/morphe_startup_animation_play.json")) {
+        listOf("morphe_startup_animation.json", "morphe_startup_animation_play.json").forEach {
+            writeResource("res/raw/$it", "rlx/branding/$appId/raw/rlx_startup_animation.json")
         }
     }
 

@@ -114,12 +114,13 @@
     "ryd_toast_on_connection_error": false,
     "sb_enabled": false,
     "seekbar_custom_color": true,
+    "settings_name": "RLX_SETTINGS",
     "settings_search_history": false,
     "shorts_autoplay_background": false,
     "shorts_quality_default_mobile": 1080,
     "shorts_quality_default_wifi": 1080,
     "show_watch_later_button": true,
-    "splash_screen_style": "fps_60_one_second",
+    "splash_screen_style": "morphe_color",
     "swap_create_with_notifications_button": false,
     "swipe_left_zone": "brightness",
     "swipe_right_zone": "volume",
@@ -163,15 +164,29 @@
     "ryd_estimated_like": false,
     "ryd_toast_on_connection_error": false,
     "sb_enabled": false,
+    "settings_name": "RLX_SETTINGS",
     "settings_search_history": false,
-    "splash_screen_style": "fps_60_one_second"
+    "splash_screen_style": "morphe_color"
   },
   "replaced": {
     "youtube": {
+      "header_logo": [
+        "custom"
+      ],
+      "splash_screen_style": [
+        "fps_60_one_second"
+      ],
       "theme_color_dark": [
         "app_default"
       ]
     },
-    "music": {}
+    "music": {
+      "header_logo": [
+        "custom"
+      ],
+      "splash_screen_style": [
+        "fps_60_one_second"
+      ]
+    }
   }
 }

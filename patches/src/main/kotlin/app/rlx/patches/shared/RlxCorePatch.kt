@@ -155,6 +155,11 @@ internal fun rlxCorePatch(
 
     // RLX app icons and header logos, after Custom branding and Change header added theirs.
     finalize {
+        // Morphe strings and arrays that RLX replaces (the app names of Custom branding, the settings names).
+        // Added here, after the resources of the app, so they replace the Morphe ones (addResourcesPatch
+        // keeps the last resource of a name and runs after this).
+        addAppResources("rlx-shared")
+        addAppResources("rlx-$appId")
         applyRlxBranding(appId)
     }
 }

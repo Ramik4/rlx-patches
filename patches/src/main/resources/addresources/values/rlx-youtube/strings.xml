@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RLX Patches: the app names of Custom branding (launch aliases 2 to 8; 1 is the original name and
+    9, RLX_APP_NAME_COUNT, the custom name). Added by the RLX core after the strings of YouTube, so these
+    replace the Morphe strings of the same name. 4 stays Morphe's "YT", hidden in the settings.
+    Name 2 is the default (RLX_DEFAULT_APP_NAME_INDEX). Names can be added, but no alias removed.
+-->
+<resources>
+    <string name="morphe_custom_branding_name_entry_2" translatable="false">YouTube RLX</string>
+    <string name="morphe_custom_branding_name_entry_3" translatable="false">YT RLX</string>
+    <string name="morphe_custom_branding_name_entry_5" translatable="false">YouTube Premium</string>
+    <string name="morphe_custom_branding_name_entry_6" translatable="false">YouTube X</string>
+    <string name="morphe_custom_branding_name_entry_7" translatable="false">YouTube Morphe</string>
+    <string name="morphe_custom_branding_name_entry_8" translatable="false">YT Morphe</string>
+</resources>

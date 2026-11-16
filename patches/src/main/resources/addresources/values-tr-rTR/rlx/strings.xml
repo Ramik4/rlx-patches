@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="rlx_extended_screen_title">RLX Extended</string>
-    <string name="rlx_about_summary">RLX Patches %1$s · Morphe Patches %2$s tabanlı</string>
     <string name="rlx_about_title">RLX Patches</string>
     <string name="rlx_about_message">"Sürüm %1$s
 Morphe Patches %2$s tabanlı
@@ -279,10 +278,15 @@ Seçilen altyazılar %3$s klasörüne kaydedilir"</string>
     <string name="morphe_offline_subtitles_font_casual">Casual</string>
     <string name="morphe_offline_subtitles_font_cursive">El yazısı</string>
 
-    <!-- Names of the RLX app icons and header logos in the branding settings. -->
-    <string name="rlx_branding_red">RLX kırmızı</string>
-    <string name="rlx_branding_green">RLX yeşil</string>
-    <string name="rlx_branding_layered">RLX katmanlı</string>
-    <string name="rlx_branding_red_premium">RLX kırmızı Premium</string>
-    <string name="rlx_branding_green_premium">RLX yeşil Premium</string>
+    <!-- Names in the branding settings (RlxBranding). -->
+    <string name="rlx_branding_original_youtube">YouTube (Orijinal)</string>
+    <string name="rlx_branding_original_music">YouTube Music (Orijinal)</string>
+    <string name="rlx_branding_original_premium">Premium (Orijinal)</string>
+    <string name="rlx_branding_original_analog">Orijinal Analog</string>
+    <string name="rlx_branding_original_cake">Orijinal Pasta</string>
+    <string name="rlx_branding_original_metal">Orijinal Metal</string>
+    <string name="rlx_branding_notification_original_youtube">Orijinal (YouTube)</string>
+    <string name="rlx_branding_header_default_original">Varsayılan (Orijinal)</string>
+    <string name="morphe_settings_name_entry_5">RLX Ayarları</string>
+    <string name="morphe_settings_name_entry_6">Morphe Ayarları</string>
 </resources>
