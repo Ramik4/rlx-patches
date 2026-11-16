@@ -27,7 +27,7 @@ Credits: Morphe (Morphe Patches), ReVanced (prior work of Morphe Patches)."</str
     <string name="rlx_defaults_restart_message">Restart to apply the RLX default settings</string>
 
     <!-- Voice over translation (Yandex). Based on YaVoT (github.com/sashade8-ship-it/morphe-patches-yavot)
-         by sashade8, with earlier work of Jav1x, MarcaD, anddea and Sasha. Keys are kept, so the settings of
+         by sashade8, with work of Jav1x, anddea, MarcaDian and Ramik4. Keys are kept, so the settings of
          YaVoT and YT Morphe carry over. -->
     <string name="morphe_yandex_vot_screen_title">Voice over translation (Yandex)</string>
     <string name="morphe_yandex_vot_enabled_title">Enable Voice Over Translation</string>
@@ -105,5 +105,5 @@ Credits: Morphe (Morphe Patches), ReVanced (prior work of Morphe Patches)."</str
     <string name="morphe_yandex_vot_audio_preparing">Preparing the original audio…</string>
     <string name="morphe_yandex_vot_audio_uploading">Sending audio to Yandex… %1$d/%2$d</string>
     <string name="morphe_yandex_vot_request_error">Translation is not available right now. Try again later</string>
-    <string name="morphe_yandex_vot_rlx_attribution">Based on YaVoT by sashade8, with earlier work of Jav1x, MarcaD, anddea and Sasha</string>
+    <string name="morphe_yandex_vot_rlx_attribution">Based on YaVoT by sashade8, with work of Jav1x, anddea, MarcaDian and Ramik4. Timing and coordination from Dual VoT; the Yandex API client follows vot.js by FOSWLY</string>
 </resources>

@@ -20,7 +20,7 @@ RLX Patches — независимо созданная изменённая в�
     <string name="rlx_defaults_restart_message">Перезапустите, чтобы применить настройки RLX по умолчанию</string>
 
     <!-- Voice over translation (Yandex). Based on YaVoT (github.com/sashade8-ship-it/morphe-patches-yavot)
-         by sashade8, with earlier work of Jav1x, MarcaD, anddea and Sasha. Keys are kept, so the settings of
+         by sashade8, with work of Jav1x, anddea, MarcaDian and Ramik4. Keys are kept, so the settings of
          YaVoT and YT Morphe carry over. -->
     <string name="morphe_yandex_vot_screen_title">Перевод озвучивания (Яндекс)</string>
     <string name="morphe_yandex_vot_enabled_title">Включить закадровый перевод</string>
@@ -98,5 +98,5 @@ RLX Patches — независимо созданная изменённая в�
     <string name="morphe_yandex_vot_audio_preparing">Подготовка оригинальной аудиодорожки…</string>
     <string name="morphe_yandex_vot_audio_uploading">Отправка аудио в Яндекс… %1$d/%2$d</string>
     <string name="morphe_yandex_vot_request_error">Перевод сейчас недоступен. Попробуйте позже</string>
-    <string name="morphe_yandex_vot_rlx_attribution">Основано на YaVoT от sashade8, с более ранней работой Jav1x, MarcaD, anddea и Sasha</string>
+    <string name="morphe_yandex_vot_rlx_attribution">Основано на YaVoT от sashade8, с работой Jav1x, anddea, MarcaDian и Ramik4. Тайминги и координация из Dual VoT; клиент Yandex API следует vot.js от FOSWLY</string>
 </resources>

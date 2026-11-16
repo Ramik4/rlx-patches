@@ -1,6 +1,6 @@
 /*
  * RLX Patches
- * https://github.com/RAMiK4/rlx-patches
+ * https://github.com/Ramik4/rlx-patches
  *
  * Based on Morphe Patches. See the included NOTICE file for the GPLv3 Section 7 terms.
  */

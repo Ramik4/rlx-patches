@@ -1,6 +1,6 @@
 /*
  * RLX Patches
- * https://github.com/RAMiK4/rlx-patches
+ * https://github.com/Ramik4/rlx-patches
  *
  * Based on Morphe Patches. See the included NOTICE file for the GPLv3 Section 7 terms.
  */
@@ -15,7 +15,7 @@ import static app.morphe.extension.shared.StringRef.str;
 @SuppressWarnings("unused")
 public final class RlxInfo {
 
-    public static final String REPOSITORY_URL = "https://github.com/RAMiK4/rlx-patches";
+    public static final String REPOSITORY_URL = "https://github.com/Ramik4/rlx-patches";
 
     private RlxInfo() {
     }

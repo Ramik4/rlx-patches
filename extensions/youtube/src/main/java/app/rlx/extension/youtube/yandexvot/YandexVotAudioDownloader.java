@@ -2,7 +2,7 @@
  * Settings of YaVoT, https://github.com/sashade8-ship-it/morphe-patches-yavot
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
- * Modified by RLX Patches (https://github.com/RAMiK4/rlx-patches), 2026:
+ * Modified by RLX Patches (https://github.com/Ramik4/rlx-patches), 2026:
  * moved to app.rlx.extension.youtube.yandexvot and built into the RLX bundle.
  */
 

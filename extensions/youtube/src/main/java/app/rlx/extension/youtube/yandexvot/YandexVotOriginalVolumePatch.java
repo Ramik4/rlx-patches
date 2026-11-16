@@ -41,7 +41,7 @@
  * listing original author(s) appropriately and modifiers as committers
  * or co-authors.
  *
- * Modified by RLX Patches (https://github.com/RAMiK4/rlx-patches), 2026:
+ * Modified by RLX Patches (https://github.com/Ramik4/rlx-patches), 2026:
  * moved to app.rlx.extension.youtube.yandexvot and built into the RLX bundle.
  */
 

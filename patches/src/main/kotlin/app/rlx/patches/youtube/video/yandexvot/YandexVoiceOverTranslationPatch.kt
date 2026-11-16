@@ -9,10 +9,12 @@
  *
  * Ported to morphe-patches: https://github.com/MorpheApp/morphe-patches
  * Modified by: Jav1x (https://github.com/Jav1x)
+ * Original YaVoT add-on: MarcaDian (https://github.com/MarcaDian)
+ * Timing and coordination with the Morphe voice over translation: Dual VoT maintainers
  * Substantially modified by: YaVoT maintainers (sashade8-ship-it),
  * https://github.com/sashade8-ship-it/morphe-patches-yavot
  *
- * Modified by RLX Patches (https://github.com/RAMiK4/rlx-patches), 2026:
+ * Modified by RLX Patches (https://github.com/Ramik4/rlx-patches), 2026:
  * built into the RLX bundle instead of loaded as an add-on bundle, settings in RLX Extended.
  *
  * Licensed under the GNU General Public License v3.0.

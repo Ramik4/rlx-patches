@@ -94,5 +94,5 @@ Katkıda bulunanlar: Morphe (Morphe Patches), ReVanced (Morphe Patches'in temel 
     <string name="morphe_yandex_vot_audio_preparing">Orijinal ses hazırlanıyor…</string>
     <string name="morphe_yandex_vot_audio_uploading">Ses Yandex\'e gönderiliyor… %1$d/%2$d</string>
     <string name="morphe_yandex_vot_request_error">Çeviri şu anda kullanılamıyor. Daha sonra tekrar deneyin</string>
-    <string name="morphe_yandex_vot_rlx_attribution">sashade8\'in YaVoT\'una dayanır; Jav1x, MarcaD, anddea ve Sasha\'nın önceki çalışmalarıyla</string>
+    <string name="morphe_yandex_vot_rlx_attribution">sashade8\'in YaVoT\'una dayanır; Jav1x, anddea, MarcaDian ve Ramik4\'ün katkılarıyla. Zamanlama ve eşgüdüm Dual VoT\'tan; Yandex API istemcisi FOSWLY\'nin vot.js\'ini izler</string>
 </resources>

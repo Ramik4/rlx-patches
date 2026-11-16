@@ -9,10 +9,10 @@ patches {
     about {
         name = "RLX Patches"
         description = "Morphe patches + VoT + extra features"
-        source = "git@github.com:RAMiK4/rlx-patches.git"
-        author = "RAMiK4"
-        contact = "https://github.com/RAMiK4/rlx-patches/issues"
-        website = "https://github.com/RAMiK4/rlx-patches"
+        source = "git@github.com:Ramik4/rlx-patches.git"
+        author = "Ramik4"
+        contact = "https://github.com/Ramik4/rlx-patches/issues"
+        website = "https://github.com/Ramik4/rlx-patches"
         license = "GNU General Public License v3.0, with additional GPL section 7 requirements"
     }
 }

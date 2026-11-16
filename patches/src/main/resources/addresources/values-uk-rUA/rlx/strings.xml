@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Voice over translation (Yandex). Based on YaVoT (github.com/sashade8-ship-it/morphe-patches-yavot)
-         by sashade8, with earlier work of Jav1x, MarcaD, anddea and Sasha. Keys are kept, so the settings of
+         by sashade8, with work of Jav1x, anddea, MarcaDian and Ramik4. Keys are kept, so the settings of
          YaVoT and YT Morphe carry over. -->
     <string name="morphe_yandex_vot_screen_title">Голосовий переклад (Яндекс)</string>
     <string name="morphe_yandex_vot_enabled_title">Увімкнути закадровий переклад</string>

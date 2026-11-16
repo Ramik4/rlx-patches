@@ -85,8 +85,11 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
 
 ### Voice over translation (Yandex)
 
-Based on [YaVoT](https://github.com/sashade8-ship-it/morphe-patches-yavot) 1.1.4 (sashade8, with
-earlier work of Jav1x, MarcaD, anddea and Sasha). Maintained here as RLX code, not as a subtree.
+Based on [YaVoT](https://github.com/sashade8-ship-it/morphe-patches-yavot) 1.1.4 by sashade8, with
+work of Jav1x (original patch and Morphe port), anddea (revanced-patches port), MarcaDian (original
+YaVoT add-on) and Ramik4 (RLX). Timing and coordination with Morphe's own voice over translation
+come from the Dual VoT maintainers; the API client follows vot.js (FOSWLY) and Voice Over
+Translation (ilyhalight). Maintained here as RLX code, not as a subtree.
 
 - Built into the bundle instead of loaded as an add-on bundle: it subscribes to the player hooks
   of Morphe's `AddOnApi` (a public contract of Morphe Patches) from the main activity, and only

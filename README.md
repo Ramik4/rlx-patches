@@ -4,9 +4,9 @@
 
 Morphe patches + VoT + extra features for YouTube and YouTube Music.
 
-[![Latest release](https://img.shields.io/github/v/release/RAMiK4/rlx-patches?label=Release&sort=semver&style=for-the-badge)](https://github.com/RAMiK4/rlx-patches/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/Ramik4/rlx-patches?label=Release&sort=semver&style=for-the-badge)](https://github.com/Ramik4/rlx-patches/releases/latest)
 
-<a href="https://morphe.software/add-source?github=RAMiK4/rlx-patches&name=RLX%20Patches">Add to Morphe Manager</a>
+<a href="https://morphe.software/add-source?github=Ramik4/rlx-patches&name=RLX%20Patches">Add to Morphe Manager</a>
 
 </div>
 
@@ -27,7 +27,7 @@ YouTube.
 
 1. Install [Morphe Manager](https://morphe.software).
 2. Add this repository as a patch source with the link above, or add
-   `https://github.com/RAMiK4/rlx-patches` under **Sources → + → Remote**.
+   `https://github.com/Ramik4/rlx-patches` under **Sources → + → Remote**.
 3. Patch YouTube or YouTube Music with the **RLX Patches** source.
 
 ## Versions
@@ -47,8 +47,8 @@ Every release names the Morphe version it is based on, for example
 | --- | --- |
 | [Morphe](https://github.com/MorpheApp/morphe-patches) | Morphe Patches, which RLX is based on |
 | [ReVanced](https://github.com/ReVanced) | Prior work Morphe Patches are based on |
-| [YaVoT](https://github.com/sashade8-ship-it/morphe-patches-yavot) by sashade8 | Yandex voice over translation, with earlier work of [Jav1x](https://github.com/Jav1x), MarcaD, [anddea](https://github.com/anddea) and Sasha |
-| [vot.js](https://github.com/FOSWLY/vot.js) | Reference for the Yandex voice over translation API |
+| [YaVoT](https://github.com/sashade8-ship-it/morphe-patches-yavot) by [sashade8](https://github.com/sashade8-ship-it) | Yandex voice over translation, with work of [Jav1x](https://github.com/Jav1x), [anddea](https://github.com/anddea), [MarcaDian](https://github.com/MarcaDian) and [Ramik4](https://github.com/Ramik4); timing and Morphe VoT coordination from the Dual VoT maintainers |
+| [vot.js](https://github.com/FOSWLY/vot.js) by FOSWLY, [Voice Over Translation](https://github.com/ilyhalight/voice-over-translation) by ilyhalight | Reference for the Yandex voice over translation API |
 
 ## License
 

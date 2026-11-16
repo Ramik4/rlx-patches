@@ -4,7 +4,7 @@
  * Entry point of the YaVoT add-on, https://github.com/sashade8-ship-it/morphe-patches-yavot
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
- * Modified by RLX Patches (https://github.com/RAMiK4/rlx-patches): built into the RLX bundle
+ * Modified by RLX Patches (https://github.com/Ramik4/rlx-patches): built into the RLX bundle
  * instead of loaded as an add-on bundle.
  */
 
