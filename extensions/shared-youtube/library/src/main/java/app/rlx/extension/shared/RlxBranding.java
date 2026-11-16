@@ -22,6 +22,7 @@ import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.ResourceType;
 import app.morphe.extension.shared.ResourceUtils;
 import app.morphe.extension.shared.settings.Setting;
+import app.morphe.extension.shared.settings.SharedYouTubeSettings;
 
 /**
  * The RLX branding in the lists of the settings (GPLv3 section 7e, see NOTICE):
@@ -66,7 +67,36 @@ public final class RlxBranding {
             {"RLX_GREEN", "rlx_branding_green", "rlx_header_music_green_dark"},
     };
 
+    /**
+     * The app name when no custom name was given while patching: name 2 of Custom branding, which RLX
+     * names "YouTube RLX" and "YT Music RLX". Must match RLX_DEFAULT_APP_NAME_INDEX of the patches.
+     */
+    public static final int DEFAULT_APP_NAME_INDEX = 2;
+
     private RlxBranding() {
+    }
+
+    /**
+     * Injection point (CustomBrandingPatch.setBranding, an RLX hook), before the launch alias is selected.
+     * <p>
+     * The last app name is the custom name given while patching. Without one, its launch alias only has the
+     * placeholder name "Custom", yet Morphe keeps it when it is still selected from an earlier install or
+     * an imported settings file. RLX selects the default name instead.
+     *
+     * @param userProvidedCustomName If a custom name was given while patching.
+     * @param numberOfPresetAppNames The number of app names, the custom name included.
+     */
+    public static void checkAppName(boolean userProvidedCustomName, int numberOfPresetAppNames) {
+        try {
+            if (userProvidedCustomName) return;
+            final int selected = SharedYouTubeSettings.CUSTOM_BRANDING_NAME.get();
+            if (selected >= numberOfPresetAppNames || selected < 1) {
+                Logger.printInfo(() -> "No custom app name, selecting the default name instead of " + selected);
+                SharedYouTubeSettings.CUSTOM_BRANDING_NAME.resetToDefault();
+            }
+        } catch (Exception ex) {
+            Logger.printException(() -> "checkAppName failure", ex);
+        }
     }
 
     /**

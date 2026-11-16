@@ -20,3 +20,10 @@ internal fun rlxPatchOptionIconStyles(names: Array<String>): Map<String, String>
 
 /** The icon style of the app when the patch option "App icon" is not set: RLX red. */
 internal const val RLX_DEFAULT_ICON_STYLE = "play"
+
+/**
+ * The app name of the app when no custom name is given: name 2 of Custom branding, which RLX names
+ * "YouTube RLX" and "YT Music RLX" (addresources values/rlx-youtube and values/rlx-music).
+ * Must match RlxBranding.DEFAULT_APP_NAME_INDEX of the extension.
+ */
+internal const val RLX_DEFAULT_APP_NAME_INDEX = 2

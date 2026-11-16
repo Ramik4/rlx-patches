@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    RLX Patches: names of the app that Custom branding offers, in place of the Morphe names.
+    Added by the RLX core after the strings of YouTube Music, so these replace the Morphe strings of
+    the same name. Entry 2 is the default name of the app (RLX_DEFAULT_APP_NAME_INDEX).
+-->
+<resources>
+    <string name="morphe_custom_branding_name_entry_2" translatable="false">YT Music RLX</string>
+    <string name="morphe_custom_branding_name_entry_3" translatable="false">Music RLX</string>
+</resources>

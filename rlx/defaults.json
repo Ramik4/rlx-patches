@@ -168,10 +168,17 @@
   },
   "replaced": {
     "youtube": {
+      "header_logo": [
+        "custom"
+      ],
       "theme_color_dark": [
         "app_default"
       ]
     },
-    "music": {}
+    "music": {
+      "header_logo": [
+        "custom"
+      ]
+    }
   }
 }
