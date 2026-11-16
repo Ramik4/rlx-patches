@@ -96,13 +96,13 @@ private val settingsResourcePatch = patch {
                 // so in both layouts the entry itself is what the name key belongs to.
                 IntentPreference(
                     key = SETTINGS_NAME_PREFERENCE_KEY,
-                    titleKey = "morphe_settings_title",
+                    titleKey = "rlx_settings_title", // RLX
                     summaryKey = null,
                     intent = newIntent(MORPHE_SETTINGS_INTENT)
                 ) to "settings_fragment",
 
                 PreferenceCategory(
-                    titleKey = "morphe_settings_title",
+                    titleKey = "rlx_settings_title", // RLX
                     layout = "@layout/preference_group_title",
                     preferences = setOf(
                         IntentPreference(

@@ -54,8 +54,8 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `patches/build.gradle.kts` | applies `rlx/patches.gradle.kts`; bundle name and description |
 | `settings.gradle.kts` | root project name |
 | `extensions/proguard-rules.pro` | keeps `app.rlx.**` |
-| `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube |
-| `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music |
+| `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube; title of the settings entry (`rlx_settings_title`) |
+| `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music; title of the settings entry (`rlx_settings_title`) |
 
 Patches of other apps (Reddit) stay in the tree untouched and are left out of the bundle by
 `rlx/patches.gradle.kts`, so deleting them never causes merge conflicts.
@@ -65,8 +65,11 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
 `app/rlx/patches/shared/RlxCorePatch.kt` is applied with the Morphe settings of each app
 (it cannot be left out, so the attribution is always there):
 
-- **RLX Extended**: a settings screen of its own; VoT, the downloader and all other RLX
-  settings go there.
+- **RLX Extended**: a settings screen of its own, right below "About" (the settings root is
+  sorted by key, so its key starts with `morphe_settings_screen_00_`); VoT, the downloader and
+  all other RLX settings go there.
+- **Settings name**: the entry in the app settings and the toolbar read *RLX* instead of
+  *Morphe* (GPLv3 section 7c and 7e). The user can still rename it with Morphe's settings name.
 - **Attribution**: the "About" entry of the settings reads
   *RLX Patches 2.3.7 · Based on Morphe Patches 2.3.0-dev.7* (GPLv3 section 7b) and opens the
   RLX about dialog.
@@ -76,6 +79,14 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
   the setting still has Morphe's default value; whatever the user changes is kept, also across
   updates. Settings already applied by the earlier YT Morphe builds are not applied again.
   *RLX Extended → Restore RLX default settings* applies all of them again.
+  When RLX changes a default, the earlier value goes to the `replaced` section of
+  `defaults.json`: a setting that still has an earlier RLX default gets the new one once.
+- **Channel whitelists**: importing settings keeps the ad, playback speed and SponsorBlock
+  channel whitelists when the imported text does not contain them (preset files), instead of
+  clearing them (`RlxWhitelistKeeper`, an import/export callback of Morphe's `Setting`).
+- **Theme**: the dark theme defaults to the custom color `#0F0F0F`, which Morphe also gives the
+  menus and sheets (with *App default* they keep YouTube's grey). A user who selected another
+  color, such as pure black, keeps it.
 
 ## RLX patches
 

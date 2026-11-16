@@ -3,7 +3,9 @@
     "RLX Patches: every change RLX makes to the default settings of Morphe, in one file.",
     "Keys are the keys of the Morphe settings export (Settings > Other > Import / export).",
     "Each setting is applied once, on the first start of a build that has it, and only if the",
-    "user has not changed it. Later changes of the user are kept, also across updates."
+    "user has not changed it. Later changes of the user are kept, also across updates.",
+    "'replaced' lists earlier RLX defaults of a setting. A setting that still has one of them gets",
+    "the current default once, so users of earlier builds get it too."
   ],
   "youtube": {
     "ads_channel_whitelist_flyout_menu": true,
@@ -122,7 +124,8 @@
     "swipe_left_zone": "brightness",
     "swipe_right_zone": "volume",
     "swipe_top_zone": "speed",
-    "theme_color_dark": "app_default",
+    "theme_color_dark": "custom",
+    "theme_color_dark_custom": "#0F0F0F",
     "video_quality_dialog_button": true,
     "vot_caption_language": "ru-RU",
     "vot_enabled": true,
@@ -162,5 +165,13 @@
     "sb_enabled": false,
     "settings_search_history": false,
     "splash_screen_style": "fps_60_one_second"
+  },
+  "replaced": {
+    "youtube": {
+      "theme_color_dark": [
+        "app_default"
+      ]
+    },
+    "music": {}
   }
 }

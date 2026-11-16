@@ -3,6 +3,8 @@
 <resources>
     <!-- Settings screen. -->
     <string name="rlx_extended_screen_title">RLX Extended</string>
+    <!-- Name of the settings entry in the app settings and of its toolbar, in place of "Morphe". -->
+    <string name="rlx_settings_title" translatable="false">RLX</string>
 
     <!-- About. %1$s is the RLX version, %2$s the Morphe Patches version RLX is based on. -->
     <string name="rlx_about_summary">RLX Patches %1$s · Based on Morphe Patches %2$s</string>

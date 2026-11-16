@@ -9,6 +9,10 @@ package app.rlx.patches.shared
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.instructions
+import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
+import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.Patch
 import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.patch
@@ -21,12 +25,19 @@ import app.morphe.util.ResourceGroup
 import app.morphe.util.addInstructionsAtControlFlowLabel
 import app.morphe.util.copyResources
 import com.android.tools.smali.dexlib2.Opcode
+import com.android.tools.smali.dexlib2.iface.instruction.OneRegisterInstruction
+import com.android.tools.smali.dexlib2.iface.instruction.ReferenceInstruction
+import com.android.tools.smali.dexlib2.iface.reference.StringReference
 import java.util.Base64
 
 private const val EXTENSION_PACKAGE = "Lapp/rlx/extension/shared"
 private const val INFO_CLASS = "$EXTENSION_PACKAGE/RlxInfo;"
 private const val DEFAULTS_CLASS = "$EXTENSION_PACKAGE/RlxDefaults;"
 private const val ABOUT_CLASS = "$EXTENSION_PACKAGE/RlxAbout;"
+
+private const val MORPHE_SETTINGS_NAME_CLASS = "Lapp/morphe/extension/shared/patches/SettingsNamePatch;"
+private const val MORPHE_SETTINGS_TITLE = "morphe_settings_title"
+private const val RLX_SETTINGS_TITLE = "rlx_settings_title"
 
 private const val MORPHE_ABOUT_PREFERENCE_CLASS =
     "Lapp/morphe/extension/shared/settings/preference/about/MorpheAboutPreference;"
@@ -84,6 +95,19 @@ internal fun rlxCorePatch(
             0,
             "invoke-static/range { p0 .. p0 }, $DEFAULTS_CLASS->onActivityCreated(Landroid/app/Activity;)V",
         )
+
+        // Settings name: "RLX" in place of "Morphe" (GPLv3 section 7c and 7e, see NOTICE). The entry of the
+        // app settings declares its title in the Morphe settings patches (RLX hooks); the toolbar and other
+        // places without a name declared while patching read the string here.
+        mutableClassDefBy(MORPHE_SETTINGS_NAME_CLASS).methods.first { it.name == "getSettingsName" }.apply {
+            val index = instructions.indexOfFirst { instruction ->
+                instruction.opcode == Opcode.CONST_STRING &&
+                    ((instruction as ReferenceInstruction).reference as StringReference).string == MORPHE_SETTINGS_TITLE
+            }
+            if (index < 0) throw PatchException("$MORPHE_SETTINGS_TITLE not found in getSettingsName")
+            val register = getInstruction<OneRegisterInstruction>(index).registerA
+            replaceInstruction(index, "const-string v$register, \"$RLX_SETTINGS_TITLE\"")
+        }
 
         // "About" entry: RLX version, Morphe Patches base version and the RLX about dialog.
         mutableClassDefBy(MORPHE_ABOUT_PREFERENCE_CLASS).methods
