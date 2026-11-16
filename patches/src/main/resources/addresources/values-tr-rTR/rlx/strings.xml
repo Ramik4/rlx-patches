@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="rlx_extended_screen_title">RLX Extended</string>
+    <string name="rlx_customizations_screen_title">RLX Özelleştirmeler</string>
     <string name="rlx_about_title">RLX Patches</string>
     <string name="rlx_about_message">"Sürüm %1$s
 Morphe Patches %2$s tabanlı
@@ -11,7 +11,6 @@ GNU Genel Kamu Lisansı v3.0 ve Morphe Patches NOTICE dosyasındaki GPLv3 7. bö
 
 Katkıda bulunanlar: Morphe (Morphe Patches), ReVanced (Morphe Patches'in temel aldığı önceki çalışma)."</string>
     <string name="rlx_about_github">GitHub</string>
-    <string name="rlx_info_title">RLX Patches</string>
     <string name="rlx_reset_defaults_title">RLX varsayılan ayarlarını geri yükle</string>
     <string name="rlx_reset_defaults_summary">"RLX'in değiştirdiği ayarları RLX varsayılanlarına döndürür. Diğer ayarlar korunur"</string>
     <string name="rlx_reset_defaults_confirm">"RLX'in değiştirdiği ayarlar, sizin değiştirdikleriniz de dahil, RLX varsayılanlarına döndürülür. Diğer ayarlar korunur."</string>
@@ -64,7 +63,7 @@ Katkıda bulunanlar: Morphe (Morphe Patches), ReVanced (Morphe Patches'in temel 
     <string name="morphe_yandex_vot_lang_auto">Otomatik algıla</string>
     <string name="morphe_yandex_vot_oauth_token_title">Yandex OAuth token</string>
     <string name="morphe_yandex_vot_oauth_token_summary">Canlı sesler için gerekli.</string>
-    <string name="morphe_yandex_vot_auth_required">Yetkilendirme gerekli. Ayarlar &gt; RLX Extended bölümünden Yandex OAuth token ekleyin.</string>
+    <string name="morphe_yandex_vot_auth_required">Yetkilendirme gerekli. Ayarlar &gt; RLX Özelleştirmeler bölümünden Yandex OAuth token ekleyin.</string>
     <string name="morphe_yandex_vot_oauth_not_signed_in_summary">Yetkilendirilmedi</string>
     <string name="morphe_yandex_vot_oauth_signed_in_summary">%s olarak oturum açıldı</string>
     <string name="morphe_yandex_vot_oauth_auth_method_title">Yandex yetkilendirmesi</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="rlx_extended_screen_title">RLX Extended</string>
+    <string name="rlx_customizations_screen_title">Персонализация RLX</string>
     <string name="rlx_about_title">RLX Patches</string>
     <string name="rlx_about_message">"Версия %1$s
 На основе Morphe Patches %2$s
@@ -11,7 +11,6 @@ RLX Patches — независимо созданная изменённая в�
 
 Благодарности: Morphe (Morphe Patches), ReVanced (предыдущая работа, на которой основаны Morphe Patches)."</string>
     <string name="rlx_about_github">GitHub</string>
-    <string name="rlx_info_title">RLX Patches</string>
     <string name="rlx_reset_defaults_title">Восстановить настройки RLX по умолчанию</string>
     <string name="rlx_reset_defaults_summary">Возвращает настройки, которые меняет RLX, к значениям RLX по умолчанию. Остальные настройки сохраняются</string>
     <string name="rlx_reset_defaults_confirm">Настройки, которые меняет RLX, будут возвращены к значениям RLX по умолчанию, в том числе изменённые вами. Остальные настройки сохраняются.</string>
@@ -68,7 +67,7 @@ RLX Patches — независимо созданная изменённая в�
     <string name="morphe_yandex_vot_lang_auto">Автоопределение</string>
     <string name="morphe_yandex_vot_oauth_token_title">Яндекс OAuth токен</string>
     <string name="morphe_yandex_vot_oauth_token_summary">Необходим для живых голосов.</string>
-    <string name="morphe_yandex_vot_auth_required">Требуется авторизация. Добавьте Яндекс OAuth токен в Настройки &gt; RLX Extended.</string>
+    <string name="morphe_yandex_vot_auth_required">Требуется авторизация. Добавьте Яндекс OAuth токен в Настройки &gt; Персонализация RLX.</string>
     <string name="morphe_yandex_vot_oauth_not_signed_in_summary">Не авторизован</string>
     <string name="morphe_yandex_vot_oauth_signed_in_summary">Вошли как %s</string>
     <string name="morphe_yandex_vot_oauth_auth_method_title">Авторизация Яндекс</string>

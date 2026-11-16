@@ -53,7 +53,7 @@ jobs:
             exit 1
           fi
           for entry in app/rlx/build.properties app/rlx/defaults.json \
-                       rlx/drawable/rlx_settings_screen_extended.xml \
+                       rlx/drawable/rlx_settings_screen_customizations.xml rlx/settings/drawable/morphe_settings_icon_light.xml \
                        addresources/values/rlx/strings.xml addresources/values/rlx/arrays.xml \
                        addresources/values/rlx-youtube/strings.xml addresources/values/rlx-music/strings.xml \
                        addresources/values/rlx-shared/strings.xml addresources/values/rlx-shared/arrays.xml \

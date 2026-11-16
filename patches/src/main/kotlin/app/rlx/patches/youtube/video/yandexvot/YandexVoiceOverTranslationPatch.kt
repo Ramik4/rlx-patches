@@ -15,7 +15,7 @@
  * https://github.com/sashade8-ship-it/morphe-patches-yavot
  *
  * Modified by RLX Patches (https://github.com/Ramik4/rlx-patches), 2026:
- * built into the RLX bundle instead of loaded as an add-on bundle, settings in RLX Extended.
+ * built into the RLX bundle instead of loaded as an add-on bundle, settings in RLX Customizations.
  *
  * Licensed under the GNU General Public License v3.0.
  *
@@ -67,7 +67,7 @@ import app.morphe.patches.youtube.video.videoid.videoIdPatch
 import app.morphe.util.ResourceGroup
 import app.morphe.util.copyResources
 import app.morphe.util.indexOfFirstInstructionOrThrow
-import app.rlx.patches.youtube.settings.RLX_EXTENDED_SCREEN
+import app.rlx.patches.youtube.settings.RLX_CUSTOMIZATIONS_SCREEN
 import com.android.tools.smali.dexlib2.Opcode
 import com.android.tools.smali.dexlib2.iface.instruction.FiveRegisterInstruction
 import com.android.tools.smali.dexlib2.iface.instruction.Instruction
@@ -123,7 +123,7 @@ internal object AudioTrackSetVolumeMethodFingerprint : Fingerprint(
 val yandexVoiceOverTranslationPatch = patch(
     name = "Voice over translation (Yandex)",
     description = "Adds a player button that plays a Yandex voice over translation of the video. " +
-            "Settings are in RLX Extended.",
+            "Settings are in RLX Customizations.",
 ) {
     compatibleWith(COMPATIBILITY_YOUTUBE)
 
@@ -145,7 +145,7 @@ val yandexVoiceOverTranslationPatch = patch(
             ResourceGroup("drawable", "morphe_yt_yandex_vot.xml", "morphe_yt_yandex_vot_bold.xml"),
         )
 
-        RLX_EXTENDED_SCREEN.addPreferences(
+        RLX_CUSTOMIZATIONS_SCREEN.addPreferences(
             PreferenceScreenPreference(
                 key = "rlx_yandex_vot_screen",
                 titleKey = "morphe_yandex_vot_screen_title",
