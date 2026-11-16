@@ -302,4 +302,11 @@ Subtitles, if chosen, are saved to %3$s"</string>
     <string name="morphe_offline_subtitles_font_monospace">Monospace</string>
     <string name="morphe_offline_subtitles_font_casual">Casual</string>
     <string name="morphe_offline_subtitles_font_cursive">Cursive</string>
+
+    <!-- Names of the RLX app icons and header logos in the branding settings. -->
+    <string name="rlx_branding_red">RLX red</string>
+    <string name="rlx_branding_green">RLX green</string>
+    <string name="rlx_branding_layered">RLX layered</string>
+    <string name="rlx_branding_red_premium">RLX red Premium</string>
+    <string name="rlx_branding_green_premium">RLX green Premium</string>
 </resources>

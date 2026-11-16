@@ -20,6 +20,7 @@ public class ChangeHeaderPatch {
     public enum HeaderLogo {
         DEFAULT(null),
         MORPHE("morphe_header_dark"),
+        RLX_RED("rlx_header_music_red_dark"), RLX_GREEN("rlx_header_music_green_dark"), // RLX
         CUSTOM("morphe_header_custom_dark");
 
         private final String drawableName;

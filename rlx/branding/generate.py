@@ -4,9 +4,13 @@
 #
 # Generates the RLX app icons and header logos as Android vector drawables and SVG previews.
 #
-# Usage: generate.py <Roboto Condensed Bold font (.woff/.ttf)> <output directory>
+# Usage: generate.py <Roboto Condensed Bold font (.ttf)> <repository> [<SVG preview directory>]
+# Writes patches/src/main/resources/rlx/drawable/rlx_header_*.xml and
+# patches/src/main/resources/rlx/branding/<app>/drawable/ (the icons RLX puts in the place of
+# Morphe icon styles while patching, see RlxBrandingPatch.kt).
 # The font (SIL Open Font License 1.1) is only read here; the letters are written as paths.
-# It is in the npm package @fontsource/roboto-condensed (files/roboto-condensed-latin-700-normal.woff).
+# It is in the npm package @fontsource/roboto-condensed (files/roboto-condensed-latin-700-normal.woff,
+# converted to .ttf with fontTools: f = TTFont(woff); f.flavor = None; f.save(ttf)).
 #
 # Needs: fonttools, uharfbuzz.
 
@@ -20,14 +24,14 @@ WHITE = "#FFFFFF"
 TEXT_LIGHT = "#0F0F0F"  # On the light theme.
 TEXT_DARK = "#F0F0F0"  # On the dark theme.
 
-# Proportions, measured from the reference icons (432 px adaptive foreground).
+# Proportions, rounded from the reference icons (432 px adaptive foreground).
 ICON_CANVAS = 108.0  # Adaptive icon viewport (dp).
-BOX = ICON_CANVAS * 194 / 432  # The red square or circle.
-BOX_RADIUS = 0.263  # Corner radius of the square, of BOX.
-PLAY_HEIGHT = 0.495  # Height of the play symbol, of BOX.
-PLAY_WIDTH = 0.875  # Width of the play symbol, of its height.
-PLAY_RADIUS = 0.208  # Corner radius of the play symbol, of its height.
-PLAY_OFFSET = 0.0155  # Optical shift of the play symbol to the right, of BOX.
+BOX = ICON_CANVAS * 0.45  # The red square or circle.
+BOX_RADIUS = 0.25  # Corner radius of the square, of BOX.
+PLAY_HEIGHT = 0.5  # Height of the play symbol, of BOX.
+PLAY_WIDTH = math.sqrt(3) / 2  # Width of the play symbol, of its height (equilateral).
+PLAY_RADIUS = 0.2  # Corner radius of the play symbol, of its height.
+PLAY_OFFSET = 0.015  # Optical shift of the play symbol to the right, of BOX.
 
 # Layered card: the front square and the green square behind it.
 LAYERED_BOX = BOX * 0.92
@@ -36,7 +40,7 @@ LAYERED_SHIFT = BOX * 0.085
 # Header logo: icon, then the word, centered on the same line.
 HEADER_HEIGHT = 192.0
 HEADER_ICON = 100.0
-HEADER_TEXT_HEIGHT = 0.76  # Height of the word (top of the tallest letter to the baseline), of the icon.
+HEADER_TEXT_HEIGHT = 0.75  # Height of the word (top of the tallest letter to the baseline), of the icon.
 HEADER_GAP = 0.15  # Space between the icon and the word, of the icon.
 HEADER_PADDING = 44.0  # Left and right.
 
@@ -100,13 +104,17 @@ def play(cx, cy, box):
 
 
 def icon_shapes(kind, cx, cy, box):
-    """Full color icon as (path, color) layers. kind: red, green, layered, red_round, green_round."""
-    if kind == "layered":
+    """Full color icon as (path, color) layers. kind: red, green or layered, with _round for a circle."""
+    if kind.startswith("layered"):
         b = box * LAYERED_BOX / BOX
         s = box * LAYERED_SHIFT / BOX
+
+        def shape(x, y):
+            return circle(x, y, b) if kind.endswith("round") else rounded_rect(x, y, b, b * BOX_RADIUS)
+
         return [
-            (rounded_rect(cx + s, cy - s, b, b * BOX_RADIUS), GREEN),
-            (rounded_rect(cx - s, cy + s, b, b * BOX_RADIUS), RED),
+            (shape(cx + s, cy - s), GREEN),
+            (shape(cx - s, cy + s), RED),
             (play(cx - s, cy + s, b), WHITE),
         ]
     color = GREEN if kind.startswith("green") else RED
@@ -223,40 +231,55 @@ def write(path, content):
         fh.write(content)
 
 
-def main(font_path, out_dir):
-    c = ICON_CANVAS / 2
-    preview = os.path.join(out_dir, "preview")
-    for kind in ("red", "green", "layered", "red_round", "green_round"):
-        layers = icon_shapes(kind, c, c, BOX)
-        write(f"{preview}/icon_{kind}.svg", svg(ICON_CANVAS, ICON_CANVAS, layers))
-        write(f"{out_dir}/vector/foreground_{kind}.xml",
-              vector(ICON_CANVAS, ICON_CANVAS, ICON_CANVAS, ICON_CANVAS, layers))
-    for kind in ("square", "round"):
-        mono = [(mono_path(kind, c, c, BOX), "#000000")]
-        write(f"{preview}/mono_{kind}.svg", svg(ICON_CANVAS, ICON_CANVAS, mono, even_odd=True))
-        write(f"{out_dir}/vector/monochrome_{kind}.xml",
-              vector(ICON_CANVAS, ICON_CANVAS, ICON_CANVAS, ICON_CANVAS, mono, even_odd=True))
-        # Notification icon: 24 dp, the glyph fills 20 dp.
-        n = [(mono_path(kind, 12, 12, 20), "#FFFFFF")]
-        write(f"{preview}/notification_{kind}.svg", svg(24, 24, n, even_odd=True))
-        write(f"{out_dir}/vector/notification_{kind}.xml", vector(24, 24, 24, 24, n, even_odd=True))
+# Morphe icon styles that RLX gives its own icons (the Morphe icons are hidden, see rlx/README.md).
+ICON_STYLES = {"play": "red", "play_black": "green", "light": "layered"}
 
+BACKGROUND = """<?xml version="1.0" encoding="utf-8"?>
+<!-- RLX Patches. Generated by rlx/branding/generate.py, do not edit. -->
+<color xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#FFFFFF" />
+"""
+
+
+def main(font_path, repo, preview=None):
+    resources = os.path.join(repo, "patches/src/main/resources/rlx")
+    c = ICON_CANVAS / 2
+
+    def out(name, width_dp, height_dp, vw, vh, layers, text=None, even_odd=False, comment=ICON_COMMENT,
+            folder="drawable"):
+        write(f"{resources}/{folder}/{name}.xml",
+              vector(width_dp, height_dp, vw, vh, layers, text, even_odd, comment))
+        if preview:
+            write(f"{preview}/{folder.replace('/', '_')}_{name}.svg", svg(vw, vh, layers, text, even_odd))
+
+    # App icons, in the place of the Morphe icon styles. YouTube: square, YouTube Music: round.
+    for app, shape in (("youtube", "square"), ("music", "round")):
+        folder = f"branding/{app}/drawable"
+        for style, kind in ICON_STYLES.items():
+            if shape == "round":
+                kind += "_round"
+            out(f"morphe_adaptive_foreground_{style}", ICON_CANVAS, ICON_CANVAS, ICON_CANVAS, ICON_CANVAS,
+                icon_shapes(kind, c, c, BOX), folder=folder)
+            out(f"morphe_adaptive_monochrome_{style}", ICON_CANVAS, ICON_CANVAS, ICON_CANVAS, ICON_CANVAS,
+                [(mono_path(shape, c, c, BOX), "#000000")], even_odd=True, folder=folder)
+            # Notification icon: 24 dp, the glyph fills 20 dp. Must be white.
+            out(f"morphe_notification_icon_{style}", 24, 24, 24, 24,
+                [(mono_path(shape, 12, 12, 20), WHITE)], even_odd=True, folder=folder)
+            write(f"{resources}/{folder}/morphe_adaptive_background_{style}.xml", BACKGROUND)
+
+    # Header logos.
     for kind in ("red", "green"):
         for word in ("YouTube", "Premium"):
             for theme, color in (("light", TEXT_LIGHT), ("dark", TEXT_DARK)):
                 w, h, layers, text = header(font_path, kind, word, color)
-                name = f"header_{kind}_{word.lower()}_{theme}"
-                write(f"{preview}/{name}.svg", svg(w, h, layers, text))
-                write(f"{out_dir}/vector/{name}.xml",
-                      vector(w / 4, h / 4, w, h, layers, text, comment=HEADER_COMMENT))
+                out(f"rlx_header_{kind}_{word.lower()}_{theme}", w / 4, h / 4, w, h, layers, text,
+                    comment=HEADER_COMMENT)
         # YouTube Music: round icon, dark theme only.
         w, h, layers, text = header(font_path, kind + "_round", "Music", TEXT_DARK)
-        name = f"header_music_{kind}_dark"
-        write(f"{preview}/{name}.svg", svg(w, h, layers, text))
-        write(f"{out_dir}/vector/{name}.xml", vector(w / 4, h / 4, w, h, layers, text, comment=HEADER_COMMENT))
+        out(f"rlx_header_music_{kind}_dark", w / 4, h / 4, w, h, layers, text, comment=HEADER_COMMENT)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        sys.exit(__doc__ or "usage: generate.py <font> <output directory>")
-    main(sys.argv[1], sys.argv[2])
+    if len(sys.argv) not in (3, 4):
+        sys.exit("usage: generate.py <font> <repository> [<SVG preview directory>]")
+    main(*sys.argv[1:])
