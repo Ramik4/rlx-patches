@@ -9,10 +9,12 @@ package app.rlx.patches.shared
 
 import app.morphe.patcher.Fingerprint
 import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
+import app.morphe.patcher.extensions.InstructionExtensions.addInstructionsWithLabels
 import app.morphe.patcher.extensions.InstructionExtensions.getInstruction
 import app.morphe.patcher.extensions.InstructionExtensions.instructions
 import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
+import app.morphe.patcher.util.smali.ExternalLabel
 import app.morphe.patcher.patch.Patch
 import app.morphe.patcher.patch.mutableClassDefBy
 import app.morphe.patcher.patch.mutableClassDefByOrNull
@@ -52,8 +54,7 @@ private val exportFolders = mapOf(
     "Morphe music" to "YouTube Music",
 )
 
-private const val MORPHE_BRANDING_THEME_CLASS =
-    "Lapp/morphe/extension/shared/patches/CustomBrandingPatch\$BrandingTheme;"
+private const val MORPHE_BRANDING_CLASS = "Lapp/morphe/extension/shared/patches/CustomBrandingPatch;"
 
 private const val MORPHE_ABOUT_PREFERENCE_CLASS =
     "Lapp/morphe/extension/shared/settings/preference/about/MorpheAboutPreference;"
@@ -111,26 +112,24 @@ internal fun rlxCorePatch(
         } ?: rlxLogger.warning("RLX: $MORPHE_EXPORTER_CLASS not found, exported videos keep the Morphe folder")
 
         // Startup animation of RLX Green: green, where Morphe gives RLX Red and RLX Green (the play icons) the same
-        // animation (RlxBranding.kt).
-        mutableClassDefByOrNull(MORPHE_BRANDING_THEME_CLASS)?.methods
-            ?.firstOrNull { it.name == "startupAnimationResourceName" }
+        // animation (RlxBranding.kt). Hooked at the start of the static getStartupAnimation(), which has no
+        // parameters, so v0 is free there; the enum method that names the animation is left as it is (its
+        // registers are chosen by the compiler, and a wrong type there fails the verification of the class).
+        mutableClassDefByOrNull(MORPHE_BRANDING_CLASS)?.methods
+            ?.firstOrNull { it.name == "getStartupAnimation" && it.parameters.isEmpty() && it.returnType == "I" }
             ?.apply {
-                implementation!!.instructions
-                    .withIndex()
-                    .filter { (_, instruction) -> instruction.opcode == Opcode.RETURN_OBJECT }
-                    .map { (index, instruction) -> index to (instruction as OneRegisterInstruction).registerA }
-                    .reversed()
-                    .forEach { (index, register) ->
-                        addInstructionsAtControlFlowLabel(
-                            index,
-                            """
-                                invoke-static { p0, v$register }, $BRANDING_CLASS->startupAnimation(Ljava/lang/Enum;Ljava/lang/String;)Ljava/lang/String;
-                                move-result-object v$register
-                            """,
-                        )
-                    }
+                addInstructionsWithLabels(
+                    0,
+                    """
+                        invoke-static { }, $BRANDING_CLASS->greenStartupAnimation()I
+                        move-result v0
+                        if-eqz v0, :morphe
+                        return v0
+                    """,
+                    ExternalLabel("morphe", getInstruction(0)),
+                )
             }
-            ?: rlxLogger.warning("RLX: startupAnimationResourceName not found, RLX Green has the red startup animation")
+            ?: rlxLogger.warning("RLX: getStartupAnimation not found, RLX Green has the red startup animation")
 
         // Versions shown in the settings.
         mutableClassDefBy(INFO_CLASS).methods.apply {

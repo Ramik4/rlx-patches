@@ -237,20 +237,22 @@ public final class RlxBranding {
     private static final String GREEN_STARTUP_ANIMATION = "rlx_startup_animation_green";
 
     /**
-     * Injection point. Called with the startup animation Morphe chose for an app icon: RLX Green gets the green
-     * one, where Morphe gives both play icons (RLX Red and RLX Green) the same animation.
+     * Injection point, at the start of {@link CustomBrandingPatch#getStartupAnimation()}. RLX Green (Morphe's
+     * PLAY_BLACK) gets the green startup animation, where Morphe gives both play icons (RLX Red and RLX Green) the
+     * same one.
+     *
+     * @return The raw resource id of the green animation, or 0 to let Morphe choose.
      */
-    @Nullable
-    public static String startupAnimation(Enum<?> theme, @Nullable String animation) {
+    public static int greenStartupAnimation() {
         try {
-            if ("PLAY_BLACK".equals(theme.name())
-                    && ResourceUtils.getIdentifier(ResourceType.RAW, GREEN_STARTUP_ANIMATION) != 0) {
-                return GREEN_STARTUP_ANIMATION;
+            if (CustomBrandingPatch.isPatchIncluded() && CustomBrandingPatch.iconIsPlay()
+                    && SharedYouTubeSettings.CUSTOM_BRANDING_ICON.get() == CustomBrandingPatch.BrandingTheme.PLAY_BLACK) {
+                return ResourceUtils.getIdentifier(ResourceType.RAW, GREEN_STARTUP_ANIMATION);
             }
-        } catch (Exception ex) {
-            Logger.printException(() -> "startupAnimation failure", ex);
+        } catch (Throwable ex) {
+            Logger.printException(() -> "greenStartupAnimation failure", ex);
         }
-        return animation;
+        return 0;
     }
 
     /**
