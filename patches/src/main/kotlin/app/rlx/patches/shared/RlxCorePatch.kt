@@ -15,6 +15,7 @@ import app.morphe.patcher.extensions.InstructionExtensions.replaceInstruction
 import app.morphe.patcher.patch.PatchException
 import app.morphe.patcher.patch.Patch
 import app.morphe.patcher.patch.mutableClassDefBy
+import app.morphe.patcher.patch.mutableClassDefByOrNull
 import app.morphe.patcher.patch.patch
 import app.morphe.patcher.util.returnEarly
 import app.morphe.patches.all.misc.resources.addAppResources
@@ -42,6 +43,17 @@ private const val MORPHE_LIST_PREFERENCE_CLASS =
 private const val MORPHE_SETTINGS_NAME_CLASS = "Lapp/morphe/extension/shared/patches/SettingsNamePatch;"
 private const val MORPHE_SETTINGS_TITLE = "morphe_settings_title"
 private const val RLX_SETTINGS_TITLE = "rlx_settings_title"
+
+private const val MORPHE_EXPORTER_CLASS = "Lapp/morphe/extension/shared/patches/OfflineVideoExporter;"
+
+/** Folders inside Download of the videos exported from the downloads of the app: Morphe's and RLX's. */
+private val exportFolders = mapOf(
+    "Morphe videos" to "YouTube",
+    "Morphe music" to "YouTube Music",
+)
+
+private const val MORPHE_BRANDING_THEME_CLASS =
+    "Lapp/morphe/extension/shared/patches/CustomBrandingPatch\$BrandingTheme;"
 
 private const val MORPHE_ABOUT_PREFERENCE_CLASS =
     "Lapp/morphe/extension/shared/settings/preference/about/MorpheAboutPreference;"
@@ -79,10 +91,46 @@ internal fun rlxCorePatch(
             "rlx",
             ResourceGroup(
                 "drawable",
-                "rlx_settings_screen_customizations.xml",
-                "rlx_settings_screen_customizations_bold.xml",
+                *listOf("customizations", "downloads", "swipe_seekbar", "community").flatMap {
+                    listOf("rlx_settings_screen_$it.xml", "rlx_settings_screen_${it}_bold.xml")
+                }.toTypedArray(),
             ),
         )
+
+        // Videos exported from the downloads of the app go to Download/YouTube (YouTube Music: Download/YouTube
+        // Music), next to the files of Save to device, instead of the Morphe folders.
+        mutableClassDefByOrNull(MORPHE_EXPORTER_CLASS)?.methods?.forEach { method ->
+            val implementation = method.implementation ?: return@forEach
+            implementation.instructions.withIndex().toList().forEach { (index, instruction) ->
+                if (instruction.opcode != Opcode.CONST_STRING) return@forEach
+                val folder = exportFolders[((instruction as ReferenceInstruction).reference as StringReference).string]
+                    ?: return@forEach
+                val register = method.getInstruction<OneRegisterInstruction>(index).registerA
+                method.replaceInstruction(index, "const-string v$register, \"$folder\"")
+            }
+        } ?: rlxLogger.warning("RLX: $MORPHE_EXPORTER_CLASS not found, exported videos keep the Morphe folder")
+
+        // Startup animation of RLX Green: green, where Morphe gives RLX Red and RLX Green (the play icons) the same
+        // animation (RlxBranding.kt).
+        mutableClassDefByOrNull(MORPHE_BRANDING_THEME_CLASS)?.methods
+            ?.firstOrNull { it.name == "startupAnimationResourceName" }
+            ?.apply {
+                implementation!!.instructions
+                    .withIndex()
+                    .filter { (_, instruction) -> instruction.opcode == Opcode.RETURN_OBJECT }
+                    .map { (index, instruction) -> index to (instruction as OneRegisterInstruction).registerA }
+                    .reversed()
+                    .forEach { (index, register) ->
+                        addInstructionsAtControlFlowLabel(
+                            index,
+                            """
+                                invoke-static { p0, v$register }, $BRANDING_CLASS->startupAnimation(Ljava/lang/Enum;Ljava/lang/String;)Ljava/lang/String;
+                                move-result-object v$register
+                            """,
+                        )
+                    }
+            }
+            ?: rlxLogger.warning("RLX: startupAnimationResourceName not found, RLX Green has the red startup animation")
 
         // Versions shown in the settings.
         mutableClassDefBy(INFO_CLASS).methods.apply {

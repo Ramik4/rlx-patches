@@ -63,7 +63,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `extensions/shared-youtube/.../shared/patches/CustomBrandingPatch.java` | default app name (`RlxBranding.DEFAULT_APP_NAME_INDEX`); no placeholder name "Custom" without a custom name (`RlxBranding.checkAppName`) |
 | `extensions/youtube/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
 | `extensions/music/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
-| `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations before they are written (`moveRlxCustomizations`) |
+| `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations and groups the screens before they are written (`moveRlxCustomizations`) |
 | `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations before they are written (`moveRlxCustomizations`) |
 
 Patches of other apps (Reddit) stay in the tree untouched and are left out of the bundle by
@@ -76,19 +76,42 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
 
 - **RLX Customizations** (*RLX Özelleştirmeler*): a settings screen of its own, right below "About"
   (the settings root is sorted by key, so its key starts with `morphe_settings_screen_00_`), with the
-  horizontal sliders icon. VoT, the downloader and all other RLX settings go there. Morphe settings are
-  moved there from *General* and *Miscellaneous* (`RlxCustomizations.kt`, called by the Morphe settings
+  horizontal sliders icon. Morphe settings are moved there from *General* and *Miscellaneous* (`RlxCustomizations.kt`, called by the Morphe settings
   patches right before the settings are written, so no Morphe patch knows about the screen), in groups:
   1. *App name*, *App icon*, *Header logo*, *Startup animation* (and its duration), *Notification icon*
   2. *Font* (and the font file)
   3. *Dark theme* and *Light theme* colors (and their custom colors, and Morphe's switch to also change
      the foreground)
-  4. the RLX patches: *Save to device*, *Voice over translation (Yandex)*
-  5. *RLX settings name*, *Language*, *Import / export*, *Restore RLX default settings*
+  4. *RLX settings name*, *Language*, *Import / export*, *Restore RLX default settings*
 
   A setting is found by its key (by its title without a key) and taken out of its category; a setting
-  of a patch that is not applied is left out. Keys, values and the settings export do not change, so
-  more settings can be moved by adding their keys to the list.
+  of a patch that is not applied is left out, with a warning in the log of the patching (so a setting
+  Morphe renamed is noticed). Keys, values and the settings export do not change, so more settings can
+  be moved by adding their keys to the list.
+- **Settings layout** (YouTube, `youtube/settings/RlxSettingsLayout.kt`, run with the RLX Customizations):
+  the screens of the RLX settings, in this order:
+  1. *About*, 2. *RLX Customizations*, 3. *General*, 4. *Feed*
+  5. *Video*, with *Voice over translation* (*Video seslendirme çevirisi*): *Voice over translation
+     (Yandex)* and Morphe's translation of the captions, titled *Captions read aloud (Morphe)*
+  6. *Player*
+  7. *Swipe and seekbar* (*Kaydırma ve Sardırma*): Morphe's *Swipe controls* and *Seekbar* screens
+  8. *Shorts*
+  9. *Downloads* (*İndirmeler*): the settings of Morphe's *Downloads* screen (from *Player*), *Download
+     post images* (from *Feed*), then *Save to device*
+  10. *Ads*
+  11. *Community services* (*Topluluk hizmetleri*): *Return YouTube Dislike*, *SponsorBlock*, *DeArrow*
+  12. *Miscellaneous* (screens Morphe adds later go right before it)
+
+  Morphe screens are moved as they are, so their keys, settings and search do not change. The settings root
+  is sorted by key at runtime; RLX makes it keep the order of the screens instead (`_sort_by_unsorted` on the
+  root of `morphe_prefs*.xml`). The list of root screens is private in Morphe's `BasePreferenceScreen`, so it
+  is read by reflection; if Morphe changes it, a warning is logged and the Morphe order is kept (the new
+  screens are then sorted after the Morphe screens). Icons of the new screens: `branding/settings_icons.py`.
+- **Exported downloads**: videos exported from the downloads of the app (Morphe's *Export*) go to
+  `Download/YouTube` (YouTube Music: `Download/YouTube Music`), next to the files of *Save to device*,
+  instead of `Download/Morphe videos` (the folder names in Morphe's `OfflineVideoExporter` are replaced
+  while patching). Post images stay in `Pictures/YouTube` (MediaStore saves images only to *Pictures* or
+  *DCIM*).
 - **Settings icon**: the entry of the RLX settings in the YouTube settings has the vertical sliders
   icon in place of the Morphe icon (written over `morphe_settings_icon_*` by the RLX core). The icons
   are generated by [`branding/settings_icons.py`](branding/settings_icons.py).
@@ -143,6 +166,8 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
     header* is applied, as values `RLX_*` of the header logo setting.
   - Startup animation: the splash screen style *RLX* (Morphe's `MORPHE_COLOR`, the RLX default) plays
     the RLX red icon popping in, square or round. The RLX core writes it over both Morphe animations.
+    RLX Green plays the green one (`rlx_startup_animation_green`): Morphe gives both play icons the same
+    animation, so the RLX core hooks `BrandingTheme.startupAnimationResourceName` (`RlxBranding.startupAnimation`).
   - The drawables are generated by [`branding/generate.py`](branding/generate.py), which also
     holds the proportions, and the animation by [`branding/animation.py`](branding/animation.py). The
     letters are Oswald Bold (SIL Open Font License 1.1), written as paths, so the app does
@@ -170,8 +195,8 @@ Translation (ilyhalight). Maintained here as RLX code, not as a subtree.
   of Morphe's `AddOnApi` (a public contract of Morphe Patches) from the main activity, and only
   hooks `AudioTrack.setVolume` itself, to lower the original audio.
 - Settings keys are unchanged (`morphe_yandex_vot_*`, `yandex_vot_*` in the settings export), so
-  the settings of YaVoT and YT Morphe carry over. They are on *RLX Customizations → Voice over
-  translation (Yandex)*.
+  the settings of YaVoT and YT Morphe carry over. They are on *Video → Voice over translation →
+  Voice over translation (Yandex)*.
 - It does not conflict with Morphe's own Google-based voice over translation (`vot_*` keys):
   starting one stops the other.
 - Changes to YaVoT: compiled against Morphe's current `Event` API (fixes the crash on long press
@@ -201,7 +226,7 @@ lavinhoque33. Maintained here as RLX code.
   alive with the stock `OfflineKeepAliveService` (both hooked, each hook optional).
 - The player response is read with `save_to_device.proto` (only the fields that are used).
 - Settings keys are unchanged (`morphe_save_to_device`, `morphe_offline_*`), so the settings of
-  YT Morphe carry over. They are on *RLX Customizations → Save to device*.
+  YT Morphe carry over. They are on *Downloads → Save to device*.
 
 
 ## Versioning
@@ -252,4 +277,13 @@ Morphe's Gradle plugin and libraries are on GitHub Packages, which needs a GitHu
 
 ```sh
 ./gradlew :patches:buildAndroid    # patches/build/libs/rlx-patches-<version>.mpp
+```
+
+Test builds of the Build workflow set `RLX_BUILD` to the run number: the file (and the artifact) is
+`rlx-patches-<version>-build<number>.mpp`, and the About entry reads *RLX Patches <version>-build<number>*.
+The workflows run in the `Europe/Istanbul` time zone, so the file times in the bundle and in the zip of
+the artifact are those of the maintainers. Releases have no build number.
+
+```sh
+RLX_BUILD=1 ./gradlew :patches:buildAndroid    # patches/build/libs/rlx-patches-<version>-build1.mpp
 ```

@@ -233,6 +233,26 @@ public final class RlxBranding {
         }
     }
 
+    /** Startup animation of RLX Green (Morphe's PLAY_BLACK), added by the RLX core when Custom branding is applied. */
+    private static final String GREEN_STARTUP_ANIMATION = "rlx_startup_animation_green";
+
+    /**
+     * Injection point. Called with the startup animation Morphe chose for an app icon: RLX Green gets the green
+     * one, where Morphe gives both play icons (RLX Red and RLX Green) the same animation.
+     */
+    @Nullable
+    public static String startupAnimation(Enum<?> theme, @Nullable String animation) {
+        try {
+            if ("PLAY_BLACK".equals(theme.name())
+                    && ResourceUtils.getIdentifier(ResourceType.RAW, GREEN_STARTUP_ANIMATION) != 0) {
+                return GREEN_STARTUP_ANIMATION;
+            }
+        } catch (Exception ex) {
+            Logger.printException(() -> "startupAnimation failure", ex);
+        }
+        return animation;
+    }
+
     /**
      * Injection point. Called when a list preference of the settings is attached, before it reads its value.
      */

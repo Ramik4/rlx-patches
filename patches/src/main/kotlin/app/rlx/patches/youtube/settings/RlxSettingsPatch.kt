@@ -40,10 +40,14 @@ val rlxSettingsPatch = rlxCorePatch(
 )
 
 /**
- * Moves the Morphe settings of RLX Customizations there. Called by the Morphe settings patch of YouTube right
- * before the settings are written (RLX hook), see rlx/README.md.
+ * Moves the Morphe settings of RLX Customizations there, then groups and orders the screens of the settings
+ * (RlxSettingsLayout.kt). Called by the Morphe settings patch of YouTube right before the settings are written
+ * (RLX hook), see rlx/README.md.
  */
-fun moveRlxCustomizations() = moveToRlxCustomizations(
-    sources = listOf(PreferenceScreen.GENERAL, PreferenceScreen.MISC),
-    target = RLX_CUSTOMIZATIONS_SCREEN,
-)
+fun moveRlxCustomizations() {
+    moveToRlxCustomizations(
+        sources = listOf(PreferenceScreen.GENERAL, PreferenceScreen.MISC),
+        target = RLX_CUSTOMIZATIONS_SCREEN,
+    )
+    applyRlxSettingsLayout()
+}

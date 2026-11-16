@@ -2,12 +2,13 @@
 # RLX Patches
 # https://github.com/Ramik4/rlx-patches
 #
-# Generates the RLX startup animation (Lottie JSON): the RLX red icon of the app, the square (YouTube)
+# Generates the RLX startup animations (Lottie JSON): the RLX red (and green) icon of the app, the square (YouTube)
 # or circle (YouTube Music) popping in and the play symbol turning into place.
 #
 # Usage: animation.py <repository>
 # Writes patches/src/main/resources/rlx/branding/<app>/raw/rlx_startup_animation.json, which the RLX
-# core puts in the place of both Morphe startup animations (RlxBranding.kt). The splash screen style
+# core puts in the place of both Morphe startup animations (RlxBranding.kt), and
+# rlx_startup_animation_green.json, which RLX Green plays. The splash screen style
 # that plays it is Morphe's MORPHE_COLOR, named "RLX" in the settings.
 #
 # The proportions of the icon are those of generate.py. No dependencies.
@@ -18,7 +19,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from generate import BOX_RADIUS, PLAY_HEIGHT, PLAY_OFFSET, PLAY_RADIUS, PLAY_WIDTH, RED  # noqa: E402
+from generate import BOX_RADIUS, GREEN, PLAY_HEIGHT, PLAY_OFFSET, PLAY_RADIUS, PLAY_WIDTH, RED  # noqa: E402
 
 CANVAS = 432  # Size of the animation, as the Morphe animations.
 FPS = 60
@@ -124,7 +125,7 @@ def layer(index, name, shapes, ks):
             "ip": 0, "op": FRAMES, "st": 0, "bm": 0, "parent": 1}
 
 
-def animation(round_icon):
+def animation(round_icon, color=RED):
     center = [CENTER, CENTER, 0]
     if round_icon:
         box = {"ty": "el", "nm": "circle", "d": 1, "p": value([CENTER, CENTER]), "s": value([BOX, BOX])}
@@ -138,7 +139,7 @@ def animation(round_icon):
                                             (28, [LOGO_SCALE_END] * 2 + [100])]))}
 
     # The square pops in with a small turn, then the play symbol turns into place.
-    box_layer = layer(3, "box", [{"ty": "gr", "nm": "box", "it": [box, fill(rgba(RED)), shape_transform()]}],
+    box_layer = layer(3, "box", [{"ty": "gr", "nm": "box", "it": [box, fill(rgba(color)), shape_transform()]}],
                       transform(position=value(center), anchor=value(center),
                                 scale=animated([(0, [0, 0, 100]), (14, [106, 106, 100]), (22, [100, 100, 100])]),
                                 rotation=animated([(0, -20), (18, 0)]),
@@ -160,11 +161,12 @@ def animation(round_icon):
 
 def main(repo):
     for app, round_icon in (("youtube", False), ("music", True)):
-        path = os.path.join(repo, f"patches/src/main/resources/rlx/branding/{app}/raw/rlx_startup_animation.json")
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as fh:
-            json.dump(animation(round_icon), fh, separators=(",", ":"))
-            fh.write("\n")
+        for suffix, color in (("", RED), ("_green", GREEN)):
+            path = os.path.join(repo, f"patches/src/main/resources/rlx/branding/{app}/raw/rlx_startup_animation{suffix}.json")
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump(animation(round_icon, color), fh, separators=(",", ":"))
+                fh.write("\n")
 
 
 if __name__ == "__main__":

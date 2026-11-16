@@ -30,6 +30,10 @@ concurrency:
   group: release
   cancel-in-progress: false
 
+env:
+  # File times in the bundle in the time of the maintainers, not UTC.
+  TZ: Europe/Istanbul
+
 jobs:
   release:
     name: Release

@@ -4,6 +4,8 @@
 - The entry of the RLX settings in the YouTube settings: vertical sliders, in place of the Morphe icon
   (morphe_settings_icon_*, light and dark theme, regular and bold), written by the RLX core.
 - The RLX Customizations screen: horizontal sliders (rlx_settings_screen_customizations*).
+- The screens the RLX settings layout adds (rlx_settings_screen_*): Downloads (an arrow into a tray), Swipe and
+  seekbar (a seekbar under a vertical swipe) and Community services (three connected nodes).
 
 usage: settings_icons.py <repository>
 """
@@ -66,6 +68,48 @@ def vector(what, vertical, weight, color):
 """
 
 
+def circle(cx, cy, radius):
+    return (f"M{f(cx - radius)},{f(cy)}"
+            f"A{f(radius)},{f(radius)} 0 1 1 {f(cx + radius)},{f(cy)}"
+            f"A{f(radius)},{f(radius)} 0 1 1 {f(cx - radius)},{f(cy)}Z")
+
+
+def downloads(stroke, radius):
+    return "M12,3.5L12,15.5M7.5,11L12,15.5L16.5,11M4,16L4,20L20,20L20,16"
+
+
+def swipe_seekbar(stroke, radius):
+    knob = 8.5
+    return (f"M3.5,17L{f(knob - radius)},17M{f(knob + radius)},17L20.5,17" + circle(knob, 17, radius) +
+            "M16,3.5L16,12M13.5,6L16,3.5L18.5,6M13.5,9.5L16,12L18.5,9.5")
+
+
+def community(stroke, radius):
+    nodes = ((5.5, 12), (18, 5.5), (18, 18.5))
+    d = "".join(circle(x, y, radius) for x, y in nodes)
+    for (x1, y1), (x2, y2) in ((nodes[0], nodes[1]), (nodes[0], nodes[2]), (nodes[1], nodes[2])):
+        length = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+        ux, uy = (x2 - x1) / length, (y2 - y1) / length
+        gap = radius + stroke
+        d += (f"M{round(x1 + ux * gap, 3):g},{round(y1 + uy * gap, 3):g}"
+              f"L{round(x2 - ux * gap, 3):g},{round(y2 - uy * gap, 3):g}")
+    return d
+
+
+def drawing(what, data, weight):
+    stroke, radius = weight
+    return HEADER.format(what=what) + f"""
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="?android:attr/textColorPrimary"
+        android:strokeWidth="{f(stroke)}"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="{data(stroke, radius)}" />
+</vector>
+"""
+
+
 def write(path, content):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as fh:
@@ -87,6 +131,13 @@ def main(repo):
           vector(screen, False, REGULAR, "?android:attr/textColorPrimary"))
     write(f"{resources}/drawable/rlx_settings_screen_customizations_bold.xml",
           vector(screen, False, BOLD, "?android:attr/textColorPrimary"))
+
+    for name, title, data in (("downloads", "Downloads", downloads),
+                              ("swipe_seekbar", "Swipe and seekbar", swipe_seekbar),
+                              ("community", "Community services", community)):
+        what = f"icon of the {title} settings screen"
+        write(f"{resources}/drawable/rlx_settings_screen_{name}.xml", drawing(what, data, REGULAR))
+        write(f"{resources}/drawable/rlx_settings_screen_{name}_bold.xml", drawing(what, data, BOLD))
 
 
 if __name__ == "__main__":
