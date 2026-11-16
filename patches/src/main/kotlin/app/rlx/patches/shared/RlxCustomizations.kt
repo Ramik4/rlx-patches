@@ -80,7 +80,9 @@ internal fun moveToRlxCustomizations(
     }
 
     groups.take(RLX_GROUPS_BEFORE).forEach(::addGroup)
-    addGroup(patches)
+    // Not in a category: Morphe gives a screen its toolbar and the room of the status bar only if it is
+    // directly on the screen above it (ToolbarPreferenceFragment.setPreferenceScreenToolbar).
+    patches.forEach { target.addPreferences(it) }
     groups.drop(RLX_GROUPS_BEFORE).dropLast(1).forEach(::addGroup)
     addGroup(groups.last() + reset)
 }
