@@ -32,26 +32,15 @@ YouTube.
    `https://github.com/Ramik4/rlx-patches` under **Sources → + → Remote**.
 3. Patch YouTube or YouTube Music with the **RLX Patches** source.
 
-## Versions
-
-Every release names the Morphe version it is based on, for example
-*Based on Morphe 2.3.0-dev.7*.
-
-| Morphe | RLX |
-| --- | --- |
-| `X.Y.0-dev.N` | `X.Y.N` |
-| `X.Y.0` | `X.(Y+1).0` |
-| RLX-only release | last RLX version + 1 |
-
 ## Credits
 
 | | |
 | --- | --- |
 | [Morphe](https://github.com/MorpheApp/morphe-patches) | Morphe Patches, which RLX is based on |
 | [ReVanced](https://github.com/ReVanced) | Prior work Morphe Patches are based on |
-| [YaVoT](https://github.com/sashade8-ship-it/morphe-patches-yavot) by [sashade8](https://github.com/sashade8-ship-it) | Yandex voice over translation, with work of [Jav1x](https://github.com/Jav1x), [anddea](https://github.com/anddea), [MarcaDian](https://github.com/MarcaDian) and [Ramik4](https://github.com/Ramik4); timing and Morphe VoT coordination from the Dual VoT maintainers |
-| [lavinhoque33](https://github.com/lavinhoque33) ([anddea/revanced-patches#1883](https://github.com/anddea/revanced-patches/pull/1883)) | Save to device, the downloader and offline player RLX's downloader is based on |
-| [vot.js](https://github.com/FOSWLY/vot.js) by FOSWLY, [Voice Over Translation](https://github.com/ilyhalight/voice-over-translation) by ilyhalight | Reference for the Yandex voice over translation API |
+
+The credits of the RLX patches (voice over translation, Save to device) are in
+[rlx/README.md](rlx/README.md#rlx-patches).
 
 ## License
 

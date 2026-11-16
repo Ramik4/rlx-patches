@@ -6,10 +6,17 @@ name: Release
 # The version is the one in rlx/rlx.properties. When that version is already released, the
 # release is an RLX-only release: the version is raised by one first (rlx/scripts/next_version.py).
 # Started by hand, or by the Morphe sync workflow after it merged a Morphe release.
+#
+# Unless 'publish' is selected, the release is a draft: only visible to the maintainers, no tag,
+# and patches-bundle.json is not changed, so Morphe Manager users do not get it.
 
 on:
   workflow_dispatch:
     inputs:
+      publish:
+        description: "Publish the release for everyone (otherwise a draft, and Morphe Manager is not updated)"
+        type: boolean
+        default: false
       notes:
         description: "Extra release notes (optional, Markdown)"
         type: string
@@ -109,12 +116,35 @@ jobs:
           } > "$RUNNER_TEMP/notes.md"
           cat "$RUNNER_TEMP/notes.md"
 
+      - name: Draft release
+        if: ${{ !inputs.publish }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git push origin HEAD:main
+          # An earlier draft of the same version is replaced.
+          if gh release view "v$VERSION" --json isDraft --jq .isDraft 2>/dev/null | grep -qx true; then
+            gh release delete "v$VERSION" --yes
+          fi
+          gh release create "v$VERSION" \
+            "patches/build/libs/rlx-patches-$VERSION.mpp" \
+            --draft \
+            --target "$(git rev-parse HEAD)" \
+            --title "RLX Patches $VERSION" \
+            --notes-file "$RUNNER_TEMP/notes.md"
+          echo "Draft release v$VERSION created; patches-bundle.json is unchanged" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Publish the release
+        if: ${{ inputs.publish }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.version.outputs.version }}
           MORPHE: ${{ steps.version.outputs.morphe }}
         run: |
+          if gh release view "v$VERSION" --json isDraft --jq .isDraft 2>/dev/null | grep -qx true; then
+            gh release delete "v$VERSION" --yes
+          fi
           # The tag is the commit that was built. The bundle files on main are updated after the
           # file is uploaded, so Morphe Manager never sees a link to a missing file.
           git tag -a "v$VERSION" -m "RLX Patches $VERSION, based on Morphe $MORPHE"
@@ -126,6 +156,7 @@ jobs:
             --notes-file "$RUNNER_TEMP/notes.md"
 
       - name: Update patches-bundle.json and patches-list.json
+        if: ${{ inputs.publish }}
         env:
           VERSION: ${{ steps.version.outputs.version }}
           MORPHE: ${{ steps.version.outputs.morphe }}

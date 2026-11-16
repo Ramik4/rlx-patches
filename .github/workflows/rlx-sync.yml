@@ -1,8 +1,8 @@
 name: Sync with Morphe
 
 # Checks Morphe Patches for a new release, mirrors Morphe's dev branch to `upstream`, merges the
-# release into main with rlx/scripts/merge_upstream.sh (never rebases, no force pushes) and starts
-# the release workflow. When the merge needs a person (a conflict the script does not resolve) or
+# release into main with rlx/scripts/merge_upstream.sh (never rebases, no force pushes) and, when
+# started by hand with 'release', starts the release workflow (a draft release). When the merge needs a person (a conflict the script does not resolve) or
 # the build fails, nothing is pushed to main and an issue lists what to do.
 
 on:
@@ -15,9 +15,9 @@ on:
         type: string
         default: ""
       release:
-        description: "Start the release workflow after the merge"
+        description: "Start the release workflow (draft release) after the merge"
         type: boolean
-        default: true
+        default: false
 
 permissions:
   contents: write
@@ -135,7 +135,8 @@ jobs:
         run: git push origin HEAD:main
 
       - name: Start the release
-        if: steps.morphe.outputs.merge == 'true' && (github.event_name == 'schedule' || inputs.release)
+        # Not on the schedule: releases are started by hand for now.
+        if: steps.morphe.outputs.merge == 'true' && inputs.release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run rlx-release.yml --ref main

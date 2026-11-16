@@ -34,6 +34,10 @@ private const val EXTENSION_PACKAGE = "Lapp/rlx/extension/shared"
 private const val INFO_CLASS = "$EXTENSION_PACKAGE/RlxInfo;"
 private const val DEFAULTS_CLASS = "$EXTENSION_PACKAGE/RlxDefaults;"
 private const val ABOUT_CLASS = "$EXTENSION_PACKAGE/RlxAbout;"
+private const val BRANDING_CLASS = "$EXTENSION_PACKAGE/RlxBranding;"
+
+private const val MORPHE_LIST_PREFERENCE_CLASS =
+    "Lapp/morphe/extension/shared/settings/preference/CustomDialogListPreference;"
 
 private const val MORPHE_SETTINGS_NAME_CLASS = "Lapp/morphe/extension/shared/patches/SettingsNamePatch;"
 private const val MORPHE_SETTINGS_TITLE = "morphe_settings_title"
@@ -108,6 +112,14 @@ internal fun rlxCorePatch(
             val register = getInstruction<OneRegisterInstruction>(index).registerA
             replaceInstruction(index, "const-string v$register, \"$RLX_SETTINGS_TITLE\"")
         }
+
+        // Morphe app icons, header logo and splash animations are hidden from the lists of the settings.
+        mutableClassDefBy(MORPHE_LIST_PREFERENCE_CLASS).methods
+            .first { it.name == "onAttachedToHierarchy" }
+            .addInstruction(
+                0,
+                "invoke-static/range { p0 .. p0 }, $BRANDING_CLASS->onListPreferenceAttached(Landroid/preference/ListPreference;)V",
+            )
 
         // "About" entry: RLX version, Morphe Patches base version and the RLX about dialog.
         mutableClassDefBy(MORPHE_ABOUT_PREFERENCE_CLASS).methods

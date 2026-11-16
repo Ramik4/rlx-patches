@@ -65,7 +65,7 @@ private const val ORIGINAL_USER_ICON_STYLE_NAME = "original"
 private const val CUSTOM_USER_ICON_STYLE_NAME = "custom"
 
 // The icon the app uses when no icon style was selected.
-private const val DEFAULT_ICON_STYLE_NAME = "black"
+private const val DEFAULT_ICON_STYLE_NAME = "original" // RLX: the original icon instead of the Morphe icon
 
 // Derived from the bundled styles so a new style cannot be missing here.
 private val iconStyleValues = buildMap {
@@ -218,7 +218,7 @@ internal fun baseCustomBrandingPatch(
         description = """
             The app icon to use, including the notification icon.
 
-            'Automatic' uses the custom icon if one is provided, and otherwise 'Black'.
+            'Automatic' uses the custom icon if one is provided, and otherwise 'Original'.
             Select 'Original' to keep the icon of the unpatched app.
 
             The icon can be changed later in the app settings, but only for the launcher.

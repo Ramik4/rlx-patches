@@ -54,6 +54,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `patches/build.gradle.kts` | applies `rlx/patches.gradle.kts`; bundle name and description |
 | `settings.gradle.kts` | root project name |
 | `extensions/proguard-rules.pro` | keeps `app.rlx.**` |
+| `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | default app icon `original` instead of the Morphe icon |
 | `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube; title of the settings entry (`rlx_settings_title`) |
 | `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music; title of the settings entry (`rlx_settings_title`) |
 
@@ -84,6 +85,10 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
 - **Channel whitelists**: importing settings keeps the ad, playback speed and SponsorBlock
   channel whitelists when the imported text does not contain them (preset files), instead of
   clearing them (`RlxWhitelistKeeper`, an import/export callback of Morphe's `Setting`).
+- **Branding**: the Morphe app icons, notification icons, header logo and splash animations are
+  hidden from the lists of the settings (`RlxBranding`, a hook of Morphe's
+  `CustomDialogListPreference`); a hidden option that is still selected stays visible. The
+  default app icon is the original one (a one-line RLX change in `BaseCustomBrandingPatch.kt`).
 - **Theme**: the dark theme defaults to the custom color `#0F0F0F`, which Morphe also gives the
   menus and sheets (with *App default* they keep YouTube's grey). A user who selected another
   color, such as pure black, keeps it.
@@ -166,15 +171,16 @@ python3 -m unittest discover -s rlx/scripts
 | Workflow | When | What |
 | --- | --- | --- |
 | `rlx-build.yml` | every push and pull request | builds the bundle and checks its RLX parts |
-| `rlx-sync.yml` | every 6 hours, or by hand | mirrors Morphe's `dev` to `upstream`, merges a new Morphe release into `main` with `merge_upstream.sh`, builds it, pushes it and starts the release |
-| `rlx-release.yml` | by hand, or by the sync | releases the version of `rlx.properties` as `vX.Y.Z` with the `.mpp` file, then updates `patches-bundle.json` and `patches-list.json` on `main` |
+| `rlx-sync.yml` | every 6 hours, or by hand | mirrors Morphe's `dev` to `upstream`, merges a new Morphe release into `main` with `merge_upstream.sh`, builds it and pushes it; started by hand it can also start a draft release |
+| `rlx-release.yml` | by hand | releases the version of `rlx.properties` as `vX.Y.Z` with the `.mpp` file, then updates `patches-bundle.json` and `patches-list.json` on `main` |
 
 - **Sync**: nothing is pushed to `main` when the merge has a conflict the script does not resolve
   or the build fails; an issue lists the conflicts instead. A Morphe tag can be given by hand.
   Morphe's commits change Morphe's workflows, which GitHub does not let the workflow token push,
   so the sync needs a fine-grained token with the *Contents* and *Workflows* (read and write)
   permissions of this repository as the `RLX_SYNC_TOKEN` secret.
-- **Release**: when the version of `rlx.properties` is already released, it is an RLX-only
+- **Release**: a draft by default (visible to maintainers only, no tag, `patches-bundle.json`
+  unchanged); *publish* makes it public and points Morphe Manager to it. When the version of `rlx.properties` is already released, it is an RLX-only
   release and the version is raised by one first. The release notes name the Morphe base version
   and list the RLX commits since the last release (first parents of `main`, so without Morphe's
   history). The tag and the `.mpp` file are published before `patches-bundle.json` points to
