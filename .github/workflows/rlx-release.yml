@@ -100,24 +100,41 @@ jobs:
           PREVIOUS_TAG: ${{ steps.version.outputs.previous_tag }}
           EXTRA_NOTES: ${{ inputs.notes }}
         run: |
-          {
-            echo "**Based on Morphe $MORPHE** · [Morphe release notes](https://github.com/MorpheApp/morphe-patches/releases/tag/v$MORPHE)"
-            echo
-            if [[ -n "$EXTRA_NOTES" ]]; then
-              printf '%s\n\n' "$EXTRA_NOTES"
-            fi
-            # RLX commits only: the first parents of main, without the Morphe history of merges.
-            range="${PREVIOUS_TAG:+$PREVIOUS_TAG..}HEAD"
-            changes="$(git log --first-parent --no-merges --format='* %s' "$range" \
-              | grep -v -E '^\* (RLX [0-9.]+|Release v[0-9.]+.*)$' || true)"
-            if [[ -n "$changes" ]]; then
-              echo "### RLX changes"
-              echo
-              echo "$changes"
-              echo
-            fi
-            echo "Add the source to Morphe Manager: https://github.com/Ramik4/rlx-patches"
-          } > "$RUNNER_TEMP/notes.md"
+          python3 - <<'PY'
+          import os, re, subprocess
+
+          def git(*args):
+              return subprocess.run(["git", *args], check=True, capture_output=True, text=True).stdout
+
+          morphe = os.environ["MORPHE"]
+          lines = [f"**Based on Morphe {morphe}** · "
+                   f"[Morphe release notes](https://github.com/MorpheApp/morphe-patches/releases/tag/v{morphe})", ""]
+          extra = os.environ.get("EXTRA_NOTES", "").strip()
+          if extra:
+              lines += [extra, ""]
+
+          # RLX changes since the last release: the first parents of main (pull requests by their title, direct
+          # commits by their subject), without Morphe's history and merges. The first release has none (its
+          # notes are given by hand).
+          start = os.environ.get("PREVIOUS_TAG")
+          changes = []
+          log = git("log", "--first-parent", "--format=%s%x1f%b%x1e", f"{start}..HEAD") if start else ""
+          for entry in log.split("\x1e"):
+              if not entry.strip():
+                  continue
+              subject, _, body = entry.strip().partition("\x1f")
+              pull = re.match(r"Merge pull request #(\d+) ", subject)
+              if pull:
+                  title = body.strip().splitlines()[0] if body.strip() else subject
+                  changes.append(f"* {title} (#{pull.group(1)})")
+              elif not re.match(r"(Merge |RLX [0-9.]+$|Release v[0-9.]+)", subject):
+                  changes.append(f"* {subject}")
+          if changes:
+              lines += ["### RLX changes", "", *changes, ""]
+          lines.append("Add the source to Morphe Manager: https://github.com/Ramik4/rlx-patches")
+          with open(os.path.join(os.environ["RUNNER_TEMP"], "notes.md"), "w", encoding="utf-8") as fh:
+              fh.write("\n".join(lines) + "\n")
+          PY
           cat "$RUNNER_TEMP/notes.md"
 
       - name: Draft release

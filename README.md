@@ -16,12 +16,20 @@ RLX Patches is one patch bundle for **YouTube** and **YouTube Music**. It contai
 patch of [Morphe Patches](https://github.com/MorpheApp/morphe-patches), plus:
 
 - **Voice over translation (Yandex)**, built in: a player button that plays a Yandex voice-over
-  translation of the video (YouTube). Settings are in *RLX Customizations*.
+  translation of the video (YouTube). Settings are in *Video → Voice over translation*, next to
+  Morphe's own translation of the captions.
 - **Save to device**, a downloader for videos, audio, thumbnails and subtitles, with a quality
   picker, a library of the saved videos and an offline player with SponsorBlock (YouTube, off by
-  default). Settings are in *RLX Customizations*.
-- An **RLX Customizations** section in the settings for everything RLX adds, and the branding,
-  theme and settings options of Morphe.
+  default). Files go to *Download/YouTube*. Settings are in *Downloads*.
+- **RLX branding**: RLX app icons (red, green, layered), header logos, startup animation and app
+  names, next to the original YouTube ones.
+- **RLX settings**: the settings in fewer, clearer sections (YouTube): *RLX Customizations* (app
+  name, icon, logo, font, theme colors, settings name, language, import/export), *General*, *Feed*,
+  *Video*, *Player*, *Swipe and seekbar*, *Shorts*, *Downloads*, *Ads*, *Community services*
+  (Return YouTube Dislike, SponsorBlock, DeArrow) and *Miscellaneous*. Every Morphe setting is
+  still there, with the same keys, so exported settings work in both.
+- **RLX default settings**, applied once, which you can change; *Restore RLX default settings*
+  applies them again.
 
 RLX is an independent project. It is not affiliated with, or endorsed by, Morphe, Google or
 YouTube.
