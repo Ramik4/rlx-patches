@@ -71,12 +71,15 @@ internal const val RLX_PREFERENCE_PACKAGE = "app.rlx.extension.shared.settings.p
  *
  * @param appId Section of rlx/defaults.json for the app, "youtube" or "music".
  * @param customizationsScreen The "RLX Customizations" screen of the app.
+ * @param afterSettingsWritten Called when the Morphe settings of the app are written (the RLX core is finalized
+ *   after the Morphe settings patch, which it runs before).
  */
 internal fun rlxCorePatch(
     appId: String,
     sharedExtensionPatch: Patch,
     mainActivityOnCreateFingerprint: Fingerprint,
     customizationsScreen: BasePreferenceScreen.Screen,
+    afterSettingsWritten: () -> Unit = {},
 ) = patch(
     description = "Adds the RLX Customizations settings, the RLX default settings and the Morphe Patches attribution.",
 ) {
@@ -204,5 +207,6 @@ internal fun rlxCorePatch(
         addAppResources("rlx-shared")
         addAppResources("rlx-$appId")
         applyRlxBranding(appId)
+        afterSettingsWritten()
     }
 }

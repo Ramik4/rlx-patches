@@ -37,6 +37,7 @@ val rlxSettingsPatch = rlxCorePatch(
     sharedExtensionPatch = sharedExtensionPatch,
     mainActivityOnCreateFingerprint = YouTubeActivityOnCreateFingerprint,
     customizationsScreen = RLX_CUSTOMIZATIONS_SCREEN,
+    afterSettingsWritten = ::orderRlxSettingsRoot,
 )
 
 /**

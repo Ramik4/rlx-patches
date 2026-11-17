@@ -8,6 +8,7 @@
 package app.rlx.patches.youtube.settings
 
 import app.morphe.patcher.patch.resourceXml
+import app.morphe.patcher.xml.XmlElement
 import app.morphe.patches.shared.misc.settings.preference.BasePreference
 import app.morphe.patches.shared.misc.settings.preference.BasePreferenceScreen
 import app.morphe.patches.shared.misc.settings.preference.PreferenceScreenPreference
@@ -66,6 +67,7 @@ private const val VOICE_OVER_TRANSLATION_KEY = "morphe_vot_screen_rlx"
  * links into the settings). Called with the RLX Customizations right before the settings are written.
  */
 internal fun applyRlxSettingsLayout() {
+    rootOrder = null
     groupDownloads()
     groupVoiceOverTranslation()
 
@@ -101,11 +103,42 @@ internal fun applyRlxSettingsLayout() {
     root.clear()
     root.addAll(ordered)
 
-    // The settings root sorts its screens by key at runtime (morphe_prefs.xml); it keeps this order instead.
-    // About is added before all screens, so it stays at the top.
+    // Morphe writes each preference of the settings root at the top of morphe_prefs.xml, so the file has them in
+    // reverse; the root is sorted by key at runtime, which hides that. The RLX core puts them in this order once
+    // they are written (orderRlxSettingsRoot).
+    rootOrder = listOf(ABOUT_KEY) + ordered.mapNotNull { it.key }
+}
+
+private const val ABOUT_KEY = "morphe_settings_screen_00_about"
+
+/** Keys of the preferences of the settings root in their RLX order, or null if the layout did not run. */
+private var rootOrder: List<String>? = null
+
+/**
+ * Puts the preferences of the settings root in the RLX order (About, then the screens of [applyRlxSettingsLayout])
+ * and makes the root keep that order instead of sorting by key. Called by the RLX core when the Morphe settings are
+ * written; if they are not written yet, Morphe's order (by key) is kept. Preferences that are not in the order, such
+ * as those of add-on bundles, stay at the end.
+ */
+internal fun orderRlxSettingsRoot() {
+    val order = rootOrder ?: return
     listOf("morphe_prefs.xml", "morphe_prefs_icons.xml", "morphe_prefs_icons_bold.xml").forEach { file ->
         resourceXml("res/xml/$file").use { xml ->
-            xml.elements("PreferenceScreen").first().setAttribute("android:key", ROOT_KEY_UNSORTED)
+            val root = xml.elements("PreferenceScreen").first()
+            val children = root.children.toList()
+            if (children.none { it.attribute("android:key") == ABOUT_KEY }) {
+                rlxLogger.warning("RLX settings layout: the settings root of $file is not written yet, Morphe order kept")
+                return@use
+            }
+
+            fun rank(element: XmlElement): Int {
+                val key = element.attribute("android:key").orEmpty()
+                val index = order.indexOfFirst { key == it || key.startsWith("${it}_sort_by_") }
+                return if (index < 0) order.size else index
+            }
+            children.sortedBy(::rank).forEach { root.appendCopy(it) }
+            children.forEach { it.remove() }
+            root.setAttribute("android:key", ROOT_KEY_UNSORTED)
         }
     }
 }
