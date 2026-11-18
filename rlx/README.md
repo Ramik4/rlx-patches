@@ -65,6 +65,11 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `extensions/music/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
 | `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations and groups the screens before they are written (`moveRlxCustomizations`) |
 | `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations before they are written (`moveRlxCustomizations`) |
+| `extensions/shared-youtube/.../shared/settings/preference/ExternalDownloaderPreference.java` | quick download menu: `launchExternalDownloader` with the extras of the menu |
+| `extensions/shared-youtube/.../shared/patches/BaseInAppDownloadsPatch.java` | quick download menu: `DOWNLOAD_CLIENTS` public |
+| `extensions/shared-youtube/.../innertube/player_response.proto` | quick download menu: `fps` and `qualityLabel` of a format |
+| `extensions/youtube/.../videoplayer/ExternalDownloadButton.java` | quick download menu with qualities for YTindir (`showQualityMenu`) |
+| `extensions/music/.../patches/DownloadsPatch.java`, `extensions/music/.../settings/Settings.java`, `patches/.../music/interaction/downloads/DownloadsPatch.kt` | quick download menu of YouTube Music: Download of a song, setting `morphe_external_downloader_quick_menu` |
 
 Patches of other apps (Reddit) stay in the tree untouched and are left out of the bundle by
 `rlx/patches.gradle.kts`, so deleting them never causes merge conflicts.
@@ -184,6 +189,7 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
 | --- | --- | --- |
 | Voice over translation (Yandex), YouTube | `patches/.../app/rlx/patches/youtube/video/yandexvot/`, `extensions/youtube/.../app/rlx/extension/youtube/yandexvot/` | See below |
 | Save to device, YouTube | `patches/.../app/rlx/patches/youtube/interaction/savetodevice/`, `extensions/youtube/.../app/rlx/extension/youtube/savetodevice/` | See below |
+| Quick download menu, YouTube and YouTube Music | `extensions/shared-youtube/.../app/rlx/extension/shared/downloads/`, hooks in Morphe files (above) | See below |
 
 ### Voice over translation (Yandex)
 
@@ -230,6 +236,24 @@ lavinhoque33. Maintained here as RLX code.
 - Settings keys are unchanged (`morphe_save_to_device`, `morphe_offline_*`), so the settings of
   YT Morphe carry over. They are on *Downloads → Save to device*.
 
+
+### Quick download menu
+
+The quick download menu with qualities and file sizes of YT Morphe 2.2.0 (`addons/morphe/quick-download-quality-menu.patch`
+of yt-morphe, sent to Morphe as [MorpheApp/morphe-patches#4539](https://github.com/MorpheApp/morphe-patches/pull/4539),
+not merged yet). Maintained here as RLX code (`QuickDownloadMenu`, `QuickDownloadFormats`), with small hooks in Morphe files.
+
+- With an external downloader that applies the requested quality (YTindir), Morphe's quick download menu
+  (a tap with *Quick download on tap*, `morphe_external_downloader_quick_menu`, on by default in RLX, or tap
+  and hold on the download button of the player) is a sheet with the qualities of the video
+  (4K to 144p, with codec, frame rate and file size including the audio), the audio (M4A, MP3) and the
+  original JPG thumbnail, read from the streams of the video. A tap marks a quality, *Download* queues it in
+  the background in YTindir (`VIDEO_QUALITY`, `VIDEO_CODEC`, `AUDIO_FORMAT`, `TYPE=thumbnail`); *All options*
+  opens the download window of YTindir (`FORMAT_LIST=none`). Other downloaders keep Morphe's menu.
+- YouTube Music: the Download item of a song opens the same sheet with MP3 marked
+  (*Downloads → Quick download menu*, on by default in RLX).
+- The new strings are in `addresources/values*/rlx/` (YouTube Music only: `rlx-music/`).
+- Once Morphe merges the pull request, delete the RLX classes and hooks and keep Morphe's.
 
 ## Versioning
 

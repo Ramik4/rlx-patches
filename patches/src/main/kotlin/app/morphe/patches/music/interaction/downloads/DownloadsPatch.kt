@@ -96,7 +96,9 @@ private val downloadsResourcePatch = patch {
                     TextPreference(
                         "morphe_external_downloader_name",
                         tag = "app.morphe.extension.shared.settings.preference.ExternalDownloaderPreference"
-                    )
+                    ),
+                    // RLX: quick download menu.
+                    SwitchPreference("morphe_external_downloader_quick_menu", summary = true)
                 )
             )
         )

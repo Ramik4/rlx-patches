@@ -71,6 +71,9 @@ message Format {
   optional string mimeType = 5;
   optional string url = 2;
   optional string signatureCipher = 48;
+  // RLX: quick download menu.
+  optional int32 fps = 25;
+  optional string qualityLabel = 26;
 }
 
 message PlayerConfig {

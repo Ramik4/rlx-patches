@@ -217,6 +217,20 @@ public class ExternalDownloaderPreference extends CustomDialogListPreference {
      */
     public static boolean launchExternalDownloader(String videoId, @Nullable Context context, String url,
                                                    @Nullable String quickDownloadType) {
+        return launchExternalDownloader(videoId, context, url, quickDownloadType, null);
+    }
+
+    /**
+     * RLX: with the extras of the quick download menu (QuickDownloadMenu).
+     *
+     * @param quickExtras Extras of a quick download that replace the default quality,
+     *                    for example {@code VIDEO_QUALITY}, {@code VIDEO_CODEC} or {@code AUDIO_FORMAT},
+     *                    or of the downloader opened with all its options, such as {@code FORMAT_LIST}.
+     * @return If the downloader was opened.
+     */
+    public static boolean launchExternalDownloader(String videoId, @Nullable Context context, String url,
+                                                   @Nullable String quickDownloadType,
+                                                   @Nullable Bundle quickExtras) {
         try {
             Objects.requireNonNull(videoId);
             if (context == null) {
@@ -242,6 +256,9 @@ public class ExternalDownloaderPreference extends CustomDialogListPreference {
                 intent.putExtra("BACKGROUND", true);
                 intent.putExtra("VIDEO_QUALITY", QUICK_DOWNLOAD_VIDEO_HEIGHT);
                 intent.putExtra("AUDIO_BITRATE", QUICK_DOWNLOAD_AUDIO_KBPS);
+            }
+            if (quickExtras != null) { // RLX
+                intent.putExtras(quickExtras);
             }
             // Opening the downloader is not the user leaving the app.
             // Without this flag a playing video enters picture-in-picture,
