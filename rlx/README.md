@@ -29,12 +29,38 @@ The script merges the Morphe release, sets the RLX version and commits. It resol
 conflicts that are expected on every release by itself:
 
 - [`sync/removed.txt`](sync/removed.txt): Morphe files that RLX deletes (Morphe's workflows,
-  issue templates, bundle icon). Workflows Morphe adds later are deleted too, so they never
+  issue templates). Workflows Morphe adds later are deleted too, so they never
   run here.
 - [`sync/ours.txt`](sync/ours.txt): files RLX owns entirely (`README.md`,
-  `patches-bundle.json`, `patches-list.json`).
+  `patches-bundle.json`, `patches-list.json`, `patches-bundle.png`, `morphe-signing.pub`).
 
 Any other conflict stops the script with the list of files and leaves the merge in progress.
+
+## Release signing
+
+Releases are signed with the RLX key, as Morphe signs its own: the patches plugin signs the `.mpp`
+(Ed25519, `MorpheSig1` in the zip comment) when `MORPHE_SIGNING_KEY` is set, and checks the key
+against `morphe-signing.pub` in the root, which holds the **RLX** public key (not Morphe's).
+`patches-bundle.json` has the same key as `public_key`, so Morphe Manager refuses a file that was
+changed or swapped after it was published.
+
+- The private key is the repository secret `RLX_SIGNING_KEY` (Base64). The release workflow stops
+  if it is missing and checks that the file is signed. It is never committed (`morphe-signing.key`
+  is ignored by git); keep a copy of it in a safe place: a new key means a new public key, and
+  Morphe Manager then refuses the releases until users get the new `patches-bundle.json`.
+- Branch and pull request builds have no key, so their files are not signed (fine for testing).
+
+## Icon and images
+
+- `patches-bundle.png` (200 × 200): the icon of the RLX Patches source in Morphe Manager (without
+  it, Morphe Manager shows the GitHub avatar of the repository owner): the white play of the RLX
+  app icons (paths of `rlx/branding/generate.py`) on RLX red, with "RLX" in Oswald Bold in it,
+  centered on the play's axis and its center point. Other variants are in
+  `branding/images/icon-variants/`.
+- [`branding/images/social-preview.png`](branding/images/social-preview.png) (1280 × 640): the
+  banner of the README and the social preview of the repository (uploaded by hand in the
+  repository *Settings → General → Social preview*). The words are set in Oswald Bold, the font of
+  the RLX header logos.
 
 ## Where RLX code lives
 
@@ -65,6 +91,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `extensions/music/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
 | `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations and groups the screens before they are written (`moveRlxCustomizations`) |
 | `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations before they are written (`moveRlxCustomizations`) |
+| `extensions/shared/.../shared/patches/ExperimentalAppNoticePatch.java` | no experimental app version notice on the first start (`RLX_NO_EXPERIMENTAL_NOTICE`) |
 | `extensions/shared-youtube/.../shared/settings/preference/ExternalDownloaderPreference.java` | quick download menu: `launchExternalDownloader` with the extras of the menu |
 | `extensions/shared-youtube/.../shared/patches/BaseInAppDownloadsPatch.java` | quick download menu: `DOWNLOAD_CLIENTS` public |
 | `extensions/shared-youtube/.../innertube/player_response.proto` | quick download menu: `fps` and `qualityLabel` of a format |

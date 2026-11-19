@@ -8,7 +8,7 @@ apply(from = rootProject.file("rlx/patches.gradle.kts"))
 patches {
     about {
         name = "RLX Patches"
-        description = "Morphe patches + VoT + extra features"
+        description = "Morphe patches + voice over translation (Yandex), Save to device, quick download menu and RLX settings, for YouTube and YouTube Music"
         source = "git@github.com:Ramik4/rlx-patches.git"
         author = "Ramik4"
         contact = "https://github.com/Ramik4/rlx-patches/issues"

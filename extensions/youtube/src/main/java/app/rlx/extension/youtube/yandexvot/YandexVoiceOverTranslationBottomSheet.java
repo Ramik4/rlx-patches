@@ -40,13 +40,13 @@ import java.lang.ref.WeakReference;
 import java.util.function.Consumer;
 
 import app.morphe.extension.shared.Logger;
+import app.morphe.extension.shared.Utils;
 import app.morphe.extension.shared.settings.IntegerSetting;
 import app.morphe.extension.shared.settings.preference.SeekBarPreference;
 import app.morphe.extension.shared.settings.preference.SeekBarPreference.SeekBarConfig;
 import app.morphe.extension.shared.theme.ThemeUtils;
 import app.morphe.extension.shared.ui.Dim;
 import app.morphe.extension.shared.ui.SheetBottomDialog;
-import app.morphe.extension.youtube.patches.playback.speed.CustomPlaybackSpeedPatch;
 import app.morphe.extension.youtube.shared.PlayerType;
 
 @SuppressWarnings({"unused", "unchecked"})
@@ -333,7 +333,7 @@ public class YandexVoiceOverTranslationBottomSheet {
         button.setGravity(Gravity.CENTER);
         ShapeDrawable background = new ShapeDrawable(new RoundRectShape(
                 Dim.roundedCorners(20), null, null));
-        background.getPaint().setColor(CustomPlaybackSpeedPatch.getAdjustedBackgroundColor(false));
+        background.getPaint().setColor(getAdjustedBackgroundColor(false));
         button.setBackground(background);
         final int size = Dim.dp36;
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size, size);
@@ -377,8 +377,8 @@ public class YandexVoiceOverTranslationBottomSheet {
 
         Runnable updateSelection = () -> {
             boolean useLive = YandexVotSettings.YANDEX_VOT_USE_LIVE_VOICES.get();
-            int selectedColor = CustomPlaybackSpeedPatch.getAdjustedBackgroundColor(true);
-            int unselectedColor = CustomPlaybackSpeedPatch.getAdjustedBackgroundColor(false);
+            int selectedColor = getAdjustedBackgroundColor(true);
+            int unselectedColor = getAdjustedBackgroundColor(false);
             ShapeDrawable standardBg = (ShapeDrawable) standardButton.getBackground();
             ShapeDrawable liveBg = (ShapeDrawable) liveButton.getBackground();
             standardBg.getPaint().setColor(useLive ? unselectedColor : selectedColor);
@@ -427,7 +427,7 @@ public class YandexVoiceOverTranslationBottomSheet {
 
         ShapeDrawable background = new ShapeDrawable(new RoundRectShape(
                 Dim.roundedCorners(12), null, null));
-        background.getPaint().setColor(CustomPlaybackSpeedPatch.getAdjustedBackgroundColor(false));
+        background.getPaint().setColor(getAdjustedBackgroundColor(false));
         button.setBackground(background);
         button.setPadding(Dim.dp12, Dim.dp8, Dim.dp12, Dim.dp8);
         return button;
@@ -451,7 +451,7 @@ public class YandexVoiceOverTranslationBottomSheet {
         android.graphics.drawable.StateListDrawable bg = new android.graphics.drawable.StateListDrawable();
         bg.addState(new int[]{android.R.attr.state_pressed},
                 new android.graphics.drawable.ColorDrawable(
-                        CustomPlaybackSpeedPatch.getAdjustedBackgroundColor(true)));
+                        getAdjustedBackgroundColor(true)));
         bg.addState(new int[]{}, new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
         row.setBackground(bg);
 
@@ -480,4 +480,13 @@ public class YandexVoiceOverTranslationBottomSheet {
         return row;
     }
 
+    /**
+     * The dialog background adjusted for contrast, as the playback speed menu draws it
+     * (Morphe inlined its own helper): lighter in the dark theme, darker in the light theme,
+     * more so for the handle bar and the selected item.
+     */
+    private static int getAdjustedBackgroundColor(boolean isHandleBar) {
+        return Utils.adjustColorBrightness(getDialogBackgroundColor(),
+                isHandleBar ? 0.9f : 0.95f, isHandleBar ? 1.25f : 1.115f);
+    }
 }

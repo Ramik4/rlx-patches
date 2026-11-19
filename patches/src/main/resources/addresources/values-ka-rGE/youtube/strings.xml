@@ -122,7 +122,7 @@ Second \"item\" text"</string>
   <string name="morphe_hide_upload_time_title">ატვირთვის დროის დამალვა</string>
   <!-- Translations should match the language used in 'morphe_hide_view_count_summary'. -->
   <string name="morphe_hide_upload_time_summary">"შეზღუდვები:
-• Shorts-ის თაროებზე, არხის გვერდებსა და ძიების შედეგებში შესაძლოა კვლავ ჩანდეს ატვირთვის დრო
+• Shorts-ის თაროებზე შესაძლოა კვლავ ჩანდეს ატვირთვის დრო
 • არ მუშაობს ავტომობილის განლაგებასთან"</string>
   <string name="morphe_hide_video_thumbnail_title">ვიდეოს მინიატურის დამალვა</string>
   <!-- 'Auto-dubbed', 'Earns commission', 'Hyped', 'People also watched' and 'You might also like' should be translated using the same localized wording YouTube displays for the label. -->
@@ -131,7 +131,7 @@ Second \"item\" text"</string>
   <string name="morphe_hide_view_count_title">ნახვების რაოდენობის დამალვა</string>
   <!-- Translations should match the language used in 'morphe_hide_upload_time_summary'. -->
   <string name="morphe_hide_view_count_summary">"შეზღუდვები:
-• Shorts-ის თაროებზე, არხის გვერდებსა და ძიების შედეგებში შესაძლოა კვლავ ჩანდეს ნახვების რაოდენობა
+• Shorts-ის თაროებზე შესაძლოა კვლავ ჩანდეს ნახვების რაოდენობა
 • არ მუშაობს ავტომობილის განლაგებასთან"</string>
   <string name="morphe_hide_web_search_results_title">ვებ-ძიების შედეგების დამალვა</string>
   <string name="morphe_hide_web_search_results_summary">მალავს სექციას \'Result from the web\' ძიების შედეგებიდან</string>
@@ -290,9 +290,10 @@ Second \"item\" text"</string>
   <string name="morphe_hide_autoplay_preview_summary">მალავს მომდევნო ვიდეოს პრევიუს სრულ ეკრანზე მანამ, სანამ ავტომატური დაკვრა დაიწყება</string>
   <string name="morphe_hide_channel_bar_title">არხის პანელის დამალვა</string>
   <string name="morphe_hide_channel_watermark_title">არხის წყალსანიშნულის დამალვა</string>
-  <string name="morphe_hide_chapters_timeline_button_title">დამალეთ თავები და ღილაკი „ამ ვიდეოში“</string>
+  <string name="morphe_hide_chapters_button_title">თავების ღილაკის დამალვა</string>
   <string name="morphe_hide_crowdfunding_box_title">ქრაუდფანდინგის ბლოკის დამალვა</string>
   <string name="morphe_hide_emergency_box_title">საგანგებო შეტყობინებების ბლოკების დამალვა</string>
+  <string name="morphe_hide_in_this_video_button_title">\'ამ ვიდეოში\' ღილაკის დამალვა</string>
   <string name="morphe_hide_info_panels_title">ინფორმაციული პანელების დამალვა</string>
   <string name="morphe_hide_info_panels_summary">მალავს საინფორმაციო კონტექსტური პანელებს, მაგალითად, სამედიცინო ინფორმაციას</string>
   <!-- 'Join' should be translated using the same localized wording YouTube displays for the button.
@@ -607,6 +608,9 @@ Second \"item\" text"</string>
   <string name="morphe_feed_long_press_menu_summary">ფიდის ვიდეოს ნებისმიერ ადგილას დაჭერით და გეჭიროთ მისი მენიუს გახსნა</string>
   <string name="morphe_feed_watch_later_button_title">აჩვენეთ \"მოგვიანებით ნახვა\" ღილაკი მინიატურებზე</string>
   <string name="morphe_feed_watch_later_button_summary">ვიდეო ფიდის მინიატურებზე ჩნდება ღილაკი \"მოგვიანებით ნახვა\", ხოლო თუ ვიდეო შენახულია, ჩნდება მონიშვნის ნიშანი. მასზე დაჭერით ვიდეო ინახება ან იშლება, ხოლო ხანგრძლივი დაჭერით იხსნება \"შენახვა პლეილისტში\"</string>
+  <!-- interaction.postimages.openPostImagesFullscreenPatch -->
+  <string name="morphe_open_post_images_fullscreen_title">გახსენით პოსტის სურათები სრულ ეკრანზე</string>
+  <string name="morphe_open_post_images_fullscreen_summary">პოსტის სურათზე დაჭერა მას სრულ ეკრანზე გახსნის, ნაცვლად პოსტების ფიდისა</string>
   <!-- interaction.postimages.postImageDownloadPatch -->
   <string name="morphe_post_image_download_title">პოსტის სურათების ჩამოტვირთვა</string>
   <string name="morphe_post_image_download_summary">სურათების ან GIF-ების მქონე პოსტების „გაზიარების“ ღილაკის გვერდით ჩნდება ჩამოტვირთვის ღილაკი, ხოლო მათ მენიუს ჩამოტვირთვის პუნქტი ემატება</string>
@@ -800,6 +804,7 @@ Second \"item\" text"</string>
   <string name="morphe_loop_count_clear_done">შენახული განმეორებების რაოდენობა გასუფთავებულია</string>
   <string name="morphe_loop_count_flyout_name">ციკლის რაოდენობა</string>
   <string name="morphe_loop_count_dialog_message">რამდენჯერ განათავსებს ვიდეო შემდეგ ვიდეომდე, %1$s-დან %2$s-მდე. დატოვეთ ცარიელი ვიდეოს შეუზღუდავად გასამეორებლად.</string>
+  <string name="morphe_loop_count_times">%s-ჯერ</string>
   <string name="morphe_loop_count_no_limit">შეზღუდვის გარეშე</string>
   <string name="morphe_loop_count_decrease">ნაკლებიჯერ</string>
   <string name="morphe_loop_count_increase">მეტიჯერ</string>
@@ -991,6 +996,7 @@ Second \"item\" text"</string>
   <string name="morphe_swipe_press_to_engage_title">ჩართეთ სვაიპის ჟესტი დაჭერით</string>
   <string name="morphe_swipe_press_to_engage_summary">სვაიპის ჟესტის ამოცნობამდე საჭიროა დაჭერა და გეჭიროთ</string>
   <string name="morphe_swipe_haptic_feedback_title">ჩართეთ ჰაპტიკური უკუკავშირი</string>
+  <string name="morphe_swipe_haptic_feedback_summary">ვიბრირებს, როდესაც დაჭერა და გრძელვად and удерживание იწყებს სვაიპის ჟესტს</string>
   <string name="morphe_swipe_save_and_restore_brightness_title">სიკაშკაშის შენახვა და აღდგენა</string>
   <string name="morphe_swipe_save_and_restore_brightness_summary">იმახსოვრებს სიკაშკაშის დონეს სრულეკრანულ რეჟიმში შესვლისას / გამოსვლისას</string>
   <string name="morphe_swipe_lowest_value_enable_auto_brightness_title">ჩართეთ სიკაშკაშის ავტომატური რეგულირების ჟესტი</string>
@@ -1082,8 +1088,6 @@ Second \"item\" text"</string>
   <string name="morphe_caption_block_translation_failed">სუბტიტრების ზოგიერთი თარგმანი მიუწვდომელია. ნაჩვენებია ხელმისაწვდომი სუბტიტრები.</string>
   <string name="morphe_caption_blocks_too_large">სუბტიტრების ორივე ენა არ ეტევა ამ პლეიერში. ნაჩვენებია ძირითადი ენა.</string>
   <!-- layout.buttons.navigation.navigationBarPatch -->
-  <string name="morphe_navigation_bar_screen_title">ნავიგაციის პანელი</string>
-  <string name="morphe_navigation_bar_screen_summary">აირჩიეთ, რომელი ღილაკები გამოჩნდეს ქვედა ნავიგაციის პანელზე</string>
   <!-- 'Home' should be translated using the same localized wording YouTube displays for the tab. -->
   <string name="morphe_hide_home_button_title">მთავარი ღილაკის დამალვა</string>
   <!-- 'Shorts' should be translated using the same localized wording YouTube displays for the tab. -->
@@ -1101,11 +1105,11 @@ Second \"item\" text"</string>
   <string name="morphe_watch_later_navigation_label">მოგვიანებით ნახვა</string>
   <string name="morphe_show_settings_button_title">აჩვენეთ პარამეტრების ღილაკი</string>
   <string name="morphe_show_settings_button_type_title">პარამეტრების ღილაკის მოქმედება</string>
-  <string name="morphe_show_settings_button_type_summary">გახსნის Morphe-ის პარამეტრებს ჩართვისას, ან YouTube-ის პარამეტრებს გამორთვისას</string>
+  <string name="morphe_show_settings_button_type_summary">გააქტიურების შემთხვევაში, დაჭერა ხსნის Morphe-ის პარამეტრებს, ხოლო გრძელვადიანი დაჭერა - YouTube-ის პარამეტრებს; გასაწყვეტად გამორთეთ</string>
   <string name="morphe_navigation_buttons_order_title">ნავიგაციის ღილაკების თანმიმდევრობა</string>
   <string name="morphe_navigation_buttons_order_summary">გადააადგილეთ ღილაკები ნავიგაციის პანელში მათი თანმიმდევრობის შესაცვლელად</string>
   <string name="morphe_swap_create_with_notifications_button_title">შექმნის ღილაკის შეცვლა შეტყობინებების ღილაკით</string>
-  <string name="morphe_swap_create_with_notifications_button_summary">თუ ამ პარამეტრის შეცვლა შედეგს არ იძლევა, სცადეთ ინკოგნიტო რეჟიმზე გადართვა</string>
+  <string name="morphe_swap_create_with_notifications_button_summary">ინ Thông-ების ღილაკს გადაიტანს ნავიგაციის პანელზე, ხოლო შექმნის ღილაკს - ხელსაწყოების პანელზე. თუ ცვლილებები არ აისახა, სცადეთ ინკოგნიტო რეჟიმზე გადართვა</string>
   <string name="morphe_hide_navigation_button_labels_title">დამალეთ ნავიგაციის ღილაკების წარწერები</string>
   <string name="morphe_hide_navigation_new_content_dot_title">ახალი კონტენტის წერტილის დამალვა</string>
   <string name="morphe_hide_navigation_bar_title">დამალეთ ნავიგაციის პანელი</string>
@@ -1134,14 +1138,16 @@ Second \"item\" text"</string>
   <string name="morphe_navigation_bar_glass_opacity_summary">დაარეგულირეთ მინისებრი ნავიგაციის პანელის გამჭვირვალობის დონე (0 არის გამჭვირვალე, 100 არის გაუმჭვირვალე)</string>
   <string name="morphe_navigation_bar_glass_round_title">ნავიგაციის პანელის მომრგვალებული შუშის ეფექტი</string>
   <string name="morphe_navigation_bar_glass_round_summary">ნავიგაციის შუშის პანელს აქვს მომრგვალებული კიდეები, განსხვავებით მინიმალური პლეერის კუთხეებისგან</string>
+  <string name="morphe_navigation_bar_glass_edge_title">მინისებრი ნავიგაციის პანელის კიდე</string>
+  <string name="morphe_navigation_bar_glass_edge_summary">ხატავს სინათლის კიდეს მინისებრი ნავიგაციის პანელის გარშემო</string>
+  <string name="morphe_navigation_bar_glass_bottom_margin_title">მინისებრი ნავიგაციის პანელის ქვედა დაშორება</string>
+  <string name="morphe_navigation_bar_glass_bottom_margin_summary">დაარეგულირეთ სივრცე შუშის навіგაციის პანელსა და ეკრანის ქვედა ნაწილს ან სისტემურ навіგაციას შორის</string>
   <string name="morphe_navigation_bar_glass_size_title">მინისებრი ნავიგაციის პანელის ზომა</string>
   <string name="morphe_navigation_bar_glass_size_summary">დაარეგულირეთ მინისებრი ნავიგაციის პანელის სიმაღლე, სიგანე და ღილაკების დაცილება, წინასწარი ნახვით. ღილაკები, რომლებიც არ ეტევა ეკრანის სიგანეში, იმალება</string>
   <string name="morphe_navigation_bar_glass_size_height">სიმაღლე</string>
   <string name="morphe_navigation_bar_glass_size_width">მაქსიმალური სიგანე</string>
   <string name="morphe_navigation_bar_glass_size_button_spacing">ღილაკების დაცილება</string>
   <string name="morphe_navigation_bar_glass_size_buttons_shown">ნაჩვენები ღილაკები: %1$s %2$s-დან</string>
-  <string name="morphe_toolbar_screen_title">ინსტრუმენტების პანელი</string>
-  <string name="morphe_toolbar_screen_summary">აირჩიეთ, რომელი კომპონენტები გამოჩნდეს ხელსაწყოების პანელზე</string>
   <string name="morphe_hide_toolbar_chat_button_title">დამალეთ ჩატის ღილაკი</string>
   <string name="morphe_hide_toolbar_microphone_button_title">მიკროფონის ღილაკის დამალვა</string>
   <string name="morphe_hide_toolbar_search_button_title">ძებნის ღილაკის დამალვა</string>
@@ -1380,6 +1386,9 @@ Second \"item\" text"</string>
   <!-- layout.feedrefresh.disableAutoFeedRefreshPatch -->
   <string name="morphe_disable_auto_feed_refresh_title">გამორთეთ ფიდის ავტომატური განახლება</string>
   <string name="morphe_disable_auto_feed_refresh_summary">თავიდან აგდებს ფიდების ავტომატურ განახლებას მათი მოძველების შემდეგ</string>
+  <!-- layout.notifications.ungroupNotificationsPatch -->
+  <string name="morphe_ungroup_notifications_title">შეტყობინებების დაჯგუფების გაუქმება</string>
+  <string name="morphe_ungroup_notifications_summary">აჩვენებს არხის დაჯგუფებულ ატვირთვების თითოეულ ვიდეოს, როგორც ცალკეულ შეტყობინებას</string>
   <!-- layout.feedcards.feedCardLayoutPatch -->
   <string name="morphe_feed_card_layout_title">ფიდის ბარათის განლაგება</string>
   <string name="morphe_feed_card_layout_entry_1">კლასიკური</string>
@@ -1492,6 +1501,8 @@ Second \"item\" text"</string>
   <string name="morphe_dearrow_titles_search_title">ძებნის შედეგები</string>
   <string name="morphe_dearrow_titles_icon_title">DeArrow ხატულის ჩვენება</string>
   <string name="morphe_dearrow_titles_icon_summary">აჩვენებს DeArrow-ის ხატულას იმ ვიდეოების სათაურებში, რომლებსაც crowdsourced სათაური ან მინიათურა აქვთ. დააჭირეთ ხატულას ორიგინალი სათაურისა და მინიათურის სანახავად</string>
+  <string name="morphe_dearrow_clean_up_titles_title">სათაურების გასუფთავება</string>
+  <string name="morphe_dearrow_clean_up_titles_summary">ასუფთავებს იმ ვიდეოების სათაურებს, რომლებსაც არ აქვთ DeArrow-ის სათაური. დიდი ასოებით დაწერილი სიტყვები იცვლება ჩვეულებრივ რეგისტრად, ხოლო ემოჯიები, დეკორატიული ტექსტი და განმეორებადი and პირის ნიშნები იშლება</string>
   <string name="morphe_dearrow_casual_mode_title">არაფორმალური რეჟიმი</string>
   <string name="morphe_dearrow_casual_mode_summary">აჩვენებს ორიგინალ სათაურს DeArrow-ის სათაურის ნაცვლად, თუ DeArrow-ის მომხმარებლებმა ხმა მისცეს, რომ ორიგინალი სათაური მოსწონთ</string>
   <string name="morphe_dearrow_casual_mode_min_votes_title">არაფორმალური ხმების მინიმუმი ორიგინალი სათაურის საჩვენებლად</string>

@@ -16,7 +16,17 @@ import app.morphe.extension.shared.ui.CustomDialog;
 @SuppressWarnings("unused")
 public class ExperimentalAppNoticePatch {
 
+    /**
+     * RLX: the experimental app version notice is never shown, see rlx/README.md.
+     */
+    private static final boolean RLX_NO_EXPERIMENTAL_NOTICE = true;
+
     public static boolean experimentalNoticeShouldBeShown() {
+        // RLX: no notice on the first start of a newer app version than the recommended one.
+        if (RLX_NO_EXPERIMENTAL_NOTICE) {
+            return false;
+        }
+
         String appVersionName = Utils.getAppVersionName();
         String recommendedAppVersion = Utils.getRecommendedAppVersion();
 

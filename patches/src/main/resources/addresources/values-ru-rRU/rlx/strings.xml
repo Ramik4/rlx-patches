@@ -15,7 +15,15 @@ RLX Patches — независимо созданная изменённая в�
 
 Распространяется по лицензии GNU General Public License v3.0 с дополнительными условиями раздела 7 GPLv3 из файла NOTICE Morphe Patches.
 
-Благодарности: Morphe (Morphe Patches), ReVanced (предыдущая работа, на которой основаны Morphe Patches)."</string>
+Благодарности:
+• Morphe: Morphe Patches
+• ReVanced и ReVanced Extended: предыдущая работа, на которой основаны Morphe Patches
+• MicroG RE: сервисы Google
+• inotia00: Подмена видеопотоков, PotHelper
+• MarcaDian: Перевод озвучивания
+• sashade8: Перевод озвучивания (Яндекс)
+• lavinhoque33: Сохранение на устройство
+• Ramik4: разработка, дизайн и дополнительные функции RLX Patches"</string>
     <string name="rlx_about_github">GitHub</string>
     <string name="rlx_reset_defaults_title">Восстановить настройки RLX по умолчанию</string>
     <string name="rlx_reset_defaults_summary">Возвращает настройки, которые меняет RLX, к значениям RLX по умолчанию. Остальные настройки сохраняются</string>

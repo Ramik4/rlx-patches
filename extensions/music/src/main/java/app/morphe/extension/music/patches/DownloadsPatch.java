@@ -59,7 +59,7 @@ public final class DownloadsPatch extends BaseInAppDownloadsPatch {
     private static volatile String downloadButtonLabel = "";
 
     // RLX: quick download menu with qualities and file sizes (QuickDownloadMenu).
-    private static final int QUICK_DOWNLOAD_MENU_DARK_COLOR = 0xFF212121;
+    private static final int QUICK_DOWNLOAD_MENU_DARK_COLOR = 0xFF0F0F0F;
     private static final int QUICK_DOWNLOAD_MENU_ANIMATION_DURATION = 200;
 
     /**
