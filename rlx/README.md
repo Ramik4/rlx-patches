@@ -32,9 +32,23 @@ conflicts that are expected on every release by itself:
   issue templates). Workflows Morphe adds later are deleted too, so they never
   run here.
 - [`sync/ours.txt`](sync/ours.txt): files RLX owns entirely (`README.md`,
-  `patches-bundle.json`, `patches-list.json`, `patches-bundle.png`).
+  `patches-bundle.json`, `patches-list.json`, `patches-bundle.png`, `morphe-signing.pub`).
 
 Any other conflict stops the script with the list of files and leaves the merge in progress.
+
+## Release signing
+
+Releases are signed with the RLX key, as Morphe signs its own: the patches plugin signs the `.mpp`
+(Ed25519, `MorpheSig1` in the zip comment) when `MORPHE_SIGNING_KEY` is set, and checks the key
+against `morphe-signing.pub` in the root, which holds the **RLX** public key (not Morphe's).
+`patches-bundle.json` has the same key as `public_key`, so Morphe Manager refuses a file that was
+changed or swapped after it was published.
+
+- The private key is the repository secret `RLX_SIGNING_KEY` (Base64). The release workflow stops
+  if it is missing and checks that the file is signed. It is never committed (`morphe-signing.key`
+  is ignored by git); keep a copy of it in a safe place: a new key means a new public key, and
+  Morphe Manager then refuses the releases until users get the new `patches-bundle.json`.
+- Branch and pull request builds have no key, so their files are not signed (fine for testing).
 
 ## Icon and images
 

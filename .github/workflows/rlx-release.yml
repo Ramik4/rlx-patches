@@ -82,7 +82,15 @@ jobs:
       - name: Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The RLX signing key (Base64 Ed25519). The patches plugin signs the .mpp with it and checks it
+          # against morphe-signing.pub, the RLX public key; Morphe Manager checks the file against the
+          # public_key of patches-bundle.json.
+          MORPHE_SIGNING_KEY: ${{ secrets.RLX_SIGNING_KEY }}
         run: |
+          if [[ -z "$MORPHE_SIGNING_KEY" ]]; then
+            echo "::error::The RLX_SIGNING_KEY secret is missing: releases are signed (see rlx/README.md)"
+            exit 1
+          fi
           ./gradlew -q printVersions --no-daemon
           ./gradlew :patches:generatePatchesList --no-daemon
           ./gradlew :patches:buildAndroid --no-daemon
@@ -90,6 +98,10 @@ jobs:
           test -f "$mpp" || { echo "::error::$mpp was not built"; ls patches/build/libs; exit 1; }
           if unzip -l "$mpp" | grep -E 'app/morphe/patches/reddit/|extensions/reddit\.mpe'; then
             echo "::error::Reddit is not excluded from the bundle"
+            exit 1
+          fi
+          if ! unzip -z "$mpp" | grep -q '^MorpheSig1 '; then
+            echo "::error::$mpp is not signed"
             exit 1
           fi
 
@@ -191,6 +203,8 @@ jobs:
               "download_url": f"https://github.com/Ramik4/rlx-patches/releases/download/v{version}/rlx-patches-{version}.mpp",
               "signature_download_url": "",
               "version": version,
+              # The RLX public key: Morphe Manager refuses a file that was not signed with the RLX key.
+              "public_key": pathlib.Path("morphe-signing.pub").read_text().strip(),
           }
           pathlib.Path("patches-bundle.json").write_text(json.dumps(bundle, indent=2, ensure_ascii=False) + "\n")
           EOF
