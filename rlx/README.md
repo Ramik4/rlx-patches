@@ -220,7 +220,7 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
 - **Theme**: the dark theme defaults to the custom color `#0F0F0F` (Morphe's *Modern YouTube*), which
   Morphe also gives the menus and sheets (with *App default* they keep YouTube's grey), and the light
   theme to the custom color `#F0F0F0`, with *Change foreground colors* on. A user who selected another
-  color, such as pure black, keeps it. The patch option *Light theme color* (Morphe Manager) also
+  color, such as pure black, keeps it. YouTube Music (dark theme only) defaults to `#0F0F0F` too. The patch option *Light theme color* (Morphe Manager) also
   offers *Soft light* (`#F0F0F0`, an RLX hook in `BaseThemePatch.kt`), next to Morphe's *Modern
   YouTube* (`#0F0F0F`) of the dark theme; both options stay at *Change in the app* by default, so
   the colors can still be changed in the app.

@@ -153,6 +153,7 @@
     "external_downloader_quick_menu": true,
     "external_potoken_provider": true,
     "header_logo": "rlx_red",
+    "music_auto_song_version": true,
     "music_change_miniplayer_color": true,
     "music_enable_audio_video_switch": true,
     "music_enable_forced_miniplayer": true,
@@ -161,7 +162,7 @@
     "music_hide_flyout_menu_pin_to_speed_dial": true,
     "music_hide_flyout_menu_report": true,
     "music_hide_flyout_menu_unpin_from_speed_dial": true,
-    "music_hide_lyrics_translate_button": true,
+    "music_hide_lyrics_translate_button": false,
     "music_lyrics_enabled": false,
     "music_miniplayer_glass": true,
     "music_miniplayer_glass_album_tint": false,
@@ -173,7 +174,9 @@
     "sb_enabled": false,
     "settings_name": "RLX_SETTINGS",
     "settings_search_history": false,
-    "splash_screen_style": "morphe_color"
+    "splash_screen_style": "morphe_color",
+    "theme_color_dark": "custom",
+    "theme_color_dark_custom": "#0F0F0F"
   },
   "replaced": {
     "youtube": {
@@ -196,6 +199,9 @@
     "music": {
       "header_logo": [
         "custom"
+      ],
+      "music_hide_lyrics_translate_button": [
+        true
       ],
       "splash_screen_style": [
         "fps_60_one_second"
