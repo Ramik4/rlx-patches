@@ -7,7 +7,6 @@
     <string name="rlx_community_screen_title">Сервисы сообщества</string>
     <string name="rlx_vot_screen_title">Закадровый перевод видео</string>
     <string name="rlx_vot_morphe_title">Озвучивание субтитров (Morphe)</string>
-    <string name="rlx_about_title">RLX Patches</string>
     <string name="rlx_about_component">На основе Morphe Patches %s</string>
     <string name="rlx_about_test_build">Тестовая сборка</string>
     <string name="rlx_about_links">Ссылки</string>
@@ -46,9 +45,6 @@
     <string name="morphe_yandex_vot_volume_label_value">%1$s: %2$s</string>
     <string name="morphe_yandex_vot_audio_proxy_title">Прокси аудиопотока</string>
     <string name="morphe_yandex_vot_audio_proxy_enabled_summary">Включать только в случае недоступности серверов Яндекса</string>
-    <string name="morphe_yandex_vot_audio_proxy_summary">Включать только в случае недоступности серверов Яндекса</string>
-    <string name="morphe_yandex_vot_audio_proxy_summary_on">Аудиопоток проксируется через worker</string>
-    <string name="morphe_yandex_vot_audio_proxy_summary_off">Аудиопоток использует прямую ссылку</string>
     <string name="morphe_yandex_vot_proxy_url_title">Прокси-сервер</string>
     <string name="morphe_yandex_vot_proxy_url_summary">Хост прокси VOT worker. По умолчанию: vot-worker.eu.cc</string>
     <string name="morphe_yandex_vot_use_live_voices_title">Живые голоса</string>
@@ -58,7 +54,6 @@
     <string name="morphe_yandex_vot_voice_style_title">Стиль озвучки</string>
     <string name="morphe_yandex_vot_voice_style_standard">Стандартный</string>
     <string name="morphe_yandex_vot_voice_style_live">Живой</string>
-    <string name="morphe_yandex_vot_started">Перевод запущен</string>
     <string name="morphe_yandex_vot_stopped">Перевод остановлен</string>
     <string name="morphe_yandex_vot_playback_error">Не удалось воспроизвести аудио перевода</string>
     <string name="morphe_yandex_vot_unavailable_live">Перевод недоступен для прямых трансляций</string>
@@ -66,14 +61,11 @@
     <string name="morphe_yandex_vot_unavailable_same_language">Аудио видео уже на языке перевода</string>
     <string name="morphe_yandex_vot_stream_waiting">Ожидание… ~%s</string>
     <string name="morphe_yandex_vot_stream_waiting_status">Перевод запрошен, вернитесь позже</string>
-    <string name="morphe_yandex_vot_stream_not_ready">Перевод ещё не готов. Используйте кнопку для включения.</string>
-    <string name="morphe_yandex_vot_stream_requesting">Запрос перевода для потока…</string>
     <string name="morphe_yandex_vot_stream_ready">Перевод готов, воспроизведение</string>
     <string name="morphe_yandex_vot_time_sec">%d сек</string>
     <string name="morphe_yandex_vot_time_min">%d мин</string>
     <string name="dualvot_yandex_button_time_seconds">%dс</string>
     <string name="dualvot_yandex_button_time_minutes">%dм</string>
-    <string name="morphe_yandex_vot_live_voices_unavailable">Живые голоса недоступны, используются стандартные</string>
     <string name="morphe_yandex_vot_lang_auto">Автоопределение</string>
     <string name="morphe_yandex_vot_oauth_token_title">Яндекс OAuth токен</string>
     <string name="morphe_yandex_vot_oauth_token_summary">Необходим для живых голосов.</string>
@@ -87,8 +79,6 @@
     <string name="morphe_yandex_vot_oauth_sign_out_button">Выйти</string>
     <string name="morphe_yandex_vot_oauth_switch_token_button">Ввести другой токен</string>
     <string name="morphe_yandex_vot_oauth_enter_token_title">Ввести токен вручную</string>
-    <string name="morphe_yandex_vot_oauth_webview_title">Авторизация Яндекс</string>
-    <string name="morphe_yandex_vot_oauth_auth_declined">Авторизация отклонена</string>
     <string name="morphe_yandex_vot_oauth_invalid_token">Недействительный токен</string>
     <string name="morphe_yandex_vot_oauth_no_network">Нет подключения к интернету</string>
     <string name="morphe_yandex_vot_oauth_account_management_title">Яндекс OAuth токен</string>

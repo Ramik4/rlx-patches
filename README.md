@@ -37,9 +37,9 @@ patch of [Morphe Patches](https://github.com/MorpheApp/morphe-patches), plus:
 - **RLX default settings**, applied once, which you can change; your settings are kept on updates.
   *Restore RLX default settings* sets all settings back to them (channel whitelists, Spoof video
   streams and the PoToken provider are kept).
-- **Theme colors**: dark `#0F0F0F` and light `#F0F0F0` by default, any other color (pure black too)
-  can be selected.
-- **About page** with the RLX and Morphe versions, update check, links and credits.
+- **Theme colors**: dark `#0F0F0F` and light `#F0F0F0` by default (YouTube Music: dark `#0F0F0F`),
+  from the startup screen on; any other color, pure black too, can be selected in the app.
+- **About page** with the RLX and Morphe versions, update check, release notes, links and credits.
 - No notice on the first start of an app version newer than the recommended one.
 
 RLX is an independent project. It is not affiliated with, or endorsed by, Morphe, Google or
@@ -50,7 +50,11 @@ YouTube.
 1. Install [Morphe Manager](https://morphe.software).
 2. Add this repository as a patch source with the link above, or add
    `https://github.com/Ramik4/rlx-patches` under **Sources → + → Remote**.
-3. Patch YouTube or YouTube Music with the **RLX Patches** source.
+3. Patch YouTube or YouTube Music with the **RLX Patches** source. Morphe Manager shows the
+   supported app versions and lets you know when a new RLX release is out.
+
+Releases are signed with the RLX key; Morphe Manager refuses a file that was changed after it
+was published.
 
 ## Credits
 
