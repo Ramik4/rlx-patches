@@ -17,28 +17,25 @@
     <!-- About. %1$s is the RLX version, %2$s the Morphe Patches version RLX is based on. -->
     <string name="rlx_about_summary" translatable="false">RLX Patches %1$s</string>
     <string name="rlx_about_title">RLX Patches</string>
-    <string name="rlx_about_message">"Version %1$s
-Based on Morphe Patches %2$s
-
-RLX Patches is a modified version of Morphe Patches, made independently. It is not affiliated with or endorsed by Morphe, Google or YouTube.
-
-Licensed under the GNU General Public License v3.0, with the additional terms of GPLv3 section 7 in the NOTICE of Morphe Patches.
-
-Credits:
-• Morphe: Morphe Patches
-• ReVanced and ReVanced Extended: prior work of Morphe Patches
-• MicroG RE: Google services
-• inotia00: Spoof video streams, PotHelper
-• MarcaDian: Voice over translation
-• sashade8: Voice over translation (Yandex)
-• lavinhoque33: Save to device
-• Ramik4: RLX Patches development, design and extra features"</string>
-    <string name="rlx_about_github">GitHub</string>
+    <!-- %s is the Morphe Patches version RLX is based on. -->
+    <string name="rlx_about_component">Based on Morphe Patches %s</string>
+    <string name="rlx_about_test_build">Test build</string>
+    <string name="rlx_about_links">Links</string>
+    <string name="rlx_about_morphe_contributors">Morphe contributors</string>
+    <string name="rlx_about_credits">Credits</string>
+    <string name="rlx_about_credit_revanced">Earlier work Morphe Patches builds on</string>
+    <string name="rlx_about_credit_microg">Google services</string>
+    <string name="rlx_about_credit_inotia00">Spoof video streams, PotHelper</string>
+    <string name="rlx_about_credit_marcadian">Voice over translation</string>
+    <string name="rlx_about_credit_sashade8">Voice over translation (Yandex)</string>
+    <string name="rlx_about_credit_lavinhoque33">Save to device</string>
+    <string name="rlx_about_credit_ramik4">RLX Patches development, design and extra features</string>
+    <string name="rlx_about_notice">RLX Patches is a modified version of Morphe Patches, made independently. It is not affiliated with or endorsed by Morphe, Google or YouTube. Licensed under the GNU General Public License v3.0, with the additional terms of GPLv3 section 7 in the NOTICE of Morphe Patches.</string>
 
     <!-- Default settings. -->
     <string name="rlx_reset_defaults_title">Restore RLX default settings</string>
-    <string name="rlx_reset_defaults_summary">Sets the settings RLX changes back to the RLX defaults. Other settings are kept</string>
-    <string name="rlx_reset_defaults_confirm">Settings that RLX changes are set back to the RLX defaults, also the ones you changed. Other settings are kept.</string>
+    <string name="rlx_reset_defaults_summary">Sets all settings back to the RLX defaults. Channel whitelists, Spoof video streams and the external PoToken provider are kept</string>
+    <string name="rlx_reset_defaults_confirm">All settings are set back to the RLX defaults, also the ones you changed. Channel whitelists, Spoof video streams and the external PoToken provider are kept.</string>
     <string name="rlx_reset_defaults_done">%d settings restored</string>
     <string name="rlx_defaults_restart_message">Restart to apply the RLX default settings</string>
 

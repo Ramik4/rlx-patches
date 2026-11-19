@@ -64,7 +64,7 @@ jobs:
             echo "::error::Reddit is not excluded from the bundle"
             exit 1
           fi
-          for entry in app/rlx/build.properties app/rlx/defaults.json \
+          for entry in app/rlx/build.properties app/rlx/defaults.json app/rlx/icon.png \
                        rlx/drawable/rlx_settings_screen_customizations.xml rlx/settings/drawable/morphe_settings_icon_light.xml \
                        addresources/values/rlx/strings.xml addresources/values/rlx/arrays.xml \
                        addresources/values/rlx-youtube/strings.xml addresources/values/rlx-music/strings.xml \

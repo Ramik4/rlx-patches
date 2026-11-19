@@ -35,6 +35,13 @@ public final class RlxInfo {
     }
 
     /**
+     * @return The icon of RLX Patches (patches-bundle.png), Base64 encoded. Replaced while patching.
+     */
+    public static String iconBase64() {
+        return "";
+    }
+
+    /**
      * @return "RLX Patches 2.3.7" (the Morphe Patches base version is in the RLX about dialog).
      */
     public static String aboutSummary() {

@@ -32,4 +32,7 @@ internal object RlxBuildInfo {
 
     /** Content of rlx/defaults.json. */
     val defaultsJson: ByteArray get() = resource("defaults.json")
+
+    /** The icon of RLX Patches, patches-bundle.png (shown on the about page). */
+    val iconPng: ByteArray get() = resource("icon.png")
 }

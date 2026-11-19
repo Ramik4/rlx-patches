@@ -34,8 +34,12 @@ patch of [Morphe Patches](https://github.com/MorpheApp/morphe-patches), plus:
   *Video*, *Player*, *Swipe and seekbar*, *Shorts*, *Downloads*, *Ads*, *Community services*
   (Return YouTube Dislike, SponsorBlock, DeArrow) and *Miscellaneous*. Every Morphe setting is
   still there, with the same keys, so exported settings work in both.
-- **RLX default settings**, applied once, which you can change; *Restore RLX default settings*
-  applies them again.
+- **RLX default settings**, applied once, which you can change; your settings are kept on updates.
+  *Restore RLX default settings* sets all settings back to them (channel whitelists, Spoof video
+  streams and the PoToken provider are kept).
+- **Theme colors**: dark `#0F0F0F` and light `#F0F0F0` by default, any other color (pure black too)
+  can be selected.
+- **About page** with the RLX and Morphe versions, update check, links and credits.
 - No notice on the first start of an app version newer than the recommended one.
 
 RLX is an independent project. It is not affiliated with, or endorsed by, Morphe, Google or

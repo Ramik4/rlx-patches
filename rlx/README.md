@@ -91,6 +91,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `extensions/music/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
 | `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations and groups the screens before they are written (`moveRlxCustomizations`) |
 | `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations before they are written (`moveRlxCustomizations`) |
+| `patches/.../shared/layout/theme/BaseThemePatch.kt` | patch option *Light theme color*: *Soft light* (`#F0F0F0`) |
 | `extensions/shared/.../shared/patches/ExperimentalAppNoticePatch.java` | no experimental app version notice on the first start (`RLX_NO_EXPERIMENTAL_NOTICE`) |
 | `extensions/shared-youtube/.../shared/settings/preference/ExternalDownloaderPreference.java` | quick download menu: `launchExternalDownloader` with the extras of the menu |
 | `extensions/shared-youtube/.../shared/patches/BaseInAppDownloadsPatch.java` | quick download menu: `DOWNLOAD_CLIENTS` public |
@@ -153,13 +154,23 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
   *Default*, *RLX Settings* (the RLX default), *Morphe Settings*, *Extended*, *RLX* and *Custom*; the
   Morphe names are hidden (arrays in `addresources/values/rlx-shared`, names 5 to 8 in `values/rlx`).
 - **Attribution**: the "About" entry of the settings reads *RLX Patches 2.3.7* and opens the RLX
-  about dialog, which names the Morphe Patches base version (GPLv3 section 7b).
+  about page (`RlxAboutPage`), which names the Morphe Patches base version (GPLv3 section 7b). It is
+  built like Morphe's about page and with its page style (`AboutDialogStyle`, which is not public, so
+  `RlxAboutPage` is an RLX file in Morphe's `...settings.preference.about` package): the RLX Patches
+  icon (`patches-bundle.png`, bundled as `app/rlx/icon.png` and written into `RlxInfo.iconBase64()`
+  while patching), the version (with a *Test build* badge for test builds), whether a newer RLX release
+  is out (GitHub API, once per app start; the update button opens Morphe Manager), links (GitHub,
+  YTindir, Morphe Patches, Morphe, Morphe's contributors), the credits and the license notice.
 - **Default settings**: every change RLX makes to Morphe's default settings is in
   [`defaults.json`](defaults.json), one section per app, with the keys of the Morphe settings
   export. Each default is applied once, on the first start of a build that has it, and only if
   the setting still has Morphe's default value; whatever the user changes is kept, also across
   updates. Settings already applied by the earlier YT Morphe builds are not applied again.
-  *RLX Customizations → Restore RLX default settings* applies all of them again.
+  *RLX Customizations → Restore RLX default settings* sets every setting back: to the RLX default, or
+  to the Morphe default where RLX has none, also the settings the user changed. Kept: the channel
+  whitelists, *Spoof video streams*, the *External PoToken provider* and the SponsorBlock user ID
+  (`KEPT_ON_RESET_KEYS` in `RlxDefaults`). Settings that are not in the settings export (internal
+  state) are not touched.
   When RLX changes a default, the earlier value goes to the `replaced` section of
   `defaults.json`: a setting that still has an earlier RLX default gets the new one once.
 - **Channel whitelists**: importing settings keeps the ad, playback speed and SponsorBlock
@@ -206,9 +217,13 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
     holds the proportions, and the animation by [`branding/animation.py`](branding/animation.py). The
     letters are Oswald Bold (SIL Open Font License 1.1), written as paths, so the app does
     not need the font.
-- **Theme**: the dark theme defaults to the custom color `#0F0F0F`, which Morphe also gives the
-  menus and sheets (with *App default* they keep YouTube's grey). A user who selected another
-  color, such as pure black, keeps it.
+- **Theme**: the dark theme defaults to the custom color `#0F0F0F` (Morphe's *Modern YouTube*), which
+  Morphe also gives the menus and sheets (with *App default* they keep YouTube's grey), and the light
+  theme to the custom color `#F0F0F0`, with *Change foreground colors* on. A user who selected another
+  color, such as pure black, keeps it. The patch option *Light theme color* (Morphe Manager) also
+  offers *Soft light* (`#F0F0F0`, an RLX hook in `BaseThemePatch.kt`), next to Morphe's *Modern
+  YouTube* (`#0F0F0F`) of the dark theme; both options stay at *Change in the app* by default, so
+  the colors can still be changed in the app.
 
 ## RLX patches
 

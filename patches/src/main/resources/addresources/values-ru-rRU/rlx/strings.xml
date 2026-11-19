@@ -8,26 +8,22 @@
     <string name="rlx_vot_screen_title">Закадровый перевод видео</string>
     <string name="rlx_vot_morphe_title">Озвучивание субтитров (Morphe)</string>
     <string name="rlx_about_title">RLX Patches</string>
-    <string name="rlx_about_message">"Версия %1$s
-На основе Morphe Patches %2$s
-
-RLX Patches — независимо созданная изменённая версия Morphe Patches. Проект не связан с Morphe, Google или YouTube и не одобрен ими.
-
-Распространяется по лицензии GNU General Public License v3.0 с дополнительными условиями раздела 7 GPLv3 из файла NOTICE Morphe Patches.
-
-Благодарности:
-• Morphe: Morphe Patches
-• ReVanced и ReVanced Extended: предыдущая работа, на которой основаны Morphe Patches
-• MicroG RE: сервисы Google
-• inotia00: Подмена видеопотоков, PotHelper
-• MarcaDian: Перевод озвучивания
-• sashade8: Перевод озвучивания (Яндекс)
-• lavinhoque33: Сохранение на устройство
-• Ramik4: разработка, дизайн и дополнительные функции RLX Patches"</string>
-    <string name="rlx_about_github">GitHub</string>
+    <string name="rlx_about_component">На основе Morphe Patches %s</string>
+    <string name="rlx_about_test_build">Тестовая сборка</string>
+    <string name="rlx_about_links">Ссылки</string>
+    <string name="rlx_about_morphe_contributors">Участники Morphe</string>
+    <string name="rlx_about_credits">Благодарности</string>
+    <string name="rlx_about_credit_revanced">Предыдущая работа, на которой основаны Morphe Patches</string>
+    <string name="rlx_about_credit_microg">Сервисы Google</string>
+    <string name="rlx_about_credit_inotia00">Подмена видеопотоков, PotHelper</string>
+    <string name="rlx_about_credit_marcadian">Перевод озвучивания</string>
+    <string name="rlx_about_credit_sashade8">Перевод озвучивания (Яндекс)</string>
+    <string name="rlx_about_credit_lavinhoque33">Сохранение на устройство</string>
+    <string name="rlx_about_credit_ramik4">Разработка, дизайн и дополнительные функции RLX Patches</string>
+    <string name="rlx_about_notice">RLX Patches — независимо созданная изменённая версия Morphe Patches. Проект не связан с Morphe, Google или YouTube и не одобрен ими. Распространяется по лицензии GNU General Public License v3.0 с дополнительными условиями раздела 7 GPLv3 из файла NOTICE Morphe Patches.</string>
     <string name="rlx_reset_defaults_title">Восстановить настройки RLX по умолчанию</string>
-    <string name="rlx_reset_defaults_summary">Возвращает настройки, которые меняет RLX, к значениям RLX по умолчанию. Остальные настройки сохраняются</string>
-    <string name="rlx_reset_defaults_confirm">Настройки, которые меняет RLX, будут возвращены к значениям RLX по умолчанию, в том числе изменённые вами. Остальные настройки сохраняются.</string>
+    <string name="rlx_reset_defaults_summary">Возвращает все настройки к значениям RLX по умолчанию. Белые списки каналов, подмена видеопотоков и внешний провайдер PoToken сохраняются</string>
+    <string name="rlx_reset_defaults_confirm">Все настройки, в том числе измененные вами, возвращаются к значениям RLX по умолчанию. Белые списки каналов, подмена видеопотоков и внешний провайдер PoToken сохраняются.</string>
     <string name="rlx_reset_defaults_done">Восстановлено настроек: %d</string>
     <string name="rlx_defaults_restart_message">Перезапустите, чтобы применить настройки RLX по умолчанию</string>
 
