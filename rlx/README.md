@@ -53,8 +53,9 @@ changed or swapped after it was published.
 ## Icon and images
 
 - `patches-bundle.png` (200 × 200): the icon of the RLX Patches source in Morphe Manager (without
-  it, Morphe Manager shows the GitHub avatar of the repository owner). It is the RLX Red app icon
-  on white, drawn from the paths of `rlx/branding/generate.py`.
+  it, Morphe Manager shows the GitHub avatar of the repository owner): the white play of the RLX
+  app icons (paths of `rlx/branding/generate.py`) on RLX red. Other variants are in
+  `branding/images/icon-variants/`.
 - [`branding/images/social-preview.png`](branding/images/social-preview.png) (1280 × 640): the
   banner of the README and the social preview of the repository (uploaded by hand in the
   repository *Settings → General → Social preview*). The words are set in Oswald Bold, the font of
