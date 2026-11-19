@@ -202,6 +202,8 @@ internal val lightThemeColorOption = colorOption(
     values = mapOf(
         "Change in the app" to THEME_COLOR_IN_APP,
         "White" to "@android:color/white",
+        // RLX: light counterpart of "Modern YouTube" (#0F0F0F), the RLX default light theme color.
+        "Soft light" to "#F0F0F0",
         "Material You (Neutral)" to "@android:color/system_neutral1_100",
         "Material You (Primary)" to "@android:color/system_accent1_200",
         "Material You (Secondary)" to "@android:color/system_accent2_200",

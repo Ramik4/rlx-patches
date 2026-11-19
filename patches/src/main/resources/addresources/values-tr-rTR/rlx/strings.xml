@@ -8,26 +8,22 @@
     <string name="rlx_vot_screen_title">Video seslendirme çevirisi</string>
     <string name="rlx_vot_morphe_title">Altyazı seslendirme (Morphe)</string>
     <string name="rlx_about_title">RLX Patches</string>
-    <string name="rlx_about_message">"Sürüm %1$s
-Morphe Patches %2$s tabanlı
-
-RLX Patches, Morphe Patches'in bağımsız olarak geliştirilen değiştirilmiş bir sürümüdür. Morphe, Google veya YouTube ile bağlantılı değildir ve onlar tarafından desteklenmez.
-
-GNU Genel Kamu Lisansı v3.0 ve Morphe Patches NOTICE dosyasındaki GPLv3 7. bölüm ek koşulları ile lisanslanmıştır.
-
-Katkıda bulunanlar:
-• Morphe: Morphe Patches
-• ReVanced ve ReVanced Extended: Morphe Patches'in temel aldığı önceki çalışma
-• MicroG RE: Google hizmetleri
-• inotia00: Video akışlarını taklit et, PotHelper
-• MarcaDian: Seslendirme çevirisi
-• sashade8: Sesli çeviri (Yandex)
-• lavinhoque33: Cihaza kaydet
-• Ramik4: RLX Patches geliştirme, tasarım ve ek özellikler"</string>
-    <string name="rlx_about_github">GitHub</string>
+    <string name="rlx_about_component">Morphe Patches %s tabanlı</string>
+    <string name="rlx_about_test_build">Test derlemesi</string>
+    <string name="rlx_about_links">Bağlantılar</string>
+    <string name="rlx_about_morphe_contributors">Morphe katkıda bulunanları</string>
+    <string name="rlx_about_credits">Teşekkürler</string>
+    <string name="rlx_about_credit_revanced">Morphe Patches\'in temel aldığı önceki çalışma</string>
+    <string name="rlx_about_credit_microg">Google hizmetleri</string>
+    <string name="rlx_about_credit_inotia00">Video akışlarını taklit et, PotHelper</string>
+    <string name="rlx_about_credit_marcadian">Seslendirme çevirisi</string>
+    <string name="rlx_about_credit_sashade8">Sesli çeviri (Yandex)</string>
+    <string name="rlx_about_credit_lavinhoque33">Cihaza kaydet</string>
+    <string name="rlx_about_credit_ramik4">RLX Patches geliştirme, tasarım ve ek özellikler</string>
+    <string name="rlx_about_notice">RLX Patches, Morphe Patches\'in bağımsız olarak geliştirilen değiştirilmiş bir sürümüdür. Morphe, Google veya YouTube ile bağlantılı değildir ve onlar tarafından desteklenmez. GNU Genel Kamu Lisansı v3.0 ve Morphe Patches NOTICE dosyasındaki GPLv3 7. bölüm ek koşulları ile lisanslanmıştır.</string>
     <string name="rlx_reset_defaults_title">RLX varsayılan ayarlarını geri yükle</string>
-    <string name="rlx_reset_defaults_summary">"RLX'in değiştirdiği ayarları RLX varsayılanlarına döndürür. Diğer ayarlar korunur"</string>
-    <string name="rlx_reset_defaults_confirm">"RLX'in değiştirdiği ayarlar, sizin değiştirdikleriniz de dahil, RLX varsayılanlarına döndürülür. Diğer ayarlar korunur."</string>
+    <string name="rlx_reset_defaults_summary">"Tüm ayarları RLX varsayılanlarına döndürür. Kanal beyaz listeleri, Video akışlarını taklit et ve Harici PoToken sağlayıcı korunur"</string>
+    <string name="rlx_reset_defaults_confirm">"Sizin değiştirdikleriniz de dahil tüm ayarlar RLX varsayılanlarına döndürülür. Kanal beyaz listeleri, Video akışlarını taklit et ve Harici PoToken sağlayıcı korunur."</string>
     <string name="rlx_reset_defaults_done">%d ayar geri yüklendi</string>
     <string name="rlx_defaults_restart_message">RLX varsayılan ayarlarını uygulamak için yeniden başlatın</string>
     <!-- Voice over translation (Yandex). -->

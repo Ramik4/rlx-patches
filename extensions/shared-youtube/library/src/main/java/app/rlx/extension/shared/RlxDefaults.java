@@ -20,8 +20,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import app.morphe.extension.shared.Logger;
@@ -79,6 +81,23 @@ public final class RlxDefaults {
      * Prefix the Morphe settings export leaves out of the keys.
      */
     private static final String MORPHE_KEY_PREFIX = "morphe_";
+
+    /**
+     * Settings that "Restore RLX default settings" keeps: the channel whitelists, the settings of
+     * Spoof video streams and of the PoToken provider, and the SponsorBlock user ID (an account,
+     * not a setting).
+     */
+    private static final String[] KEPT_ON_RESET_KEYS = {
+            "morphe_ads_channel_whitelist",
+            "morphe_playback_speed_channel_whitelist",
+            "morphe_sb_channel_whitelist",
+            "morphe_sb_private_user_id_Do_Not_Share",
+            "sb_private_user_id_Do_Not_Share",
+    };
+    private static final String[] KEPT_ON_RESET_KEY_PREFIXES = {
+            "morphe_spoof_video_streams",
+            "morphe_external_potoken_provider",
+    };
 
     private static final long FIRST_RUN_RESTART_DELAY_MS = 10_000;
 
@@ -148,10 +167,49 @@ public final class RlxDefaults {
     }
 
     /**
-     * Applies every RLX default again, also to settings the user has changed.
+     * Sets every setting back to the RLX default, or to the Morphe default if RLX does not change it,
+     * also the settings the user has changed. The channel whitelists, Spoof video streams and the
+     * PoToken provider are kept ({@link #KEPT_ON_RESET_KEYS}).
      */
     public static Changes applyAll(Context context) throws Exception {
-        return apply(context, true);
+        loadSettingsClasses();
+
+        Map<Setting<?>, Object> before = new HashMap<>();
+        for (Setting<?> setting : Setting.allLoadedSettings()) {
+            if (setting.includeWithImportExport) before.put(setting, setting.get());
+        }
+
+        // Morphe defaults first, then the RLX defaults over them.
+        for (Setting<?> setting : before.keySet()) {
+            if (keptOnReset(setting.key) || setting.isSetToDefault()) continue;
+            try {
+                setting.resetToDefault();
+            } catch (Exception ex) {
+                Logger.printException(() -> "Could not reset " + setting.key, ex);
+            }
+        }
+        apply(context, true);
+
+        Changes result = new Changes();
+        for (Map.Entry<Setting<?>, Object> entry : before.entrySet()) {
+            Setting<?> setting = entry.getKey();
+            if (entry.getValue().equals(setting.get())) continue;
+            result.changed++;
+            result.rebootNeeded |= setting.rebootApp;
+        }
+        final int changed = result.changed;
+        Logger.printInfo(() -> "Restored " + changed + " settings to the RLX defaults");
+        return result;
+    }
+
+    private static boolean keptOnReset(String key) {
+        for (String kept : KEPT_ON_RESET_KEYS) {
+            if (kept.equals(key)) return true;
+        }
+        for (String prefix : KEPT_ON_RESET_KEY_PREFIXES) {
+            if (key.startsWith(prefix)) return true;
+        }
+        return false;
     }
 
     /**
@@ -191,6 +249,7 @@ public final class RlxDefaults {
                 // Not part of this app (yet). Applied once a build has it.
                 continue;
             }
+            if (all && keptOnReset(setting.key)) continue;
 
             final boolean apply = all
                     || (replacesEarlier ? hasValue(setting, replaced.optJSONArray(key)) : setting.isSetToDefault());

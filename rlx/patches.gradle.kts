@@ -40,18 +40,20 @@ if (rlxBuildSuffix != null) {
 }
 
 // Build information the RLX patches read while patching: the RLX version, the Morphe base
-// version, and rlx/defaults.json. Bundled as resources under app/rlx/.
+// version, rlx/defaults.json and the icon (patches-bundle.png). Bundled as resources under app/rlx/.
 val rlxBuildInfo = tasks.register("rlxBuildInfo") {
     description = "Bundles the RLX build information and default settings"
 
     val rlxVersion = project.version.toString() + (rlxBuildSuffix?.let { "-$it" } ?: "")
     val morpheBaseVersion = project.extra["morpheBaseVersion"].toString()
     val defaults = rootProject.file("rlx/defaults.json")
+    val icon = rootProject.file("patches-bundle.png")
     val output = layout.buildDirectory.dir("generated/rlx")
 
     inputs.property("rlxVersion", rlxVersion)
     inputs.property("morpheBaseVersion", morpheBaseVersion)
     inputs.file(defaults)
+    inputs.file(icon)
     outputs.dir(output)
 
     doLast {
@@ -61,6 +63,7 @@ val rlxBuildInfo = tasks.register("rlxBuildInfo") {
             "rlxVersion=$rlxVersion\nmorpheBaseVersion=$morpheBaseVersion\n"
         )
         defaults.copyTo(dir.resolve("defaults.json"), overwrite = true)
+        icon.copyTo(dir.resolve("icon.png"), overwrite = true)
     }
 }
 

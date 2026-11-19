@@ -10,6 +10,7 @@
   "youtube": {
     "ads_channel_whitelist_flyout_menu": true,
     "auto_captions_style": "both_disabled",
+    "auto_translate_additional_languages": true,
     "back_button_always_exits_feed": false,
     "copy_video_link_with_timestamp_button": false,
     "custom_playback_speeds": "0.5\n0.75\n0.85\n0.9\n0.95\n1.0\n1.1\n1.15\n1.25\n1.35\n1.5\n1.75\n2.0\n2.25\n2.5",
@@ -23,6 +24,9 @@
     "disable_sign_in_to_tv_popup": true,
     "disable_toolbar_navigation_tabs": false,
     "enhanced_ambient_mode": true,
+    "enhanced_ambient_mode_blur": 20,
+    "enhanced_ambient_mode_smoothing": 10,
+    "enhanced_ambient_mode_strength": 50,
     "external_downloader_name": "com.rl.ytindr",
     "external_downloader_overlay_button": true,
     "external_downloader_quick_menu": true,
@@ -33,7 +37,6 @@
     "fix_transcript": false,
     "force_original_audio": false,
     "header_logo": "rlx_red",
-    "hide_autoplay_button": false,
     "hide_comments_channel_guidelines": false,
     "hide_comments_community_guidelines": false,
     "hide_comments_create_a_short_button": false,
@@ -56,6 +59,7 @@
     "hide_members_shelf": false,
     "hide_merchandise_banners": false,
     "hide_movies_section": false,
+    "hide_navigation_button_labels": true,
     "hide_notify_me_button": false,
     "hide_paid_promotion_labels": false,
     "hide_player_flyout_help": true,
@@ -90,13 +94,14 @@
     "hide_you_may_like_section": false,
     "hide_youtube_premium_promotions": false,
     "miniplayer_swipe_up_expand": true,
-    "miniplayer_type": "minimal_bar",
+    "miniplayer_type": "minimal_bar_2",
     "native_snackbar": true,
+    "navigation_bar_animations": true,
     "navigation_bar_glass": true,
-    "navigation_bar_glass_opacity": 20,
     "navigation_bar_style": "translucent",
     "navigation_buttons_order": "FEwhat_to_watch,FEshorts,FEuploads,FEactivity,morphe_watch_later,morphe_settings,morphe_search,FEsubscriptions,FElibrary",
     "offline_min_height": 480,
+    "open_post_images_fullscreen": true,
     "override_youtube_music_buttons": true,
     "patches_update_notice": "off",
     "play_all_button_type": "videos_only_with_time_descending",
@@ -109,7 +114,7 @@
     "remember_playback_speed_last_selected_toast": false,
     "ryd_estimated_like": false,
     "ryd_feed_like_count": true,
-    "ryd_feed_like_ratio": true,
+    "ryd_feed_like_ratio": false,
     "ryd_toast_on_connection_error": false,
     "sb_enabled": false,
     "seekbar_custom_color": true,
@@ -118,14 +123,17 @@
     "shorts_autoplay_background": false,
     "shorts_quality_default_mobile": 1080,
     "shorts_quality_default_wifi": 1080,
+    "show_toolbar_settings_button": true,
     "show_watch_later_button": true,
     "splash_screen_style": "morphe_color",
-    "swap_create_with_notifications_button": false,
     "swipe_left_zone": "brightness",
     "swipe_right_zone": "volume",
     "swipe_top_zone": "speed",
+    "theme_color_change_foreground": true,
     "theme_color_dark": "custom",
     "theme_color_dark_custom": "#0F0F0F",
+    "theme_color_light": "custom",
+    "theme_color_light_custom": "#F0F0F0",
     "video_quality_dialog_button": true,
     "vot_caption_language": "ru-RU",
     "vot_enabled": true,
@@ -145,6 +153,7 @@
     "external_downloader_quick_menu": true,
     "external_potoken_provider": true,
     "header_logo": "rlx_red",
+    "music_auto_song_version": true,
     "music_change_miniplayer_color": true,
     "music_enable_audio_video_switch": true,
     "music_enable_forced_miniplayer": true,
@@ -153,7 +162,7 @@
     "music_hide_flyout_menu_pin_to_speed_dial": true,
     "music_hide_flyout_menu_report": true,
     "music_hide_flyout_menu_unpin_from_speed_dial": true,
-    "music_hide_lyrics_translate_button": true,
+    "music_hide_lyrics_translate_button": false,
     "music_lyrics_enabled": false,
     "music_miniplayer_glass": true,
     "music_miniplayer_glass_album_tint": false,
@@ -165,12 +174,20 @@
     "sb_enabled": false,
     "settings_name": "RLX_SETTINGS",
     "settings_search_history": false,
-    "splash_screen_style": "morphe_color"
+    "splash_screen_style": "morphe_color",
+    "theme_color_dark": "custom",
+    "theme_color_dark_custom": "#0F0F0F"
   },
   "replaced": {
     "youtube": {
       "header_logo": [
         "custom"
+      ],
+      "miniplayer_type": [
+        "minimal_bar"
+      ],
+      "ryd_feed_like_ratio": [
+        true
       ],
       "splash_screen_style": [
         "fps_60_one_second"
@@ -182,6 +199,9 @@
     "music": {
       "header_logo": [
         "custom"
+      ],
+      "music_hide_lyrics_translate_button": [
+        true
       ],
       "splash_screen_style": [
         "fps_60_one_second"

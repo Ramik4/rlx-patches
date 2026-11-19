@@ -7,22 +7,16 @@
 
 package app.rlx.extension.shared;
 
-import static app.morphe.extension.shared.StringRef.str;
-
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.preference.Preference;
-import android.util.Pair;
-import android.widget.LinearLayout;
 
 import app.morphe.extension.shared.Logger;
-import app.morphe.extension.shared.Utils;
-import app.morphe.extension.shared.ui.CustomDialog;
+import app.morphe.extension.shared.settings.preference.about.RlxAboutPage;
 
 /**
  * The "About" entry of the settings: shows the RLX version and the Morphe Patches
- * version RLX is based on (GPLv3 section 7b attribution), and opens the RLX about dialog.
+ * version RLX is based on (GPLv3 section 7b attribution), and opens the RLX about page.
  */
 @SuppressWarnings({"unused", "deprecation"})
 public final class RlxAbout {
@@ -51,23 +45,9 @@ public final class RlxAbout {
                     && (activity.isFinishing() || activity.isDestroyed())) {
                 return;
             }
-
-            Pair<Dialog, LinearLayout> dialogPair = CustomDialog.create(
-                    context,
-                    str("rlx_about_title"),                                   // Title.
-                    str("rlx_about_message",
-                            RlxInfo.rlxVersion(), RlxInfo.morpheBaseVersion()), // Message.
-                    null,                                                     // No EditText.
-                    null,                                                     // OK button text (default).
-                    () -> {},                                                 // OK button action.
-                    null,                                                     // No Cancel button.
-                    str("rlx_about_github"),                                  // Neutral button text.
-                    () -> Utils.openLink(RlxInfo.REPOSITORY_URL),             // Neutral button action.
-                    true                                                      // Dismiss on neutral click.
-            );
-            dialogPair.first.show();
+            RlxAboutPage.show(context);
         } catch (Exception ex) {
-            Logger.printException(() -> "Could not show the about dialog", ex);
+            Logger.printException(() -> "Could not show the about page", ex);
         }
     }
 }

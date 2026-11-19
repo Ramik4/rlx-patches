@@ -138,6 +138,7 @@ internal fun rlxCorePatch(
         mutableClassDefBy(INFO_CLASS).methods.apply {
             first { it.name == "rlxVersion" }.returnEarly(RlxBuildInfo.rlxVersion)
             first { it.name == "morpheBaseVersion" }.returnEarly(RlxBuildInfo.morpheBaseVersion)
+            first { it.name == "iconBase64" }.returnEarly(Base64.getEncoder().encodeToString(RlxBuildInfo.iconPng))
         }
 
         // Default settings. Base64 keeps quotes, backslashes and non-ASCII text out of the string constant.
@@ -172,7 +173,7 @@ internal fun rlxCorePatch(
                 "invoke-static/range { p0 .. p0 }, $BRANDING_CLASS->onListPreferenceAttached(Landroid/preference/ListPreference;)V",
             )
 
-        // "About" entry: RLX version, Morphe Patches base version and the RLX about dialog.
+        // "About" entry: RLX version, Morphe Patches base version and the RLX about page.
         mutableClassDefBy(MORPHE_ABOUT_PREFERENCE_CLASS).methods
             .filter { it.name == "<init>" }
             .forEach { constructor ->
