@@ -1,8 +1,10 @@
 <div align="center">
 
+<img src="rlx/branding/images/social-preview.png" alt="RLX Patches" width="640">
+
 # RLX Patches
 
-Morphe patches + VoT + extra features for YouTube and YouTube Music.
+Morphe patches + voice over translation + extra features for YouTube and YouTube Music.
 
 [![Latest release](https://img.shields.io/github/v/release/Ramik4/rlx-patches?label=Release&sort=semver&style=for-the-badge)](https://github.com/Ramik4/rlx-patches/releases/latest)
 
@@ -17,10 +19,14 @@ patch of [Morphe Patches](https://github.com/MorpheApp/morphe-patches), plus:
 
 - **Voice over translation (Yandex)**, built in: a player button that plays a Yandex voice-over
   translation of the video (YouTube). Settings are in *Video → Voice over translation*, next to
-  Morphe's own translation of the captions.
-- **Save to device**, a downloader for videos, audio, thumbnails and subtitles, with a quality
+  Morphe's own voice over translation of the captions.
+- **Save to device**: a downloader for videos, audio, thumbnails and subtitles, with a quality
   picker, a library of the saved videos and an offline player with SponsorBlock (YouTube, off by
   default). Files go to *Download/YouTube*. Settings are in *Downloads*.
+- **Quick download menu** for [YTindir](https://github.com/Ramik4/ytindir) (YouTube and YouTube
+  Music): the download button opens the video's qualities with frame rate, codec and file size,
+  audio only (M4A or MP3) and the thumbnail; *Download* queues the marked one in YTindir, *All
+  options* opens YTindir's download window with all its settings.
 - **RLX branding**: RLX app icons (red, green, layered), header logos, startup animation and app
   names, next to the original YouTube ones.
 - **RLX settings**: the settings in fewer, clearer sections (YouTube): *RLX Customizations* (app
@@ -30,6 +36,7 @@ patch of [Morphe Patches](https://github.com/MorpheApp/morphe-patches), plus:
   still there, with the same keys, so exported settings work in both.
 - **RLX default settings**, applied once, which you can change; *Restore RLX default settings*
   applies them again.
+- No notice on the first start of an app version newer than the recommended one.
 
 RLX is an independent project. It is not affiliated with, or endorsed by, Morphe, Google or
 YouTube.
@@ -46,10 +53,15 @@ YouTube.
 | | |
 | --- | --- |
 | [Morphe](https://github.com/MorpheApp/morphe-patches) | Morphe Patches, which RLX is based on |
-| [ReVanced](https://github.com/ReVanced) | Prior work Morphe Patches are based on |
+| [ReVanced](https://github.com/ReVanced) and [ReVanced Extended](https://github.com/inotia00/revanced-patches) | Prior work Morphe Patches are based on |
+| [MicroG RE](https://github.com/MorpheApp/MicroG-RE) | Google services for the patched apps |
+| [inotia00](https://github.com/inotia00) | Spoof video streams, [PotHelper](https://github.com/MorpheApp/PotHelper) |
+| [MarcaDian](https://github.com/MarcaDian) | Voice over translation |
+| [sashade8](https://github.com/sashade8-ship-it) | Voice over translation (Yandex), [YaVoT](https://github.com/sashade8-ship-it/morphe-patches-yavot) |
+| [lavinhoque33](https://github.com/lavinhoque33) | Save to device |
+| [Ramik4](https://github.com/Ramik4) | RLX Patches development, design and extra features |
 
-The credits of the RLX patches (voice over translation, Save to device) are in
-[rlx/README.md](rlx/README.md#rlx-patches).
+More about the code of the RLX patches is in [rlx/README.md](rlx/README.md#rlx-patches).
 
 ## License
 

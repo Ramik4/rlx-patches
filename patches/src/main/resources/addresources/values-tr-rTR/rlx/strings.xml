@@ -15,7 +15,15 @@ RLX Patches, Morphe Patches'in bağımsız olarak geliştirilen değiştirilmiş
 
 GNU Genel Kamu Lisansı v3.0 ve Morphe Patches NOTICE dosyasındaki GPLv3 7. bölüm ek koşulları ile lisanslanmıştır.
 
-Katkıda bulunanlar: Morphe (Morphe Patches), ReVanced (Morphe Patches'in temel aldığı önceki çalışma)."</string>
+Katkıda bulunanlar:
+• Morphe: Morphe Patches
+• ReVanced ve ReVanced Extended: Morphe Patches'in temel aldığı önceki çalışma
+• MicroG RE: Google hizmetleri
+• inotia00: Video akışlarını taklit et, PotHelper
+• MarcaDian: Seslendirme çevirisi
+• sashade8: Sesli çeviri (Yandex)
+• lavinhoque33: Cihaza kaydet
+• Ramik4: RLX Patches geliştirme, tasarım ve ek özellikler"</string>
     <string name="rlx_about_github">GitHub</string>
     <string name="rlx_reset_defaults_title">RLX varsayılan ayarlarını geri yükle</string>
     <string name="rlx_reset_defaults_summary">"RLX'in değiştirdiği ayarları RLX varsayılanlarına döndürür. Diğer ayarlar korunur"</string>

@@ -24,7 +24,15 @@ RLX Patches is a modified version of Morphe Patches, made independently. It is n
 
 Licensed under the GNU General Public License v3.0, with the additional terms of GPLv3 section 7 in the NOTICE of Morphe Patches.
 
-Credits: Morphe (Morphe Patches), ReVanced (prior work of Morphe Patches)."</string>
+Credits:
+• Morphe: Morphe Patches
+• ReVanced and ReVanced Extended: prior work of Morphe Patches
+• MicroG RE: Google services
+• inotia00: Spoof video streams, PotHelper
+• MarcaDian: Voice over translation
+• sashade8: Voice over translation (Yandex)
+• lavinhoque33: Save to device
+• Ramik4: RLX Patches development, design and extra features"</string>
     <string name="rlx_about_github">GitHub</string>
 
     <!-- Default settings. -->
