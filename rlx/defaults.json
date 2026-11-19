@@ -103,7 +103,6 @@
     "playback_in_feeds": 0,
     "playback_speed_channel_whitelist_flyout_menu": true,
     "playback_speed_dialog_button": true,
-    "queue_add_flyout_menu": false,
     "queue_type": "local",
     "remember_live_stream_position": true,
     "remember_playback_speed_last_selected": true,
