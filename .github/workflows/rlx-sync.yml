@@ -32,7 +32,9 @@ concurrency:
 env:
   MORPHE_REPOSITORY: https://github.com/MorpheApp/morphe-patches.git
   # File times in the bundle in the time of the maintainers, not UTC.
-  TZ: Europe/Istanbul
+  TZ: Asia/Dubai
+  # Every JVM of the build (Gradle, its workers, d8) in the same time zone, so the times in the bundle are too.
+  JAVA_TOOL_OPTIONS: -Duser.timezone=Asia/Dubai
 
 jobs:
   sync:

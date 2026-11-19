@@ -89,6 +89,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | patch option "App icon" with the RLX icons in place of the Morphe icons (`RlxPatchOptions.kt`) |
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | default app name "YouTube RLX" / "YT Music RLX" (`RLX_DEFAULT_APP_NAME_INDEX`) |
 | `patches/.../youtube/layout/branding/CustomBrandingPatch.kt`, `patches/.../music/layout/branding/CustomBrandingPatch.kt` | number of app names (`RLX_APP_NAME_COUNT`) |
+| `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | application label *YouTube Morphe* / *YT Music Morphe* (name 7): the app list of the system settings and the file Morphe Manager saves (`YouTube_Morphe-v21.46.522-RLX_Patches-v2.4.5.apk`); the launcher shows the selected name |
 | `extensions/shared-youtube/.../shared/patches/CustomBrandingPatch.java` | default app name (`RlxBranding.DEFAULT_APP_NAME_INDEX`); no placeholder name "Custom" without a custom name (`RlxBranding.checkAppName`) |
 | `extensions/youtube/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
 | `extensions/music/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
@@ -344,7 +345,9 @@ python3 -m unittest discover -s rlx/scripts
   release and the version is raised by one first. The release notes name the Morphe base version,
   add the notes given when it is started, and list the RLX changes since the last release: the
   titles of the pull requests and the direct commits on `main` (first parents, so without Morphe's
-  history). The first release lists none, its notes are given by hand. The tag and the `.mpp` file are published before `patches-bundle.json` points to
+  history). The first release lists what RLX adds instead ([`first-release.md`](first-release.md)). The
+  notes also name the supported app versions (from the patches list of the build) and how to install.
+  Drafts of earlier runs are deleted, so there is one draft at most. The tag and the `.mpp` file are published before `patches-bundle.json` points to
   them, so Morphe Manager never gets a link to a missing file.
 
 ## Building
@@ -359,8 +362,8 @@ Morphe's Gradle plugin and libraries are on GitHub Packages, which needs a GitHu
 
 Test builds of the Build workflow set `RLX_BUILD` to the run number: the file (and the artifact) is
 `rlx-patches-<version>-build<number>.mpp`, and the About entry reads *RLX Patches <version>-build<number>*.
-The workflows run in the `Europe/Istanbul` time zone, so the file times in the bundle and in the zip of
-the artifact are those of the maintainers. Releases have no build number.
+The workflows run in the `Asia/Dubai` time zone (`TZ`, and `-Duser.timezone` for every JVM of the build),
+so the file times in the bundle and in the zip of the artifact are those of the maintainers. Releases have no build number.
 
 ```sh
 RLX_BUILD=1 ./gradlew :patches:buildAndroid    # patches/build/libs/rlx-patches-<version>-build1.mpp
