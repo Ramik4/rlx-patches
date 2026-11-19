@@ -158,9 +158,12 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
   built like Morphe's about page and with its page style (`AboutDialogStyle`, which is not public, so
   `RlxAboutPage` is an RLX file in Morphe's `...settings.preference.about` package): the RLX Patches
   icon (`patches-bundle.png`, bundled as `app/rlx/icon.png` and written into `RlxInfo.iconBase64()`
-  while patching), the version (with a *Test build* badge for test builds), whether a newer RLX release
-  is out (GitHub API, once per app start; the update button opens Morphe Manager), links (GitHub,
-  YTindir, Morphe Patches, Morphe, Morphe's contributors), the credits and the license notice.
+  while patching) and name, the version and the Morphe base version (with a *Test build* badge for test
+  builds), whether a newer RLX release is out (GitHub API, once per app start; the update button opens
+  Morphe Manager), links (RLX Patches, YTindir, Morphe Patches, Morphe, Morphe's contributors), the
+  credits and the license notice. A tap on the version shows the notes of the latest release (its
+  Markdown as HTML). The page is HTML written in `RlxAboutPage`, shown in a WebView with Morphe's
+  stylesheet; nothing but the latest release is loaded from the network.
 - **Default settings**: every change RLX makes to Morphe's default settings is in
   [`defaults.json`](defaults.json), one section per app, with the keys of the Morphe settings
   export. Each default is applied once, on the first start of a build that has it, and only if

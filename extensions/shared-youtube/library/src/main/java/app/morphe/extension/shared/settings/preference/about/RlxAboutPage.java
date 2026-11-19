@@ -10,7 +10,11 @@ package app.morphe.extension.shared.settings.preference.about;
 import static app.morphe.extension.shared.StringRef.str;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.annotation.Nullable;
 
@@ -21,6 +25,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import app.morphe.extension.shared.Logger;
 import app.morphe.extension.shared.Utils;
@@ -29,7 +35,10 @@ import app.rlx.extension.shared.RlxInfo;
 /**
  * The RLX about page, in the style of the Morphe about page: the RLX Patches icon, version and
  * Morphe Patches base version (GPLv3 section 7b), whether a newer RLX release is out, links and
- * credits.
+ * credits. A tap on the version shows the notes of the latest release.
+ * <p>
+ * The page is HTML written here and shown in a WebView with Morphe's page style
+ * ({@link AboutStylesheet}); only the latest release is fetched (GitHub API).
  * <p>
  * RLX code in the package of the Morphe about page, so it can use its page style, which is not public.
  */
@@ -43,6 +52,8 @@ public final class RlxAboutPage {
     private static final String YTINDIR_URL = "https://github.com/Ramik4/ytindir";
     private static final String MORPHE_PATCHES_URL = "https://github.com/MorpheApp/morphe-patches";
     private static final String MORPHE_WEBSITE_URL = "https://morphe.software";
+    // Dummy url. Tapping the version shows the release notes rather than a page.
+    private static final String NOTES_LINK_PLACEHOLDER_URL = "https://rlx.patches/release-notes/";
 
     /**
      * Name, role (string key, or the text itself if it is not a key) and page of each credit.
@@ -63,6 +74,13 @@ public final class RlxAboutPage {
      */
     @Nullable
     private static volatile String latestVersion;
+    /**
+     * Notes of the latest release (Markdown) and when it was published (yyyy-mm-dd), once fetched.
+     */
+    @Nullable
+    private static volatile String latestNotes;
+    @Nullable
+    private static volatile String latestDate;
     private static volatile boolean latestVersionFetched;
 
     private RlxAboutPage() {
@@ -81,7 +99,7 @@ public final class RlxAboutPage {
                     return;
                 }
                 try {
-                    new AboutWebViewDialog(context, html, false).show();
+                    new RlxDialog(context, html).show();
                 } catch (Exception ex) {
                     Logger.printException(() -> "Could not show the RLX about page", ex);
                 }
@@ -98,7 +116,11 @@ public final class RlxAboutPage {
             connection.setRequestProperty("Accept", "application/vnd.github+json");
             try {
                 if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    String tag = new JSONObject(read(connection.getInputStream())).getString("tag_name");
+                    JSONObject release = new JSONObject(read(connection.getInputStream()));
+                    String tag = release.getString("tag_name");
+                    latestNotes = release.optString("body", "").trim();
+                    final String published = release.optString("published_at", "");
+                    latestDate = published.length() >= 10 ? published.substring(0, 10) : null;
                     latestVersion = tag.startsWith("v") ? tag.substring(1) : tag;
                 }
                 // Any answer counts, so a missing release is not asked for again on every tap.
@@ -171,26 +193,37 @@ public final class RlxAboutPage {
         StringBuilder html = new StringBuilder(AboutDialogStyle.documentStart(context))
                 .append(AboutDialogStyle.pageStart(true));
 
-        // Icon of RLX Patches (the icon of the source in Morphe Manager), name, and the Morphe base.
+        // Icon and name of RLX Patches (the icon of the source in Morphe Manager).
         html.append("<div class=\"dialog-header\"><div class=\"about-header\">")
                 .append("<div class=\"app-logo\" style=\"padding:0;background:none;overflow:hidden\">")
                 .append("<img alt=\"\" style=\"display:block;width:100%;height:100%\" src=\"data:image/png;base64,")
                 .append(RlxInfo.iconBase64()).append("\"/></div>")
-                .append("<div><div class=\"app-name\">RLX Patches</div><div class=\"app-component\">")
-                .append(nonBreaking(str("rlx_about_component",
-                        AboutDialogStyle.isolateLtr(RlxInfo.morpheBaseVersion()))))
-                .append("</div></div></div>");
+                .append("<div class=\"app-name\">RLX Patches</div></div>");
 
-        // Version, and whether a newer release is out (nothing while that is not known).
-        html.append("<div class=\"version-card\"><div class=\"version-label-row\"><span class=\"version-label\">")
+        // Version, the Morphe base, and whether a newer release is out (nothing while that is not known).
+        // A tap shows the notes of the latest release, if there are any.
+        final String latest = latestVersion;
+        final String notes = latestNotes;
+        final boolean hasNotes = latest != null && notes != null && !notes.isEmpty();
+        html.append("<div class=\"version-card\"");
+        if (hasNotes) {
+            html.append(" style=\"cursor:pointer\" onclick=\"location.href='")
+                    .append(NOTES_LINK_PLACEHOLDER_URL).append("'\"");
+        }
+        html.append("><div class=\"version-label-row\"><span class=\"version-label\">")
                 .append(str("morphe_settings_about_version")).append("</span>");
         if (testBuild) {
             html.append("<span class=\"badge\">").append(str("rlx_about_test_build")).append("</span>");
+        } else if (hasNotes) {
+            html.append(AboutDialogStyle.chevron());
         }
-        html.append("</div><div class=\"version\">")
-                .append(nonBreaking(AboutDialogStyle.isolateLtr(version))).append("</div>");
+        html.append("</div><div class=\"version\" style=\"font-size:20px;line-height:26px;margin-top:4px\">")
+                .append(nonBreaking(AboutDialogStyle.isolateLtr(version))).append("</div>")
+                .append("<div class=\"version-hint\" style=\"margin-top:2px\">")
+                .append(nonBreaking(str("rlx_about_component",
+                        AboutDialogStyle.isolateLtr(RlxInfo.morpheBaseVersion()))))
+                .append("</div>");
 
-        final String latest = latestVersion;
         if (latest != null) {
             final int comparison = compareVersions(latest, release);
             if (comparison == 0) {
@@ -204,7 +237,8 @@ public final class RlxAboutPage {
                         .append("<div class=\"version-hint\">")
                         .append(str("morphe_settings_about_update_hint"))
                         .append("</div></div><a href=\"").append(MorpheAboutPreference.MANAGER_LINK_PLACEHOLDER_URL)
-                        .append("\" class=\"update-button\">")
+                        // The card opens the notes; the button only opens Morphe Manager.
+                        .append("\" onclick=\"event.stopPropagation()\" class=\"update-button\">")
                         .append(str("morphe_patches_update_notice_dialog_update"))
                         .append("</a></div>");
             }
@@ -214,7 +248,7 @@ public final class RlxAboutPage {
         // Links.
         html.append("<div class=\"section\"><div class=\"group-label\">")
                 .append(str("rlx_about_links")).append("</div><div class=\"tiles\">");
-        appendTile(html, RlxInfo.REPOSITORY_URL, "GitHub", AboutDialogStyle.linkIcon(RlxInfo.REPOSITORY_URL), false);
+        appendTile(html, RlxInfo.REPOSITORY_URL, "RLX Patches", AboutDialogStyle.linkIcon(RlxInfo.REPOSITORY_URL), false);
         appendTile(html, YTINDIR_URL, "YTindir", AboutDialogStyle.linkIcon(YTINDIR_URL), false);
         appendTile(html, MORPHE_PATCHES_URL, "Morphe Patches", AboutDialogStyle.linkIcon(MORPHE_PATCHES_URL), false);
         appendTile(html, MORPHE_WEBSITE_URL, "Morphe", AboutDialogStyle.linkIcon(MORPHE_WEBSITE_URL), false);
@@ -244,5 +278,112 @@ public final class RlxAboutPage {
         html.append(AboutDialogStyle.pageEnd(str("morphe_settings_about_close"), null))
                 .append(AboutDialogStyle.DOCUMENT_END);
         return html.toString();
+    }
+
+    /**
+     * @return The page of the notes of the latest release.
+     */
+    private static String createNotesHtml(Context context) {
+        StringBuilder html = new StringBuilder(AboutDialogStyle.documentStart(context))
+                .append(AboutDialogStyle.pageStart(false))
+                .append("<div class=\"dialog-header\"><div class=\"dialog-title\">RLX Patches ")
+                .append(nonBreaking(AboutDialogStyle.isolateLtr(String.valueOf(latestVersion))))
+                .append("</div>");
+        final String date = latestDate;
+        if (date != null) {
+            html.append("<div class=\"dialog-subtitle\">").append(AboutDialogStyle.isolateLtr(date)).append("</div>");
+        }
+        html.append("</div><div class=\"section license-body\" style=\"padding-top:0;line-height:1.5\">")
+                .append(markdownToHtml(String.valueOf(latestNotes)))
+                .append("</div>")
+                .append(AboutDialogStyle.pageEnd(str("morphe_settings_about_close"), null))
+                .append(AboutDialogStyle.DOCUMENT_END);
+        return html.toString();
+    }
+
+    private static final Pattern MARKDOWN_LINK = Pattern.compile("\\[([^\\]]+)\\]\\((https?://[^)\\s]+)\\)");
+    private static final Pattern BARE_URL = Pattern.compile("(?<![\"'>=])(https?://[^\\s<]+)");
+    private static final Pattern BOLD = Pattern.compile("\\*\\*(.+?)\\*\\*");
+    private static final Pattern CODE = Pattern.compile("`([^`]+)`");
+
+    /**
+     * The Markdown of release notes as HTML: headings, lists, paragraphs, links, bold and code.
+     */
+    static String markdownToHtml(String markdown) {
+        StringBuilder html = new StringBuilder();
+        boolean inList = false;
+        StringBuilder paragraph = new StringBuilder();
+        for (String raw : markdown.replace("\r", "").split("\n")) {
+            final String line = raw.trim();
+            final boolean item = line.startsWith("- ") || line.startsWith("* ");
+            if (line.isEmpty() || item || line.startsWith("#")) {
+                if (paragraph.length() > 0) {
+                    html.append("<p>").append(paragraph).append("</p>");
+                    paragraph.setLength(0);
+                }
+                if (!item && inList) {
+                    html.append("</ul>");
+                    inList = false;
+                }
+            }
+            if (line.isEmpty()) continue;
+            if (line.startsWith("#")) {
+                html.append("<h2>").append(inline(line.replaceFirst("^#+\\s*", ""))).append("</h2>");
+            } else if (item) {
+                if (!inList) {
+                    html.append("<ul style=\"padding-inline-start:20px;margin:8px 0\">");
+                    inList = true;
+                }
+                html.append("<li style=\"margin:4px 0\">").append(inline(line.substring(2))).append("</li>");
+            } else {
+                if (paragraph.length() > 0) paragraph.append(' ');
+                paragraph.append(inline(line));
+            }
+        }
+        if (paragraph.length() > 0) html.append("<p>").append(paragraph).append("</p>");
+        if (inList) html.append("</ul>");
+        return html.toString();
+    }
+
+    private static String inline(String text) {
+        String html = AboutDialogStyle.escapeHtml(text);
+        html = CODE.matcher(html).replaceAll("<code>$1</code>");
+        html = BOLD.matcher(html).replaceAll("<b>$1</b>");
+        Matcher link = MARKDOWN_LINK.matcher(html);
+        StringBuffer out = new StringBuffer();
+        while (link.find()) {
+            link.appendReplacement(out, Matcher.quoteReplacement(
+                    "<a href=\"" + link.group(2) + "\">" + link.group(1) + "</a>"));
+        }
+        link.appendTail(out);
+        return BARE_URL.matcher(out.toString()).replaceAll("<a href=\"$1\">$1</a>");
+    }
+
+    /**
+     * The about page, which also opens the release notes over itself.
+     */
+    private static final class RlxDialog extends AboutWebViewDialog {
+        RlxDialog(Context context, String html) {
+            super(context, html, false);
+        }
+
+        @Override
+        protected WebViewClient createWebViewClient() {
+            final Dialog dialog = this;
+            return new AboutLinksWebClient(getContext(), dialog) {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                    if (NOTES_LINK_PLACEHOLDER_URL.equals(request.getUrl().toString())) {
+                        try {
+                            new AboutWebViewDialog(dialog.getContext(), createNotesHtml(dialog.getContext()), false).show();
+                        } catch (Exception ex) {
+                            Logger.printException(() -> "Could not show the release notes", ex);
+                        }
+                        return true;
+                    }
+                    return super.shouldOverrideUrlLoading(view, request);
+                }
+            };
+        }
     }
 }
