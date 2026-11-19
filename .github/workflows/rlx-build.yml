@@ -92,6 +92,16 @@ jobs:
             || { echo "::error::Missing in the YouTube extension: Save to device"; exit 1; }
           contains "$RUNNER_TEMP/youtube.mpe" "Lapp/rlx/extension/youtube/savetodevice/SaveToDeviceResponse" \
             || { echo "::error::Missing in the YouTube extension: Save to device protobuf"; exit 1; }
+          # Quick download menu (YTindir): shared-youtube code, in the extensions of both apps, and its strings.
+          unzip -p "$mpp" extensions/music.mpe > "$RUNNER_TEMP/music.mpe"
+          for ext in youtube music; do
+            contains "$RUNNER_TEMP/$ext.mpe" "Lapp/rlx/extension/shared/downloads/QuickDownloadMenu;" \
+              || { echo "::error::Missing in the $ext extension: quick download menu"; exit 1; }
+          done
+          unzip -p "$mpp" addresources/values/rlx/strings.xml | grep -q 'morphe_external_downloader_quick_download' \
+            || { echo "::error::Missing in the bundle: strings of the quick download menu"; exit 1; }
+          unzip -p "$mpp" addresources/values/rlx-music/strings.xml | grep -q 'morphe_external_downloader_quick_menu_title' \
+            || { echo "::error::Missing in the bundle: YouTube Music strings of the quick download menu"; exit 1; }
           unzip -p "$mpp" app/rlx/build.properties
 
       - name: Upload patches

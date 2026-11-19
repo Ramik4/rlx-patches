@@ -18,6 +18,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
+import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
@@ -33,12 +34,14 @@ import app.morphe.extension.shared.settings.preference.ExternalDownloaderPrefere
 import app.morphe.extension.shared.theme.ThemeUtils;
 import app.morphe.extension.shared.ui.Dim;
 import app.morphe.extension.shared.ui.SheetBottomDialog;
+import app.morphe.extension.youtube.patches.InAppDownloadsPatch;
 import app.morphe.extension.youtube.patches.VideoInformation;
 import app.morphe.extension.youtube.patches.utils.requests.MarkWatchedRequest;
 import app.morphe.extension.youtube.settings.Settings;
 import app.morphe.extension.youtube.shared.PipDismissHelper;
 import app.morphe.extension.youtube.shared.PlayerType;
 import app.morphe.extension.youtube.videoplayer.LegacyPlayerControlButton.ButtonVisibility;
+import app.rlx.extension.shared.downloads.QuickDownloadMenu; // RLX: quick download menu
 
 @SuppressWarnings("unused")
 public class ExternalDownloadButton {
@@ -90,8 +93,18 @@ public class ExternalDownloadButton {
      */
     public static void launchDownloader(@Nullable Context context, String videoId,
                                         @Nullable String quickDownloadType) {
+        launchDownloader(context, videoId, quickDownloadType, null);
+    }
+
+    /**
+     * RLX: with the extras of the quick download menu.
+     *
+     * @param quickExtras See {@link ExternalDownloaderPreference#launchExternalDownloader(String, Context, String, String, Bundle)}.
+     */
+    private static void launchDownloader(@Nullable Context context, String videoId,
+                                         @Nullable String quickDownloadType, @Nullable Bundle quickExtras) {
         if (ExternalDownloaderPreference.launchExternalDownloader(
-                videoId, context, "https://youtu.be/" + videoId, quickDownloadType)
+                videoId, context, "https://youtu.be/" + videoId, quickDownloadType, quickExtras)
                 && Settings.EXTERNAL_DOWNLOADER_MARK_WATCHED.get()
                 && (PlayerType.getCurrent().isNoneOrHidden() || !videoId.equals(VideoInformation.getVideoId()))) {
             MarkWatchedRequest.markWatched(videoId);
@@ -135,6 +148,11 @@ public class ExternalDownloadButton {
      *                while the menu is open, and feed menus are not for the playing video.
      */
     public static void showQuickDownloadMenu(Context context, String videoId) {
+        // RLX: the menu with qualities and file sizes for downloaders that apply the quality (YTindir).
+        if (ExternalDownloaderPreference.supportsQuickDownloadQuality()) {
+            showQualityMenu(context, videoId);
+            return;
+        }
         try {
             final boolean showQuality = ExternalDownloaderPreference.supportsQuickDownloadQuality();
             final int foregroundColor = ThemeUtils.getAppForegroundColor();
@@ -191,6 +209,25 @@ public class ExternalDownloadButton {
             dialog.show();
         } catch (Exception ex) {
             Logger.printException(() -> "showQuickDownloadMenu failure", ex);
+        }
+    }
+
+    /**
+     * RLX: the quick download menu with qualities and file sizes,
+     * for downloaders that apply the requested quality (YTindir).
+     */
+    private static void showQualityMenu(Context context, String videoId) {
+        try {
+            SheetBottomDialog.SlideDialog dialog = QuickDownloadMenu.create(context, videoId,
+                    LegacyPlayerControlButton.getDialogBackgroundColor(),
+                    LegacyPlayerControlButton.fadeInDuration,
+                    InAppDownloadsPatch.DOWNLOAD_CLIENTS, InAppDownloadsPatch.DOWNLOAD_CLIENTS.get(0),
+                    QuickDownloadMenu.Choice.RECOMMENDED_VIDEO,
+                    (type, extras) -> launchDownloader(context, videoId, type, extras));
+            PipDismissHelper.dismissOnPip(dialog);
+            dialog.show();
+        } catch (Exception ex) {
+            Logger.printException(() -> "showQualityMenu failure", ex);
         }
     }
 

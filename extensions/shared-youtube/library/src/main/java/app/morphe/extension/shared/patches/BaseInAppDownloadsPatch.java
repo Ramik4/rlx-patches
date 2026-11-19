@@ -75,7 +75,8 @@ public class BaseInAppDownloadsPatch {
      * Clients that answer with stream urls, which the app can save.
      * The visionOS streams need no JavaScript challenge, whose unsolved streams the server sends slowly.
      */
-    protected static final List<ClientType> DOWNLOAD_CLIENTS = List.of(
+    // RLX: public for the quick download menu.
+    public static final List<ClientType> DOWNLOAD_CLIENTS = List.of(
             ClientType.VISIONOS_1_03,
             ClientType.VISIONOS_1_02,
             ClientType.ANDROID_VR_DASH,

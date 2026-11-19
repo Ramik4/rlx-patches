@@ -294,4 +294,14 @@ Seçilen altyazılar %3$s klasörüne kaydedilir"</string>
     <string name="rlx_branding_header_default_original">Varsayılan (Orijinal)</string>
     <string name="morphe_settings_name_entry_5">RLX Ayarları</string>
     <string name="morphe_settings_name_entry_6">Morphe Ayarları</string>
+    <string name="morphe_external_downloader_quick_best_quality">En iyi kalite</string>
+    <string name="morphe_external_downloader_quick_better_quality">Daha iyi kalite</string>
+    <string name="morphe_external_downloader_quick_recommended">Önerilen</string>
+    <string name="morphe_external_downloader_quick_smaller_file">Daha küçük dosya</string>
+    <string name="morphe_external_downloader_quick_source_audio">Kaynak ses</string>
+    <string name="morphe_external_downloader_quick_thumbnail">Küçük resim</string>
+    <string name="morphe_external_downloader_quick_thumbnail_summary">Orijinal boyut</string>
+    <string name="morphe_external_downloader_quick_quality">İndirme kalitesi</string>
+    <string name="morphe_external_downloader_quick_audio_only">Yalnızca ses</string>
+    <string name="morphe_external_downloader_quick_download">İndir</string>
 </resources>

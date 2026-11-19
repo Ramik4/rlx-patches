@@ -335,4 +335,15 @@ Subtitles, if chosen, are saved to %3$s"</string>
     <string name="morphe_settings_name_entry_6">Morphe Settings</string>
     <string name="morphe_settings_name_entry_7" translatable="false">Extended</string>
     <string name="morphe_settings_name_entry_8" translatable="false">RLX</string>
+    <!-- Quick download menu with qualities and file sizes (YouTube, YouTube Music). -->
+    <string name="morphe_external_downloader_quick_best_quality">Best quality</string>
+    <string name="morphe_external_downloader_quick_better_quality">Better quality</string>
+    <string name="morphe_external_downloader_quick_recommended">Recommended</string>
+    <string name="morphe_external_downloader_quick_smaller_file">Smaller file</string>
+    <string name="morphe_external_downloader_quick_source_audio">Source audio</string>
+    <string name="morphe_external_downloader_quick_thumbnail">Thumbnail</string>
+    <string name="morphe_external_downloader_quick_thumbnail_summary">Original size</string>
+    <string name="morphe_external_downloader_quick_quality">Download quality</string>
+    <string name="morphe_external_downloader_quick_audio_only">Audio only</string>
+    <string name="morphe_external_downloader_quick_download">Download</string>
 </resources>

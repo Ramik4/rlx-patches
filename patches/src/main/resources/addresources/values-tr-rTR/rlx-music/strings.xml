@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="morphe_external_downloader_quick_menu_title">Hızlı indirme menüsü</string>
+    <string name="morphe_external_downloader_quick_menu_summary">İndirmeden önce kaliteleri ve dosya boyutlarını gösterir. YTindir ile çalışır</string>
+    <string name="morphe_external_downloader_quick_menu_header">Hızlı indir</string>
+    <string name="morphe_external_downloader_quick_options">Tüm seçenekler</string>
+</resources>

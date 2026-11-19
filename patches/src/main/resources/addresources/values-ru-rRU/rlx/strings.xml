@@ -298,4 +298,14 @@ RLX Patches — независимо созданная изменённая в�
     <string name="rlx_branding_header_default_original">По умолчанию (оригинал)</string>
     <string name="morphe_settings_name_entry_5">Настройки RLX</string>
     <string name="morphe_settings_name_entry_6">Настройки Morphe</string>
+    <string name="morphe_external_downloader_quick_best_quality">Лучшее качество</string>
+    <string name="morphe_external_downloader_quick_better_quality">Высокое качество</string>
+    <string name="morphe_external_downloader_quick_recommended">Рекомендуется</string>
+    <string name="morphe_external_downloader_quick_smaller_file">Меньший размер</string>
+    <string name="morphe_external_downloader_quick_source_audio">Исходный звук</string>
+    <string name="morphe_external_downloader_quick_thumbnail">Обложка</string>
+    <string name="morphe_external_downloader_quick_thumbnail_summary">Исходный размер</string>
+    <string name="morphe_external_downloader_quick_quality">Качество загрузки</string>
+    <string name="morphe_external_downloader_quick_audio_only">Только аудио</string>
+    <string name="morphe_external_downloader_quick_download">Скачать</string>
 </resources>

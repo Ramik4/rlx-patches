@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import app.morphe.extension.music.patches.components.PlaylistPageFilter;
 import app.morphe.extension.music.patches.components.SongMenuFilter;
+import app.morphe.extension.music.patches.spoof.SpoofVideoStreamsPatch;
 import app.morphe.extension.music.settings.Settings;
 import app.morphe.extension.music.shared.VideoInformation;
 import app.morphe.extension.shared.Logger;
@@ -41,6 +42,7 @@ import app.morphe.extension.shared.patches.DownloadMode;
 import app.morphe.extension.shared.patches.components.ByteArrayFilterGroup;
 import app.morphe.extension.shared.patches.components.ContextInterface;
 import app.morphe.extension.shared.settings.preference.ExternalDownloaderPreference;
+import app.rlx.extension.shared.downloads.QuickDownloadMenu; // RLX: quick download menu
 
 @SuppressWarnings("unused")
 public final class DownloadsPatch extends BaseInAppDownloadsPatch {
@@ -55,6 +57,10 @@ public final class DownloadsPatch extends BaseInAppDownloadsPatch {
     private static final byte[] EMPTY_COMMAND = new byte[0];
 
     private static volatile String downloadButtonLabel = "";
+
+    // RLX: quick download menu with qualities and file sizes (QuickDownloadMenu).
+    private static final int QUICK_DOWNLOAD_MENU_DARK_COLOR = 0xFF212121;
+    private static final int QUICK_DOWNLOAD_MENU_ANIMATION_DURATION = 200;
 
     /**
      * Fields of the encoded parameters of the offline upsell. The parameters of a song hold its video ID,
@@ -374,14 +380,48 @@ public final class DownloadsPatch extends BaseInAppDownloadsPatch {
     @Nullable
     private static byte[] videoDownload(String videoId, boolean externalDownloader) {
         if (externalDownloader) {
-            Utils.runOnMainThreadNowOrLater(() -> ExternalDownloaderPreference.launchExternalDownloader(
-                    videoId, Utils.getActivity(), "https://music.youtube.com/watch?v=" + videoId));
+            Utils.runOnMainThreadNowOrLater(() -> launchVideoDownloader(videoId)); // RLX
             return EMPTY_COMMAND;
         }
         if (isInAppDownloadMode()) {
             return saveVideoCommand(videoId, List.of()).toByteArray();
         }
         return null;
+    }
+
+    /**
+     * RLX: opens the external downloader for a song, or the quick download menu if it is on.
+     */
+    private static void launchVideoDownloader(String videoId) {
+        Activity activity = Utils.getActivity();
+        String url = "https://music.youtube.com/watch?v=" + videoId;
+        if (activity != null && Settings.EXTERNAL_DOWNLOADER_QUICK_MENU.get()
+                && ExternalDownloaderPreference.supportsQuickDownloadQuality()) {
+            showQuickDownloadMenu(activity, videoId, url);
+            return;
+        }
+
+        ExternalDownloaderPreference.launchExternalDownloader(videoId, activity, url);
+    }
+
+    /**
+     * The quick download menu with qualities and file sizes, the MP3 marked.
+     */
+    private static void showQuickDownloadMenu(Activity activity, String videoId, String url) {
+        try {
+            QuickDownloadMenu.create(activity, videoId,
+                    // The app draws its sheets lighter than its background.
+                    Utils.isDarkModeEnabled() ? QUICK_DOWNLOAD_MENU_DARK_COLOR : null,
+                    QUICK_DOWNLOAD_MENU_ANIMATION_DURATION,
+                    SpoofVideoStreamsPatch.getAvailableClients(),
+                    Settings.SPOOF_VIDEO_STREAMS_CLIENT_TYPE.get(),
+                    QuickDownloadMenu.Choice.MP3,
+                    (type, extras) -> ExternalDownloaderPreference.launchExternalDownloader(
+                            videoId, activity, url, type, extras)
+            ).show();
+        } catch (Exception ex) {
+            Logger.printException(() -> "showQuickDownloadMenu failure", ex);
+        }
     }
 
     /**
