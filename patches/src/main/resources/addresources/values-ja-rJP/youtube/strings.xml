@@ -122,7 +122,7 @@ Second \"item\" text"</string>
   <string name="morphe_hide_upload_time_title">公開からの経過時間 / 予定時間を非表示</string>
   <!-- Translations should match the language used in 'morphe_hide_view_count_summary'. -->
   <string name="morphe_hide_upload_time_summary">"制限事項:
-• ショート欄、チャンネル ページ、検索結果では、引き続き公開からの経過時間 / 予定時間が表示される場合がある
+• ショート欄では、引き続き公開からの経過時間 / 予定時間が表示される場合がある
 • Automotive レイアウトでは動作しない"</string>
   <string name="morphe_hide_video_thumbnail_title">動画のサムネイルを非表示</string>
   <!-- 'Auto-dubbed', 'Earns commission', 'Hyped', 'People also watched' and 'You might also like' should be translated using the same localized wording YouTube displays for the label. -->
@@ -131,7 +131,7 @@ Second \"item\" text"</string>
   <string name="morphe_hide_view_count_title">視聴回数を非表示</string>
   <!-- Translations should match the language used in 'morphe_hide_upload_time_summary'. -->
   <string name="morphe_hide_view_count_summary">"制限事項:
-• ショート欄、チャンネル ページ、検索結果では、引き続き視聴回数が表示される場合がある
+• ショート欄では、引き続き視聴回数が表示される場合がある
 • Automotive レイアウトでは動作しない"</string>
   <string name="morphe_hide_web_search_results_title">ウェブ検索結果を非表示</string>
   <string name="morphe_hide_web_search_results_summary">検索結果の「ウェブの検索結果」セクションを非表示にします</string>
@@ -291,9 +291,10 @@ AI について扱っているだけのチャンネルや、動画の一部に A
   <string name="morphe_hide_autoplay_preview_summary">全画面表示モードで終了画面に表示される、「次の動画」のプレビューを非表示にします</string>
   <string name="morphe_hide_channel_bar_title">チャンネルバーを非表示</string>
   <string name="morphe_hide_channel_watermark_title">チャンネルの透かしを非表示</string>
-  <string name="morphe_hide_chapters_timeline_button_title">チャプター ボタン /「この動画内」ボタンを非表示</string>
+  <string name="morphe_hide_chapters_button_title">チャプターボタンを非表示</string>
   <string name="morphe_hide_crowdfunding_box_title">クラウドファンディング欄を非表示</string>
   <string name="morphe_hide_emergency_box_title">緊急ボックスを非表示</string>
+  <string name="morphe_hide_in_this_video_button_title">「この動画の内容」ボタンを非表示</string>
   <string name="morphe_hide_info_panels_title">情報パネルを非表示</string>
   <string name="morphe_hide_info_panels_summary">医療情報などに関する補足情報が表示されるパネルを非表示にします</string>
   <!-- 'Join' should be translated using the same localized wording YouTube displays for the button.
@@ -608,6 +609,9 @@ AI について扱っているだけのチャンネルや、動画の一部に A
   <string name="morphe_feed_long_press_menu_summary">フィードの動画をどこでもよいので長押しすると、フライアウト メニューを開きます</string>
   <string name="morphe_feed_watch_later_button_title">サムネイルに「後で見る」ボタンを表示</string>
   <string name="morphe_feed_watch_later_button_summary">フィード動画のサムネイルに「後で見る」ボタンが表示され、保存済みの場合はチェックマークが表示されます。タップすると動画を保存または削除し、長押しすると「プレイリストに保存」が開きます</string>
+  <!-- interaction.postimages.openPostImagesFullscreenPatch -->
+  <string name="morphe_open_post_images_fullscreen_title">投稿画像をフルスクリーンで開く</string>
+  <string name="morphe_open_post_images_fullscreen_summary">投稿の画像をタップすると、フィードではなくフルスクリーンで開かれます</string>
   <!-- interaction.postimages.postImageDownloadPatch -->
   <string name="morphe_post_image_download_title">投稿の画像をダウンロード</string>
   <string name="morphe_post_image_download_summary">画像または GIF 画像を含む投稿の共有ボタンの隣に、表示中の画像をダウンロードするボタンを表示します。同様の投稿のフライアウト メニューに、投稿内のすべての画像をダウンロードするための項目を追加します</string>
@@ -993,6 +997,7 @@ APIキーは決して共有しないでください。アクセス権を持つ�
   <string name="morphe_swipe_press_to_engage_title">長押しスワイプ ジェスチャーを有効化</string>
   <string name="morphe_swipe_press_to_engage_summary">スワイプ ジェスチャーを、「画面をスワイプ」から「画面を長押ししてからスワイプ」に変更します</string>
   <string name="morphe_swipe_haptic_feedback_title">触覚フィードバックを有効化</string>
+  <string name="morphe_swipe_haptic_feedback_summary">長押ししてスワイプジェスチャを開始したときに振動します</string>
   <string name="morphe_swipe_save_and_restore_brightness_title">明るさを保存 &amp; 復元</string>
   <string name="morphe_swipe_save_and_restore_brightness_summary">全画面表示を終了 / 開始するときに明るさを保存 / 復元します</string>
   <string name="morphe_swipe_lowest_value_enable_auto_brightness_title">明るさジェスチャーの自動調節を有効化</string>
@@ -1084,8 +1089,6 @@ APIキーは決して共有しないでください。アクセス権を持つ�
   <string name="morphe_caption_block_translation_failed">一部の字幕翻訳を利用できません。利用可能な字幕を表示しています。</string>
   <string name="morphe_caption_blocks_too_large">両方の字幕言語はこのプレーヤーに収まりません。メイン言語を表示しています。</string>
   <!-- layout.buttons.navigation.navigationBarPatch -->
-  <string name="morphe_navigation_bar_screen_title">ナビゲーションバー</string>
-  <string name="morphe_navigation_bar_screen_summary">画面最下部のバーであるナビゲーション バーに表示するボタンを設定します</string>
   <!-- 'Home' should be translated using the same localized wording YouTube displays for the tab. -->
   <string name="morphe_hide_home_button_title">ホームボタンを非表示</string>
   <!-- 'Shorts' should be translated using the same localized wording YouTube displays for the tab. -->
@@ -1103,11 +1106,11 @@ APIキーは決して共有しないでください。アクセス権を持つ�
   <string name="morphe_watch_later_navigation_label">後で見る</string>
   <string name="morphe_show_settings_button_title">設定ボタンを表示</string>
   <string name="morphe_show_settings_button_type_title">設定ボタンの動作</string>
-  <string name="morphe_show_settings_button_type_summary">オンの場合は Morphe の設定を、オフの場合は YouTube の設定を開きます</string>
+  <string name="morphe_show_settings_button_type_summary">この設定がオンの場合、タップすると Morphe の設定を、長押しすると YouTube の設定を開きます。オフの場合は動作が入れ替わります</string>
   <string name="morphe_navigation_buttons_order_title">ナビゲーション ボタンの順序</string>
   <string name="morphe_navigation_buttons_order_summary">ボタンをドラッグして、ナビゲーション バー内の順序を変更します</string>
   <string name="morphe_swap_create_with_notifications_button_title">作成ボタンと通知ボタンを入れ替える</string>
-  <string name="morphe_swap_create_with_notifications_button_summary">この設定を変更しても反映されない場合は、シークレット モードへの切り替えをお試しください</string>
+  <string name="morphe_swap_create_with_notifications_button_summary">通知ボタンをナビゲーションバーに、作成ボタンをツールバーに移動します。変更が反映されない場合は、シークレットモードへの切り替えをお試しください</string>
   <string name="morphe_hide_navigation_button_labels_title">ボタンをアイコンのみで表示</string>
   <string name="morphe_hide_navigation_new_content_dot_title">通知ドットを非表示</string>
   <string name="morphe_hide_navigation_bar_title">ナビゲーション バーを非表示</string>
@@ -1136,14 +1139,16 @@ APIキーは決して共有しないでください。アクセス権を持つ�
   <string name="morphe_navigation_bar_glass_opacity_summary">ガラス風ナビゲーション バーの透明度を設定します (0 は透明、100 は不透明)</string>
   <string name="morphe_navigation_bar_glass_round_title">ラウンド ガラス ナビゲーション バー</string>
   <string name="morphe_navigation_bar_glass_round_summary">ガラス ミニプレイヤーのような角ではなく、ガラス ナビゲーション バーの両端を丸くします</string>
+  <string name="morphe_navigation_bar_glass_edge_title">グラスナビゲーションバーのエッジ</string>
+  <string name="morphe_navigation_bar_glass_edge_summary">グラスナビゲーションバーの周囲に光のエッジを描画します</string>
+  <string name="morphe_navigation_bar_glass_bottom_margin_title">グラスナビゲーションバーの下部マージン</string>
+  <string name="morphe_navigation_bar_glass_bottom_margin_summary">ガラス製ナビゲーションバーと画面下部またはシステムナビゲーションの間の間隔を調整します</string>
   <string name="morphe_navigation_bar_glass_size_title">グラスナビゲーションバーのサイズ</string>
   <string name="morphe_navigation_bar_glass_size_summary">グラスナビゲーションバーの高さ、幅、ボタンの間隔をプレビューしながら調整します。画面幅に収まらないボタンは非表示になります</string>
   <string name="morphe_navigation_bar_glass_size_height">高さ</string>
   <string name="morphe_navigation_bar_glass_size_width">最大幅</string>
   <string name="morphe_navigation_bar_glass_size_button_spacing">ボタンの間隔</string>
   <string name="morphe_navigation_bar_glass_size_buttons_shown">表示ボタン: %2$s 個中 %1$s 個</string>
-  <string name="morphe_toolbar_screen_title">ツールバー</string>
-  <string name="morphe_toolbar_screen_summary">ツールバーに表示するコンポーネントを設定します</string>
   <string name="morphe_hide_toolbar_chat_button_title">チャットボタンを非表示</string>
   <string name="morphe_hide_toolbar_microphone_button_title">検索の音声入力ボタンを非表示</string>
   <string name="morphe_hide_toolbar_search_button_title">検索ボタンを非表示</string>
@@ -1382,6 +1387,9 @@ Automotive レイアウト
   <!-- layout.feedrefresh.disableAutoFeedRefreshPatch -->
   <string name="morphe_disable_auto_feed_refresh_title">自動フィード更新を無効にする</string>
   <string name="morphe_disable_auto_feed_refresh_summary">フィードが古くなった後に自動的に更新されるのを防ぎます。</string>
+  <!-- layout.notifications.ungroupNotificationsPatch -->
+  <string name="morphe_ungroup_notifications_title">通知のグループ化を解除</string>
+  <string name="morphe_ungroup_notifications_summary">チャンネルのグループ化されたアップロード動画を、それぞれ個別の通知として表示します</string>
   <!-- layout.feedcards.feedCardLayoutPatch -->
   <string name="morphe_feed_card_layout_title">フィードのレイアウト</string>
   <string name="morphe_feed_card_layout_entry_1">従来のレイアウト</string>
@@ -1494,6 +1502,8 @@ Automotive レイアウト
   <string name="morphe_dearrow_titles_search_title">検索結果</string>
   <string name="morphe_dearrow_titles_icon_title">DeArrow アイコンを表示</string>
   <string name="morphe_dearrow_titles_icon_summary">クラウドソースによるタイトルまたはサムネイルを持つビデオのタイトルにDeArrowアイコンを表示します。アイコンをタップすると、元のタイトルとサムネイルが表示されます</string>
+  <string name="morphe_dearrow_clean_up_titles_title">タイトルのクリーンアップ</string>
+  <string name="morphe_dearrow_clean_up_titles_summary">DeArrowのタイトルがないビデオのタイトルをクリーンアップします。大文字の単語は通常のケースに変更され、絵文字、特殊文字、および繰り返しの感嘆符は削除されます</string>
   <string name="morphe_dearrow_casual_mode_title">カジュアル モード</string>
   <string name="morphe_dearrow_casual_mode_summary">DeArrow ユーザーが元のタイトルを「いいね」と投票した場合、DeArrow のタイトルではなく元のタイトルが表示されます</string>
   <string name="morphe_dearrow_casual_mode_min_votes_title">元のタイトルを表示するためのカジュアル投票の最小数</string>
