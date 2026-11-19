@@ -94,7 +94,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `extensions/music/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
 | `patches/.../youtube/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations and groups the screens before they are written (`moveRlxCustomizations`) |
 | `patches/.../music/misc/settings/SettingsPatch.kt` | depends on the RLX core patch of YouTube Music; title of the settings entry (`rlx_settings_title`); moves settings to RLX Customizations before they are written (`moveRlxCustomizations`) |
-| `patches/.../shared/layout/theme/BaseThemePatch.kt` | patch option *Light theme color*: *Soft light* (`#F0F0F0`) |
+| `patches/.../shared/layout/theme/BaseThemePatch.kt` | patch option *Light theme color*: *Soft light* (`#F0F0F0`); splash screen colors with the colors left to the app (`RlxTheme.kt`) |
 | `extensions/shared/.../shared/patches/ExperimentalAppNoticePatch.java` | no experimental app version notice on the first start (`RLX_NO_EXPERIMENTAL_NOTICE`) |
 | `extensions/shared-youtube/.../shared/settings/preference/ExternalDownloaderPreference.java` | quick download menu: `launchExternalDownloader` with the extras of the menu |
 | `extensions/shared-youtube/.../shared/patches/BaseInAppDownloadsPatch.java` | quick download menu: `DOWNLOAD_CLIENTS` public |
@@ -229,7 +229,10 @@ Patches of other apps (Reddit) stay in the tree untouched and are left out of th
   color, such as pure black, keeps it. YouTube Music (dark theme only) defaults to `#0F0F0F` too. The patch option *Light theme color* (Morphe Manager) also
   offers *Soft light* (`#F0F0F0`, an RLX hook in `BaseThemePatch.kt`), next to Morphe's *Modern
   YouTube* (`#0F0F0F`) of the dark theme; both options stay at *Change in the app* by default, so
-  the colors can still be changed in the app.
+  the colors can still be changed in the app (a color set in a patch option removes the theme
+  settings of the app). With the colors left to the app, the splash screen the system draws before
+  the app starts has the RLX colors too, in place of Morphe's black and white (`RlxTheme.kt`, an RLX
+  hook in `BaseThemePatch.kt`).
 
 ## RLX patches
 
