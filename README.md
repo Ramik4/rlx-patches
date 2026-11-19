@@ -6,7 +6,7 @@
 
 Morphe patches + voice over translation + extra features for YouTube and YouTube Music.
 
-[![Latest release](https://img.shields.io/github/v/release/Ramik4/rlx-patches?label=Release&sort=semver&style=for-the-badge)](https://github.com/Ramik4/rlx-patches/releases/latest)
+[![Latest release](https://img.shields.io/github/v/release/Ramik4/rlx-patches?label=Release&sort=semver&style=for-the-badge&color=FF0040)](https://github.com/Ramik4/rlx-patches/releases/latest)
 
 <a href="https://morphe.software/add-source?github=Ramik4/rlx-patches&name=RLX%20Patches">Add to Morphe Manager</a>
 

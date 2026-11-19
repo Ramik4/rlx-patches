@@ -316,6 +316,11 @@ public final class RlxAboutPage {
         for (String raw : markdown.replace("\r", "").split("\n")) {
             final String line = raw.trim();
             final boolean item = line.startsWith("- ") || line.startsWith("* ");
+            // An indented line goes on with the list item before it.
+            if (inList && !item && !line.isEmpty() && Character.isWhitespace(raw.charAt(0))) {
+                html.insert(html.length() - "</li>".length(), " " + inline(line));
+                continue;
+            }
             if (line.isEmpty() || item || line.startsWith("#")) {
                 if (paragraph.length() > 0) {
                     html.append("<p>").append(paragraph).append("</p>");

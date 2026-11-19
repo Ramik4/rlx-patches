@@ -32,7 +32,9 @@ concurrency:
 
 env:
   # File times in the bundle in the time of the maintainers, not UTC.
-  TZ: Europe/Istanbul
+  TZ: Asia/Dubai
+  # Every JVM of the build (Gradle, its workers, d8) in the same time zone, so the times in the bundle are too.
+  JAVA_TOOL_OPTIONS: -Duser.timezone=Asia/Dubai
 
 jobs:
   release:
@@ -113,21 +115,48 @@ jobs:
           EXTRA_NOTES: ${{ inputs.notes }}
         run: |
           python3 - <<'PY'
-          import os, re, subprocess
+          import json, os, re, subprocess
 
           def git(*args):
               return subprocess.run(["git", *args], check=True, capture_output=True, text=True).stdout
 
-          morphe = os.environ["MORPHE"]
-          lines = [f"**Based on Morphe {morphe}** · "
+          version, morphe = os.environ["VERSION"], os.environ["MORPHE"]
+          lines = [f"Based on **Morphe Patches {morphe}** · "
                    f"[Morphe release notes](https://github.com/MorpheApp/morphe-patches/releases/tag/v{morphe})", ""]
+
+          # Supported app versions, from the patches list of this build: the newest recommended one, and the
+          # newest one at all (newer ones are experimental in Morphe Manager).
+          def key(v):
+              return [int(x) if x.isdigit() else 0 for x in re.split(r"[.-]", v)]
+          supported = []
+          patches = json.load(open("patches-list.json", encoding="utf-8"))["patches"]
+          for app in ("YouTube", "YouTube Music"):
+              stable, every = set(), set()
+              for patch in patches:
+                  for package in patch.get("compatiblePackages") or []:
+                      if package.get("name") != app:
+                          continue
+                      for target in package.get("targets") or []:
+                          every.add(target["version"])
+                          if not target.get("isExperimental"):
+                              stable.add(target["version"])
+              if not every:
+                  continue
+              text = f"**{app}** {max(stable, key=key)}" if stable else f"**{app}**"
+              newest = max(every, key=key)
+              if not stable or key(newest) > key(max(stable, key=key)):
+                  text += f" (up to {newest}, experimental)"
+              supported.append(text)
+          if supported:
+              lines += ["Supported: " + " · ".join(supported), ""]
+
           extra = os.environ.get("EXTRA_NOTES", "").strip()
           if extra:
               lines += [extra, ""]
 
           # RLX changes since the last release: the first parents of main (pull requests by their title, direct
-          # commits by their subject), without Morphe's history and merges. The first release has none (its
-          # notes are given by hand).
+          # commits by their subject), without Morphe's history and merges. The first release lists what RLX
+          # adds to Morphe Patches instead (rlx/first-release.md).
           start = os.environ.get("PREVIOUS_TAG")
           changes = []
           log = git("log", "--first-parent", "--format=%s%x1f%b%x1e", f"{start}..HEAD") if start else ""
@@ -143,7 +172,19 @@ jobs:
                   changes.append(f"* {subject}")
           if changes:
               lines += ["### RLX changes", "", *changes, ""]
-          lines.append("Add the source to Morphe Manager: https://github.com/Ramik4/rlx-patches")
+          elif not start:
+              lines += [open("rlx/first-release.md", encoding="utf-8").read().strip(), ""]
+
+          lines += [
+              "### Install",
+              "",
+              "1. Install [Morphe Manager](https://morphe.software).",
+              "2. [Add RLX Patches to Morphe Manager](https://morphe.software/add-source?github=Ramik4/rlx-patches&name=RLX%20Patches),"
+              " or add `https://github.com/Ramik4/rlx-patches` under *Sources → + → Remote*.",
+              "3. Patch YouTube or YouTube Music with the RLX Patches source.",
+              "",
+              f"`rlx-patches-{version}.mpp` is signed with the RLX key; Morphe Manager checks it.",
+          ]
           with open(os.path.join(os.environ["RUNNER_TEMP"], "notes.md"), "w", encoding="utf-8") as fh:
               fh.write("\n".join(lines) + "\n")
           PY
@@ -156,10 +197,9 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           git push origin HEAD:main
-          # An earlier draft of the same version is replaced.
-          if gh release view "v$VERSION" --json isDraft --jq .isDraft 2>/dev/null | grep -qx true; then
-            gh release delete "v$VERSION" --yes
-          fi
+          # Drafts of earlier runs (this version or others) are replaced, so there is one draft at most.
+          gh release list --limit 100 --json tagName,isDraft --jq '.[] | select(.isDraft) | .tagName' \
+            | while read -r tag; do gh release delete "$tag" --yes; done
           gh release create "v$VERSION" \
             "patches/build/libs/rlx-patches-$VERSION.mpp" \
             --draft \
@@ -175,9 +215,9 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
           MORPHE: ${{ steps.version.outputs.morphe }}
         run: |
-          if gh release view "v$VERSION" --json isDraft --jq .isDraft 2>/dev/null | grep -qx true; then
-            gh release delete "v$VERSION" --yes
-          fi
+          # Drafts are not needed once the release is published.
+          gh release list --limit 100 --json tagName,isDraft --jq '.[] | select(.isDraft) | .tagName' \
+            | while read -r tag; do gh release delete "$tag" --yes; done
           # The tag is the commit that was built. The bundle files on main are updated after the
           # file is uploaded, so Morphe Manager never sees a link to a missing file.
           git tag -a "v$VERSION" -m "RLX Patches $VERSION, based on Morphe $MORPHE"

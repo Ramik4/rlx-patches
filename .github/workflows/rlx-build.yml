@@ -13,7 +13,9 @@ permissions:
 
 env:
   # File times (in the bundle and in the zip of the artifact) in the time of the maintainers, not UTC.
-  TZ: Europe/Istanbul
+  TZ: Asia/Dubai
+  # Every JVM of the build (Gradle, its workers, d8) in the same time zone, so the times in the bundle are too.
+  JAVA_TOOL_OPTIONS: -Duser.timezone=Asia/Dubai
 
 concurrency:
   group: build-${{ github.ref }}
