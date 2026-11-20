@@ -228,15 +228,19 @@ internal val usePatchedThemeColor: Boolean
     get() = darkThemeColorOption.value != THEME_COLOR_IN_APP ||
             lightThemeColorOption.value != THEME_COLOR_IN_APP
 
-// RLX: with the colors left to the app, the splash screen has the RLX default colors (RlxTheme.kt).
+// RLX: with the colors left to the app, the splash screen has the default colors of the app (RlxTheme.kt).
 internal val patchedThemeColorDark: String
     get() = patchedThemeColor(
-        darkThemeColorOption.value, appThemeColorDark, app.rlx.patches.shared.RLX_THEME_COLOR_DARK
+        darkThemeColorOption.value, appThemeColorDark,
+        if (app.rlx.patches.shared.rlxPureBlackByDefault) DEFAULT_THEME_COLOR_DARK
+        else app.rlx.patches.shared.RLX_THEME_COLOR_DARK
     )
 
 internal val patchedThemeColorLight: String
     get() = patchedThemeColor(
-        lightThemeColorOption.value, appThemeColorLight, app.rlx.patches.shared.RLX_THEME_COLOR_LIGHT
+        lightThemeColorOption.value, appThemeColorLight,
+        if (app.rlx.patches.shared.rlxPureBlackByDefault) DEFAULT_THEME_COLOR_LIGHT
+        else app.rlx.patches.shared.RLX_THEME_COLOR_LIGHT
     )
 
 /**
@@ -393,6 +397,9 @@ internal fun baseThemePatch(
     if (includeLightColor) {
         lightThemeColorOption()
     }
+
+    // RLX: the colors the app starts with (RlxTheme.kt).
+    app.rlx.patches.shared.rlxInAppDefaultColorsOption()
 
     block()
 

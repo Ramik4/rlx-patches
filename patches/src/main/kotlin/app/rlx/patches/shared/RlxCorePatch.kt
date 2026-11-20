@@ -146,6 +146,7 @@ internal fun rlxCorePatch(
             first { it.name == "defaultsBase64" }
                 .returnEarly(Base64.getEncoder().encodeToString(RlxBuildInfo.defaultsJson))
             first { it.name == "appId" }.returnEarly(appId)
+            first { it.name == "pureBlackByDefault" }.returnEarly(rlxPureBlackByDefault)
         }
         mainActivityOnCreateFingerprint.method.addInstruction(
             0,

@@ -121,6 +121,23 @@ public final class RlxDefaults {
     }
 
     /**
+     * @return If the app starts with pure black and white (patch option "Default colors in the app" of Theme).
+     *         The theme settings of rlx/defaults.json are then left at their Morphe defaults, which are
+     *         pure black and white. Replaced while patching.
+     */
+    private static boolean pureBlackByDefault() {
+        return false;
+    }
+
+    /**
+     * @param key Key of rlx/defaults.json.
+     * @return If the setting keeps its Morphe default instead of the RLX default.
+     */
+    private static boolean keepsMorpheDefault(String key) {
+        return key.startsWith("theme_color_") && pureBlackByDefault();
+    }
+
+    /**
      * Injection point. Called when the main activity is created.
      */
     public static void onActivityCreated(Activity activity) {
@@ -250,6 +267,16 @@ public final class RlxDefaults {
                 continue;
             }
             if (all && keptOnReset(setting.key)) continue;
+
+            if (keepsMorpheDefault(key)) {
+                // Not marked as applied: a build with the RLX colors applies them on its next start.
+                if (all && !setting.isSetToDefault()) {
+                    setting.resetToDefault();
+                    result.changed++;
+                    result.rebootNeeded |= setting.rebootApp;
+                }
+                continue;
+            }
 
             final boolean apply = all
                     || (replacesEarlier ? hasValue(setting, replaced.optJSONArray(key)) : setting.isSetToDefault());
