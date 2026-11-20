@@ -8,6 +8,7 @@
 package app.rlx.patches.youtube.layout.glassmenus
 
 import app.morphe.patcher.Fingerprint
+import app.morphe.patcher.methodCall
 import app.morphe.patcher.resource.ResourceType
 import app.morphe.patcher.resourceLiteral
 
@@ -36,4 +37,25 @@ internal object AddToPlaylistCreateViewFingerprint : Fingerprint(
     filters = listOf(
         resourceLiteral(ResourceType.LAYOUT, "playlist_add_to_fragment"),
     )
+)
+
+/**
+ * onStart of the dialog fragment of AndroidX, which shows the dialog of every dialog fragment of the app.
+ */
+internal object DialogFragmentOnStartFingerprint : Fingerprint(
+    returnType = "V",
+    parameters = listOf(),
+    filters = listOf(
+        methodCall(definingClass = "Landroid/app/Dialog;", name = "show"),
+        methodCall(definingClass = "Landroid/view/Window;", name = "getDecorView"),
+        resourceLiteral(ResourceType.ID, "view_tree_view_model_store_owner"),
+    )
+)
+
+/**
+ * The bottom sheets of Morphe and RLX (playback speed, voice over translation, …), in the shared extension.
+ */
+internal object SlideDialogCreateFingerprint : Fingerprint(
+    definingClass = "Lapp/morphe/extension/shared/ui/SheetBottomDialog;",
+    name = "createSlideDialog",
 )

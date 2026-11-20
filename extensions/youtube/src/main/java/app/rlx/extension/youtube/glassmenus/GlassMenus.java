@@ -19,8 +19,10 @@ import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
 import android.util.TypedValue;
 import android.view.View;
@@ -35,7 +37,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -51,7 +55,9 @@ import app.morphe.extension.shared.ui.Dim;
 
 /**
  * Draws the menus of the app as frosted glass: the bottom sheets (the menu of a video, the player settings,
- * the share sheet), the popup menus and the sheet to save a video to a playlist.
+ * the share sheet), the popup menus, the sheet to save a video to a playlist, the dialogs that are a panel at the
+ * bottom of the screen (the video quality, the download quality) and the sheets of Morphe and RLX
+ * (playback speed, voice over translation).
  * <p>
  * Only the content behind the menu is blurred ({@link BlurRegion}), and the menu is a translucent tint of the app
  * background with a light rim, so the blurred content shows through it. The rest of the screen is only dimmed, as
@@ -187,6 +193,96 @@ public final class GlassMenus {
     }
 
     /**
+     * Injection point: a dialog of a dialog fragment of the app was shown.
+     * <p>
+     * Some menus, such as the video quality and the download quality, are a dialog whose window is a panel at the
+     * bottom of the screen, with the color of a menu as the window background. The window background is removed,
+     * and the content of the window is drawn as glass. Dialogs that fill the screen keep their look.
+     */
+    public static void onDialogShown(@Nullable Dialog dialog) {
+        if (dialog == null || !isEnabled()) return;
+
+        try {
+            Window window = dialog.getWindow();
+            if (window == null) return;
+            View decor = window.getDecorView();
+            // After the fragment sets the window background, right after it shows the dialog.
+            decor.post(() -> styleWindowPanel(window, decor));
+        } catch (Exception ex) {
+            Logger.printException(() -> "onDialogShown failure", ex);
+        }
+    }
+
+    private static void styleWindowPanel(Window window, View decor) {
+        try {
+            if (window.getAttributes().height != WindowManager.LayoutParams.WRAP_CONTENT) return;
+
+            View content = decor.findViewById(android.R.id.content);
+            Drawable background = decor.getBackground();
+            if (content == null || background == null || surfaces.containsKey(content)) return;
+            if (!isMenuColor(decor.getContext(), sampleColor(background))) return;
+
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.setDimAmount(dimAmount());
+            GlassSurface.apply(content, CORNERS_AUTO);
+        } catch (Exception ex) {
+            Logger.printException(() -> "styleWindowPanel failure", ex);
+        }
+    }
+
+    /**
+     * Injection point: a sheet of Morphe or RLX ({@code SheetBottomDialog.createSlideDialog}) was created.
+     * Its panel is the first view with a filled round background ({@code SheetBottomDialog.createMainLayout}).
+     */
+    public static void onSlideDialog(@Nullable Dialog dialog) {
+        if (dialog == null || !isEnabled()) return;
+
+        try {
+            Window window = dialog.getWindow();
+            if (window == null) return;
+
+            Deque<View> queue = new ArrayDeque<>();
+            queue.add(window.getDecorView());
+            while (!queue.isEmpty()) {
+                View view = queue.poll();
+                if (view.getBackground() instanceof ShapeDrawable shape
+                        && Color.alpha(shape.getPaint().getColor()) == 255) {
+                    GlassSurface.apply(view, CORNERS_AUTO);
+                    return;
+                }
+                if (view instanceof ViewGroup group) {
+                    for (int i = 0, count = group.getChildCount(); i < count; i++) {
+                        queue.add(group.getChildAt(i));
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Logger.printException(() -> "onSlideDialog failure", ex);
+        }
+    }
+
+    /**
+     * @return The colors the app and Morphe give the background of their menus.
+     */
+    private static List<Integer> menuColors(Context context) {
+        List<Integer> colors = new ArrayList<>();
+        for (String attribute : MENU_COLOR_ATTRIBUTES) {
+            Integer color = resolveThemeColor(context, attribute);
+            if (color != null) colors.add(color);
+        }
+        colors.add(ThemeUtils.getAppBackgroundColor());
+        colors.add(ThemeUtils.getDialogBackgroundColor());
+        return colors;
+    }
+
+    private static boolean isMenuColor(Context context, @ColorInt int color) {
+        for (int menu : menuColors(context)) {
+            if (isSimilarOpaqueColor(color, menu)) return true;
+        }
+        return false;
+    }
+
+    /**
      * @return The corner radius of the background the app gave the menu, or the default radius.
      */
     private static float cornerRadiusOf(@Nullable Drawable background) {
@@ -204,6 +300,9 @@ public final class GlassMenus {
      */
     @ColorInt
     private static int sampleColor(Drawable drawable) {
+        if (drawable instanceof ColorDrawable color) return color.getColor();
+        if (drawable instanceof ShapeDrawable shape) return shape.getPaint().getColor();
+
         Rect bounds = drawable.getBounds();
         if (bounds.width() <= 0 || bounds.height() <= 0) return Color.TRANSPARENT;
 
@@ -293,12 +392,7 @@ public final class GlassMenus {
             tint = new GlassDrawable(corners == CORNERS_NONE ? 0 : cornerRadiusOf(originalBackground));
             updateOpacity();
 
-            Context context = view.getContext();
-            for (String attribute : MENU_COLOR_ATTRIBUTES) {
-                Integer color = resolveThemeColor(context, attribute);
-                if (color != null) menuColors.add(color);
-            }
-            menuColors.add(ThemeUtils.getAppBackgroundColor());
+            menuColors.addAll(menuColors(view.getContext()));
             sampleOriginalBackground();
 
             view.setBackground(tint);

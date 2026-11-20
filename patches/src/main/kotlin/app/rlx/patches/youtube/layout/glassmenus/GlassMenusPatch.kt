@@ -36,7 +36,7 @@ private const val SEEKBAR_PREFERENCE = "app.morphe.extension.shared.settings.pre
 val glassMenusPatch = patch(
     name = "Glass menus",
     description = "Adds an option to show the menus, such as the menu of a video, the player settings, " +
-        "the share sheet and the sheet to save to a playlist, as frosted glass: the content behind the menu " +
+        "the share sheet, the video quality and the sheets of Morphe, as frosted glass: the content behind the menu " +
         "is blurred. Needs Android 12 or later.",
 ) {
     dependsOn(
@@ -80,6 +80,30 @@ val glassMenusPatch = patch(
                 addInstruction(
                     index,
                     "invoke-static { v$register }, $EXTENSION_CLASS->onAddToPlaylistView(Landroid/view/View;)V",
+                )
+            }
+        }
+
+        // Dialogs of dialog fragments, right after they are shown: the panels at the bottom of the screen,
+        // such as the video quality and the download quality.
+        DialogFragmentOnStartFingerprint.let {
+            it.method.apply {
+                val showIndex = it.instructionMatches.first().index
+                val dialogRegister = getInstruction<FiveRegisterInstruction>(showIndex).registerC
+                addInstruction(
+                    showIndex + 1,
+                    "invoke-static { v$dialogRegister }, $EXTENSION_CLASS->onDialogShown(Landroid/app/Dialog;)V",
+                )
+            }
+        }
+
+        // The sheets of Morphe and RLX.
+        SlideDialogCreateFingerprint.method.apply {
+            findInstructionIndicesReversedOrThrow(Opcode.RETURN_OBJECT).forEach { index ->
+                val register = getInstruction<OneRegisterInstruction>(index).registerA
+                addInstruction(
+                    index,
+                    "invoke-static { v$register }, $EXTENSION_CLASS->onSlideDialog(Landroid/app/Dialog;)V",
                 )
             }
         }
