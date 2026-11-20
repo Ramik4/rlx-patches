@@ -1,7 +1,3 @@
-The first release of RLX Patches: every patch of Morphe Patches for YouTube and YouTube Music, plus:
-
-### What RLX adds
-
 * **Voice over translation (Yandex)**: a player button that plays a Yandex voice-over translation of
   the video (YouTube), next to Morphe's own translation of the captions.
 * **Save to device**: videos, audio, thumbnails and subtitles with a quality picker, a library of the

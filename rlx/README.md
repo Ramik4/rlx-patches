@@ -345,9 +345,13 @@ python3 -m unittest discover -s rlx/scripts
   release and the version is raised by one first. The release notes name the Morphe base version,
   add the notes given when it is started, and list the RLX changes since the last release: the
   titles of the pull requests and the direct commits on `main` (first parents, so without Morphe's
-  history). The first release lists what RLX adds instead ([`first-release.md`](first-release.md)). The
-  notes also name the supported app versions (from the patches list of the build) and how to install.
-  Drafts of earlier runs are deleted, so there is one draft at most. The tag and the `.mpp` file are published before `patches-bundle.json` points to
+  history).
+  The notes are, in this order: the Morphe base version; *New features*, the features of the Morphe
+  releases since the base of the last RLX release (from Morphe's `CHANGELOG.md`; YouTube, then YouTube
+  Music, then the ones of every app; the number of fixes with a link to Morphe's notes); *RLX extras*,
+  the RLX changes (the first release: everything RLX adds, [`first-release.md`](first-release.md));
+  *Supported versions* (from the patches list of the build); *Install*. Drafts of earlier runs are
+  deleted, so there is one draft at most. The tag and the `.mpp` file are published before `patches-bundle.json` points to
   them, so Morphe Manager never gets a link to a missing file.
 
 ## Building
