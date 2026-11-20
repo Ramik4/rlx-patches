@@ -25,7 +25,7 @@ import app.morphe.extension.shared.settings.preference.SeekBarPreference.SeekBar
 public final class GlassMenusSettings {
 
     /**
-     * The blur behind a window needs Android 12.
+     * The blur behind a menu needs Android 12.
      */
     public static final class BlurAvailability implements Setting.Availability {
         @Override
@@ -42,18 +42,18 @@ public final class GlassMenusSettings {
      * without the blur, the menu is at least {@link GlassMenus#MIN_OPACITY_WITHOUT_BLUR} opaque.
      */
     public static final IntegerSetting GLASS_MENUS_OPACITY =
-            new IntegerSetting("morphe_glass_menus_opacity", 55, false,
+            new IntegerSetting("morphe_glass_menus_opacity", 30, false,
                     parentsAll(parent(GLASS_MENUS), new BlurAvailability()));
 
     /**
-     * How much the screen behind the menu is blurred, in dp.
+     * How much the content behind the menu is blurred, in dp.
      */
     public static final IntegerSetting GLASS_MENUS_BLUR =
             new IntegerSetting("morphe_glass_menus_blur", 24, false,
                     parentsAll(parent(GLASS_MENUS), new BlurAvailability()));
 
     /**
-     * How much the screen behind the menu is darkened, in percent.
+     * How much the screen around a bottom sheet is darkened, in percent.
      */
     public static final IntegerSetting GLASS_MENUS_DIM =
             new IntegerSetting("morphe_glass_menus_dim", 20, false,

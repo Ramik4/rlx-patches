@@ -9,6 +9,7 @@ package app.rlx.extension.youtube.glassmenus;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -18,10 +19,10 @@ import android.graphics.Path;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -29,12 +30,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
@@ -47,48 +50,61 @@ import app.morphe.extension.shared.theme.ThemeUtils;
 import app.morphe.extension.shared.ui.Dim;
 
 /**
- * Draws the menus of the app (the bottom sheets, such as the menu of a video, the player settings and the share
- * sheet, and the popup menus of large screens) as frosted glass: the screen behind the menu is blurred, and the menu
- * is a translucent tint of the app background with a light rim, so the blurred screen shows through it.
+ * Draws the menus of the app as frosted glass: the bottom sheets (the menu of a video, the player settings,
+ * the share sheet), the popup menus and the sheet to save a video to a playlist.
  * <p>
- * A menu is a window of its own, so the blur is the blur behind a window of Android 12 and later
- * ({@link WindowManager.LayoutParams#FLAG_BLUR_BEHIND}), which the system draws. The system turns it off when the
- * device does not support it or while the battery saver is on; the menu is then nearly opaque, so it stays readable.
+ * Only the content behind the menu is blurred ({@link BlurRegion}), and the menu is a translucent tint of the app
+ * background with a light rim, so the blurred content shows through it. The rest of the screen is only dimmed, as
+ * without the glass. The system turns the blur off when the device does not support it or while the battery saver
+ * is on; the menu is then nearly opaque, so it stays readable.
  * <p>
- * The menu content keeps its own views. Only the background of the sheet, and opaque backgrounds that fill the
- * width of the sheet, are replaced, so the items keep their ripples and their selected state.
+ * The content of the menu keeps its views. Backgrounds inside the menu that have the color of the menu are removed,
+ * so they do not hide the glass. Items keep their ripples and their selected state.
  */
 @SuppressWarnings("unused")
 public final class GlassMenus {
 
     /**
-     * How opaque the menu is at least, in percent, while the system does not blur the screen behind it.
+     * How opaque the menu is at least, in percent, while the content behind it is not blurred.
      */
     static final int MIN_OPACITY_WITHOUT_BLUR = 92;
 
+    private static final int DESIGN_BOTTOM_SHEET = ResourceUtils.getIdentifier(ResourceType.ID, "design_bottom_sheet");
+    private static final int PLAYLIST_LIST = ResourceUtils.getIdentifier(ResourceType.ID, "list");
+    private static final int PLAYLIST_CLOSE_BAR =
+            ResourceUtils.getIdentifier(ResourceType.ID, "add_to_playlist_bottom_sheet_close_button");
+
     /**
-     * Views that hold the content of a bottom sheet, the first one found is used.
+     * Theme colors the app gives the background of its menus.
      */
-    private static final int[] SHEET_IDS = {
-            ResourceUtils.getIdentifier(ResourceType.ID, "design_bottom_sheet"),
-            ResourceUtils.getIdentifier(ResourceType.ID, "bottom_sheet"),
+    private static final String[] MENU_COLOR_ATTRIBUTES = {
+            "ytRaisedBackground", "ytBaseBackground", "ytMenuBackground", "ytAdditiveBackground",
     };
 
     /**
-     * Corner radius of a menu if the background of the app does not give one.
+     * Corner radius of a menu if its background does not give one.
      */
     private static final float DEFAULT_CORNER_RADIUS = Dim.dp(12);
 
     /**
-     * A background of a view in the menu is a fill of the menu, and not of an item,
-     * if the view is at least this part of the width of the menu.
+     * How much a background color may differ from the color of the menu, per channel, to be the color of the menu.
      */
-    private static final float FILL_WIDTH_FRACTION = 0.9f;
+    private static final int COLOR_TOLERANCE = 8;
 
     /**
-     * Windows and popups that are already glass. A menu can be created again for the same window.
+     * Rounds the corners that are not at an edge of the screen.
      */
-    private static final Set<Object> styled = Collections.newSetFromMap(new WeakHashMap<>());
+    private static final int CORNERS_AUTO = 0;
+    /**
+     * Rounds the top corners only.
+     */
+    private static final int CORNERS_TOP = 1;
+    /**
+     * No round corners.
+     */
+    private static final int CORNERS_NONE = 2;
+
+    private static final Map<View, GlassSurface> surfaces = new WeakHashMap<>();
 
     private static boolean isEnabled() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && GlassMenusSettings.GLASS_MENUS.get();
@@ -107,16 +123,21 @@ public final class GlassMenus {
     }
 
     /**
-     * Injection point: the dialog of a bottom sheet, right after the app creates it and before it is shown.
+     * Injection point: a bottom sheet dialog was attached to its window.
      */
     public static void onBottomSheetDialog(@Nullable Dialog dialog) {
         if (dialog == null || !isEnabled()) return;
 
         try {
             Window window = dialog.getWindow();
-            if (window == null || !styled.add(window)) return;
+            if (window != null) {
+                window.setDimAmount(dimAmount());
+            }
 
-            new SheetGlass(window).attach();
+            View sheet = DESIGN_BOTTOM_SHEET == 0 ? null : dialog.findViewById(DESIGN_BOTTOM_SHEET);
+            if (sheet != null) {
+                GlassSurface.apply(sheet, CORNERS_AUTO);
+            }
         } catch (Exception ex) {
             Logger.printException(() -> "onBottomSheetDialog failure", ex);
         }
@@ -131,60 +152,37 @@ public final class GlassMenus {
         Utils.runOnMainThreadDelayed(() -> {
             try {
                 View content = popup.getContentView();
-                if (content == null || !styled.add(popup)) return;
+                if (content == null) return;
 
-                whenAttached(content, () -> stylePopup(popup, content));
+                // The background view the popup adds around the content if it has a background,
+                // otherwise the content itself.
+                View surface = content.getParent() instanceof View parent && parent.getBackground() != null
+                        ? parent
+                        : content;
+                GlassSurface.apply(surface, CORNERS_AUTO);
             } catch (Exception ex) {
                 Logger.printException(() -> "onPopupWindow failure", ex);
             }
         }, 0);
     }
 
-    private static void whenAttached(View view, Runnable action) {
-        if (view.isAttachedToWindow()) {
-            view.post(action);
-            return;
-        }
-        view.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(@NonNull View attached) {
-                attached.removeOnAttachStateChangeListener(this);
-                attached.post(action);
-            }
+    /**
+     * Injection point: the view of the sheet to save a video to a playlist, which is not a bottom sheet dialog.
+     */
+    public static void onAddToPlaylistView(@Nullable View root) {
+        if (root == null || !isEnabled()) return;
 
-            @Override
-            public void onViewDetachedFromWindow(@NonNull View detached) {
-            }
-        });
-    }
-
-    @RequiresApi(Build.VERSION_CODES.S)
-    private static void stylePopup(PopupWindow popup, View content) {
         try {
-            if (!popup.isShowing()) return;
-
-            View root = content.getRootView();
-            if (!(root.getLayoutParams() instanceof WindowManager.LayoutParams params)) return;
-
-            WindowManager windowManager = (WindowManager) content.getContext().getSystemService(Context.WINDOW_SERVICE);
-            final boolean blur = windowManager.isCrossWindowBlurEnabled();
-
-            // The view that draws the background of the popup: the background view the popup adds around the
-            // content if the popup has a background, otherwise the content itself.
-            View backgroundView = content.getParent() instanceof View parent && parent.getBackground() != null
-                    ? parent
-                    : content;
-            GlassDrawable glass = new GlassDrawable(cornerRadiusOf(backgroundView.getBackground()), true);
-            glass.setOpacityPercent(blur ? opacityPercent() : Math.max(opacityPercent(), MIN_OPACITY_WITHOUT_BLUR));
-            backgroundView.setBackground(glass);
-            clearFillBackgrounds(backgroundView, backgroundView.getWidth(), null);
-
-            params.flags |= WindowManager.LayoutParams.FLAG_BLUR_BEHIND | WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            params.setBlurBehindRadius(blurRadiusPx());
-            params.dimAmount = dimAmount();
-            windowManager.updateViewLayout(root, params);
+            View list = PLAYLIST_LIST == 0 ? null : root.findViewById(PLAYLIST_LIST);
+            if (list != null) {
+                GlassSurface.apply(list, CORNERS_TOP);
+            }
+            View closeBar = PLAYLIST_CLOSE_BAR == 0 ? null : root.findViewById(PLAYLIST_CLOSE_BAR);
+            if (closeBar != null) {
+                GlassSurface.apply(closeBar, CORNERS_NONE);
+            }
         } catch (Exception ex) {
-            Logger.printException(() -> "stylePopup failure", ex);
+            Logger.printException(() -> "onAddToPlaylistView failure", ex);
         }
     }
 
@@ -192,163 +190,257 @@ public final class GlassMenus {
      * @return The corner radius of the background the app gave the menu, or the default radius.
      */
     private static float cornerRadiusOf(@Nullable Drawable background) {
-        if (background != null) {
-            Rect bounds = background.getBounds();
-            if (!bounds.isEmpty()) {
-                Outline outline = new Outline();
-                background.getOutline(outline);
-                final float radius = outline.getRadius();
-                if (radius > 0) return radius;
-            }
+        if (background != null && !background.getBounds().isEmpty()) {
+            Outline outline = new Outline();
+            background.getOutline(outline);
+            final float radius = outline.getRadius();
+            if (radius > 0) return radius;
         }
         return DEFAULT_CORNER_RADIUS;
     }
 
     /**
-     * Removes the opaque backgrounds that fill the width of the menu, which would hide the glass.
-     *
-     * @param sameKind Backgrounds of this class are removed too, such as the class of the original background
-     *                 of the sheet, which the app can also use for the views inside it.
+     * @return The color in the middle of the drawable, or transparent if it has no size.
      */
-    private static void clearFillBackgrounds(View view, int menuWidth,
-                                             @Nullable Class<? extends Drawable> sameKind) {
-        if (!(view instanceof ViewGroup group) || menuWidth <= 0) return;
+    @ColorInt
+    private static int sampleColor(Drawable drawable) {
+        Rect bounds = drawable.getBounds();
+        if (bounds.width() <= 0 || bounds.height() <= 0) return Color.TRANSPARENT;
 
-        for (int i = 0, count = group.getChildCount(); i < count; i++) {
-            View child = group.getChildAt(i);
-            Drawable background = child.getBackground();
-            if (background != null
-                    && child.getWidth() >= menuWidth * FILL_WIDTH_FRACTION
-                    && (isOpaqueFill(background) || background.getClass() == sameKind)) {
-                child.setBackground(null);
-            }
-            clearFillBackgrounds(child, menuWidth, sameKind);
+        Bitmap bitmap = Bitmap.createBitmap(3, 3, Bitmap.Config.ARGB_8888);
+        try {
+            Canvas canvas = new Canvas(bitmap);
+            canvas.scale(3f / bounds.width(), 3f / bounds.height());
+            canvas.translate(-bounds.left, -bounds.top);
+            drawable.draw(canvas);
+            return bitmap.getPixel(1, 1);
+        } finally {
+            bitmap.recycle();
         }
     }
 
-    private static boolean isOpaqueFill(Drawable background) {
-        if (background instanceof ColorDrawable color) {
-            return Color.alpha(color.getColor()) == 255;
+    private static boolean isSimilarOpaqueColor(@ColorInt int color, @ColorInt int other) {
+        return Color.alpha(color) >= 0xF0
+                && Math.abs(Color.red(color) - Color.red(other)) <= COLOR_TOLERANCE
+                && Math.abs(Color.green(color) - Color.green(other)) <= COLOR_TOLERANCE
+                && Math.abs(Color.blue(color) - Color.blue(other)) <= COLOR_TOLERANCE;
+    }
+
+    @Nullable
+    private static Integer resolveThemeColor(Context context, String attributeName) {
+        final int attribute = ResourceUtils.getIdentifier(ResourceType.ATTR, attributeName);
+        if (attribute == 0) return null;
+
+        TypedValue value = new TypedValue();
+        if (!context.getTheme().resolveAttribute(attribute, value, true)) return null;
+        if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+            return value.data;
         }
-        if (background instanceof GradientDrawable gradient) {
-            return gradient.getColor() != null && Color.alpha(gradient.getColor().getDefaultColor()) == 255;
+        if (value.resourceId != 0) {
+            try {
+                return context.getColor(value.resourceId);
+            } catch (Exception ignored) {
+                // Not a color.
+            }
         }
-        return false;
+        return null;
     }
 
     /**
-     * The glass of a bottom sheet, from when its window is shown until it is removed.
+     * A view of a menu drawn as glass, from when it is attached to its window until it is detached.
      */
     @RequiresApi(Build.VERSION_CODES.S)
-    private static final class SheetGlass {
-        private final Window window;
-        private final View decor;
-        private final float defaultDimAmount;
-        private final Consumer<Boolean> blurListener = this::applyBlur;
-        private final ViewTreeObserver.OnGlobalLayoutListener layoutListener = this::styleSheet;
+    private static final class GlassSurface implements View.OnAttachStateChangeListener,
+            ViewTreeObserver.OnPreDrawListener {
+
+        private final View view;
+        private final int corners;
+        private final GlassDrawable tint;
+        private final Consumer<Boolean> blurListener = this::onBlurEnabledChanged;
+
+        /**
+         * Colors of the menu, a background of one of these colors inside the menu is removed.
+         */
+        private final List<Integer> menuColors = new ArrayList<>();
+        /**
+         * The background the app gave the menu, until its color is known.
+         */
+        @Nullable
+        private Drawable originalBackground;
+        /**
+         * Backgrounds inside the menu that are checked, and if they are of the color of the menu.
+         */
+        private final Map<Drawable, Boolean> checkedBackgrounds = new WeakHashMap<>();
 
         @Nullable
-        private GlassDrawable glass;
+        private Drawable blur;
         @Nullable
-        private Class<? extends Drawable> originalBackgroundKind;
+        private WindowManager windowManager;
         private boolean blurEnabled;
-        private boolean shown;
+        private boolean roundBottom = true;
+        private boolean roundTop = true;
 
-        SheetGlass(Window window) {
-            this.window = window;
-            this.decor = window.getDecorView();
-            this.defaultDimAmount = window.getAttributes().dimAmount;
+        static void apply(View view, int corners) {
+            if (surfaces.containsKey(view)) return;
+            surfaces.put(view, new GlassSurface(view, corners));
         }
 
-        void attach() {
-            decor.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-                @Override
-                public void onViewAttachedToWindow(@NonNull View view) {
-                    onShown();
-                }
+        private GlassSurface(View view, int corners) {
+            this.view = view;
+            this.corners = corners;
 
-                @Override
-                public void onViewDetachedFromWindow(@NonNull View view) {
-                    onHidden();
-                }
-            });
-            if (decor.isAttachedToWindow()) {
-                onShown();
+            originalBackground = view.getBackground();
+            tint = new GlassDrawable(corners == CORNERS_NONE ? 0 : cornerRadiusOf(originalBackground));
+            updateOpacity();
+
+            Context context = view.getContext();
+            for (String attribute : MENU_COLOR_ATTRIBUTES) {
+                Integer color = resolveThemeColor(context, attribute);
+                if (color != null) menuColors.add(color);
+            }
+            menuColors.add(ThemeUtils.getAppBackgroundColor());
+            sampleOriginalBackground();
+
+            view.setBackground(tint);
+            if (corners != CORNERS_NONE) {
+                view.setClipToOutline(true);
+            }
+            view.addOnAttachStateChangeListener(this);
+            if (view.isAttachedToWindow()) {
+                onViewAttachedToWindow(view);
             }
         }
 
-        private void onShown() {
-            if (shown) return;
-            shown = true;
+        private void sampleOriginalBackground() {
+            if (originalBackground == null) return;
+            final int color = sampleColor(originalBackground);
+            if (Color.alpha(color) != 0) {
+                menuColors.add(color);
+                originalBackground = null;
+            }
+        }
+
+        @Override
+        public void onViewAttachedToWindow(@NonNull View attached) {
             try {
-                window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND
-                        | WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                // Called right away with the current state, and again when the system turns the blur on or off.
-                window.getWindowManager().addCrossWindowBlurEnabledListener(blurListener);
-                decor.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
-                decor.post(this::styleSheet);
+                // The blur belongs to the window the view is attached to.
+                windowManager = view.getContext().getSystemService(WindowManager.class);
+                blur = BlurRegion.create(view);
+                if (blur != null) {
+                    BlurRegion.setBlurRadius(blur, 0);
+                    view.setBackground(new LayerDrawable(new Drawable[]{blur, tint}));
+                    // Called right away with the current state, and again when the system turns the blur on or off.
+                    windowManager.addCrossWindowBlurEnabledListener(blurListener);
+                }
+                updateCorners(true);
+                view.getViewTreeObserver().addOnPreDrawListener(this);
             } catch (Exception ex) {
-                Logger.printException(() -> "SheetGlass onShown failure", ex);
+                Logger.printException(() -> "GlassSurface attach failure", ex);
             }
         }
 
-        private void onHidden() {
-            if (!shown) return;
-            shown = false;
+        @Override
+        public void onViewDetachedFromWindow(@NonNull View detached) {
             try {
-                window.getWindowManager().removeCrossWindowBlurEnabledListener(blurListener);
-                decor.getViewTreeObserver().removeOnGlobalLayoutListener(layoutListener);
+                view.getViewTreeObserver().removeOnPreDrawListener(this);
+                if (blur != null) {
+                    if (windowManager != null) {
+                        windowManager.removeCrossWindowBlurEnabledListener(blurListener);
+                    }
+                    blur = null;
+                    blurEnabled = false;
+                    view.setBackground(tint);
+                    updateOpacity();
+                }
+                windowManager = null;
             } catch (Exception ex) {
-                Logger.printException(() -> "SheetGlass onHidden failure", ex);
+                Logger.printException(() -> "GlassSurface detach failure", ex);
             }
         }
 
-        private void applyBlur(boolean enabled) {
+        private void onBlurEnabledChanged(boolean enabled) {
             blurEnabled = enabled;
-            WindowManager.LayoutParams params = window.getAttributes();
-            params.setBlurBehindRadius(enabled ? blurRadiusPx() : 0);
-            params.dimAmount = enabled ? dimAmount() : defaultDimAmount;
-            window.setAttributes(params);
+            if (blur != null) {
+                BlurRegion.setBlurRadius(blur, enabled ? blurRadiusPx() : 0);
+            }
             updateOpacity();
         }
 
         private void updateOpacity() {
-            if (glass != null) {
-                glass.setOpacityPercent(blurEnabled
-                        ? opacityPercent()
-                        : Math.max(opacityPercent(), MIN_OPACITY_WITHOUT_BLUR));
+            tint.setOpacityPercent(blurEnabled && blur != null
+                    ? opacityPercent()
+                    : Math.max(opacityPercent(), MIN_OPACITY_WITHOUT_BLUR));
+        }
+
+        @Override
+        public boolean onPreDraw() {
+            try {
+                if (originalBackground != null) {
+                    sampleOriginalBackground();
+                }
+                updateCorners(false);
+                removeMenuBackgrounds(view);
+            } catch (Exception ex) {
+                Logger.printException(() -> "GlassSurface onPreDraw failure", ex);
             }
+            return true;
         }
 
         /**
-         * Gives the sheet the glass background. Called again on each layout, because the app binds
-         * the items of the menu, and can change the content, after the sheet is shown.
+         * A menu at the bottom of the screen has round top corners only, a floating menu has all corners round.
          */
-        private void styleSheet() {
-            View sheet = findSheet();
-            if (sheet == null) return;
-
-            if (glass == null || sheet.getBackground() != glass) {
-                Drawable original = sheet.getBackground();
-                if (original != null && !(original instanceof GlassDrawable)) {
-                    originalBackgroundKind = original.getClass();
-                }
-                glass = new GlassDrawable(cornerRadiusOf(original), false);
-                updateOpacity();
-                sheet.setBackground(glass);
-                sheet.setClipToOutline(true);
+        private void updateCorners(boolean force) {
+            boolean top = corners != CORNERS_NONE;
+            boolean bottom = false;
+            if (corners == CORNERS_AUTO) {
+                if (windowManager == null) return;
+                int[] location = new int[2];
+                view.getLocationOnScreen(location);
+                final int screenBottom = windowManager.getCurrentWindowMetrics().getBounds().bottom;
+                bottom = location[1] + view.getHeight() < screenBottom - Dim.dp(2);
             }
-            clearFillBackgrounds(sheet, sheet.getWidth(), originalBackgroundKind);
+            if (!force && top == roundTop && bottom == roundBottom) return;
+
+            roundTop = top;
+            roundBottom = bottom;
+            tint.setRoundCorners(top, bottom);
+            view.invalidateOutline();
+            if (blur != null) {
+                final float radius = tint.radius;
+                BlurRegion.setCornerRadius(blur, top ? radius : 0, bottom ? radius : 0);
+            }
         }
 
-        @Nullable
-        private View findSheet() {
-            for (int id : SHEET_IDS) {
-                if (id == 0) continue;
-                View sheet = decor.findViewById(id);
-                if (sheet != null) return sheet;
+        private void removeMenuBackgrounds(View parent) {
+            if (!(parent instanceof ViewGroup group)) return;
+
+            for (int i = 0, count = group.getChildCount(); i < count; i++) {
+                View child = group.getChildAt(i);
+                Drawable background = child.getBackground();
+                if (background != null && isMenuBackground(background)) {
+                    child.setBackground(null);
+                }
+                removeMenuBackgrounds(child);
             }
-            return null;
+        }
+
+        private boolean isMenuBackground(Drawable background) {
+            Boolean checked = checkedBackgrounds.get(background);
+            if (checked != null) return checked;
+
+            final int color = sampleColor(background);
+            if (background.getBounds().isEmpty()) {
+                return false; // Checked again once it has a size.
+            }
+            boolean menuColor = false;
+            for (int menu : menuColors) {
+                if (isSimilarOpaqueColor(color, menu)) {
+                    menuColor = true;
+                    break;
+                }
+            }
+            checkedBackgrounds.put(background, menuColor);
+            return menuColor;
         }
     }
 
@@ -358,23 +450,23 @@ public final class GlassMenus {
     private static final class GlassDrawable extends Drawable {
         private static final float RIM_WIDTH = Dim.dp(1);
 
-        private final float radius;
-        private final boolean roundBottom;
+        final float radius;
+        private boolean roundTop = true;
+        private boolean roundBottom = true;
         private final Paint fill = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Paint rim = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private final Path path = new Path();
+        private final Path fillPath = new Path();
+        private final Path rimPath = new Path();
         private final RectF rect = new RectF();
         private int opacityPercent = 100;
 
-        GlassDrawable(float radius, boolean roundBottom) {
+        GlassDrawable(float radius) {
             this.radius = radius;
-            this.roundBottom = roundBottom;
 
             final boolean dark = Utils.isDarkModeEnabled();
             final int background = ThemeUtils.getAppBackgroundColor();
-            // A sheet is raised above the page, so it is a little lighter than the page, as in the app.
-            final int tint = blend(background, Color.WHITE, dark ? 0.08f : 0.6f);
-            fill.setColor(tint);
+            // A menu is raised above the page, so it is a little lighter than the page, as in the app.
+            fill.setColor(blend(background, Color.WHITE, dark ? 0.08f : 0.6f));
 
             rim.setStyle(Paint.Style.STROKE);
             rim.setStrokeWidth(RIM_WIDTH);
@@ -388,6 +480,13 @@ public final class GlassMenus {
             invalidateSelf();
         }
 
+        void setRoundCorners(boolean top, boolean bottom) {
+            roundTop = top;
+            roundBottom = bottom;
+            updatePaths();
+            invalidateSelf();
+        }
+
         private static int blend(int color, int with, float amount) {
             final float keep = 1 - amount;
             return Color.rgb(
@@ -398,30 +497,50 @@ public final class GlassMenus {
 
         @Override
         protected void onBoundsChange(@NonNull Rect bounds) {
+            updatePaths();
+        }
+
+        private void updatePaths() {
+            Rect bounds = getBounds();
+            final float top = roundTop ? radius : 0;
             final float bottom = roundBottom ? radius : 0;
+
             rect.set(bounds);
-            path.reset();
-            path.addRoundRect(rect, new float[]{radius, radius, radius, radius, bottom, bottom, bottom, bottom},
+            fillPath.reset();
+            fillPath.addRoundRect(rect, new float[]{top, top, top, top, bottom, bottom, bottom, bottom},
                     Path.Direction.CW);
+
+            // The rim is drawn inside the menu, so it is not cut by the outline.
+            final float inset = RIM_WIDTH / 2;
+            final float rimTop = Math.max(0, top - inset);
+            final float rimBottom = Math.max(0, bottom - inset);
+            rect.inset(inset, inset);
+            rimPath.reset();
+            rimPath.addRoundRect(rect, new float[]{rimTop, rimTop, rimTop, rimTop, rimBottom, rimBottom, rimBottom,
+                    rimBottom}, Path.Direction.CW);
         }
 
         @Override
         public void draw(@NonNull Canvas canvas) {
-            canvas.drawPath(path, fill);
-            // The rim is drawn inside the menu, so it is not cut by the outline.
-            final float inset = RIM_WIDTH / 2;
-            final float rimRadius = Math.max(0, radius - inset);
-            rect.inset(inset, inset);
-            canvas.drawRoundRect(rect, rimRadius, rimRadius, rim);
-            rect.inset(-inset, -inset);
+            canvas.drawPath(fillPath, fill);
+            canvas.drawPath(rimPath, rim);
         }
 
         @Override
         public void getOutline(@NonNull Outline outline) {
             Rect bounds = getBounds();
-            // A sheet has round top corners only: the outline reaches below the bottom of the sheet.
-            outline.setRoundRect(bounds.left, bounds.top, bounds.right,
-                    roundBottom ? bounds.bottom : bounds.bottom + (int) Math.ceil(radius), radius);
+            if (!roundTop && !roundBottom) {
+                outline.setRect(bounds);
+            } else if (roundTop && !roundBottom) {
+                // Round top corners only: the outline reaches below the bottom of the menu.
+                outline.setRoundRect(bounds.left, bounds.top, bounds.right,
+                        bounds.bottom + (int) Math.ceil(radius), radius);
+            } else if (!roundTop) {
+                outline.setRoundRect(bounds.left, bounds.top - (int) Math.ceil(radius), bounds.right,
+                        bounds.bottom, radius);
+            } else {
+                outline.setRoundRect(bounds, radius);
+            }
             outline.setAlpha(opacityPercent / 100f);
         }
 

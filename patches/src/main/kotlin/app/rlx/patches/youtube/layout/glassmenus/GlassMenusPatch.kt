@@ -15,7 +15,6 @@ import app.morphe.patches.shared.misc.settings.preference.NonInteractivePreferen
 import app.morphe.patches.shared.misc.settings.preference.PreferenceScreenPreference
 import app.morphe.patches.shared.misc.settings.preference.PreferenceScreenPreference.Sorting
 import app.morphe.patches.shared.misc.settings.preference.SwitchPreference
-import app.morphe.patches.youtube.layout.flyout.FeedBottomSheetFlyoutFingerprint
 import app.morphe.patches.youtube.layout.flyout.FeedPopupWindowFlyoutFingerprint
 import app.morphe.patches.youtube.misc.extension.sharedExtensionPatch
 import app.morphe.patches.youtube.misc.settings.PreferenceScreen
@@ -36,8 +35,9 @@ private const val SEEKBAR_PREFERENCE = "app.morphe.extension.shared.settings.pre
 @Suppress("unused")
 val glassMenusPatch = patch(
     name = "Glass menus",
-    description = "Adds an option to show the menus, such as the menu of a video, the player settings and " +
-        "the share sheet, as frosted glass over the blurred screen. Needs Android 12 or later.",
+    description = "Adds an option to show the menus, such as the menu of a video, the player settings, " +
+        "the share sheet and the sheet to save to a playlist, as frosted glass: the content behind the menu " +
+        "is blurred. Needs Android 12 or later.",
 ) {
     dependsOn(
         sharedExtensionPatch,
@@ -67,13 +67,19 @@ val glassMenusPatch = patch(
             "invoke-static { }, $EXTENSION_SETTINGS_CLASS->load()V",
         )
 
-        // Bottom sheets: the dialog of every bottom sheet of the app (BaseBottomSheetDialogFragment.onCreateDialog).
-        FeedBottomSheetFlyoutFingerprint.method.apply {
+        // Bottom sheets: every bottom sheet dialog of the app, when it is attached to its window.
+        BottomSheetDialogOnAttachedToWindowFingerprint.method.addInstruction(
+            0,
+            "invoke-static { p0 }, $EXTENSION_CLASS->onBottomSheetDialog(Landroid/app/Dialog;)V",
+        )
+
+        // The sheet to save a video to a playlist, which is a dialog of its own.
+        AddToPlaylistCreateViewFingerprint.method.apply {
             findInstructionIndicesReversedOrThrow(Opcode.RETURN_OBJECT).forEach { index ->
                 val register = getInstruction<OneRegisterInstruction>(index).registerA
                 addInstruction(
                     index,
-                    "invoke-static { v$register }, $EXTENSION_CLASS->onBottomSheetDialog(Landroid/app/Dialog;)V",
+                    "invoke-static { v$register }, $EXTENSION_CLASS->onAddToPlaylistView(Landroid/view/View;)V",
                 )
             }
         }
