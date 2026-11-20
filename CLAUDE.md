@@ -14,5 +14,7 @@
 - `./gradlew :patches:validateRlxApk -PrlxApk=/absolute/path/youtube.apk` patches it with the patches Morphe
   Manager selects by default, with fingerprint validation and SDK DEX verification. Only some patches:
   `-PrlxExtraPatches="Glass menus" -PrlxOnly=true`.
-- yt-morphe builds a test APK of a branch of this repository with its Release workflow (RLX Patches: the branch
-  name, Publish unchecked).
+- For every change to test, start the test APK build yourself, right after the push: workflow `release.yml` of
+  `Ramik4/yt-morphe` on `main`, inputs `rlx` = the branch name and **`publish` = false** (its default is true,
+  which would publish the build for everyone). The owner downloads the APK from the Actions artifacts of
+  yt-morphe and installs it over the app on the phone.
