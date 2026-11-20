@@ -17,6 +17,8 @@ import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
@@ -24,6 +26,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
+import android.os.SystemClock;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,6 +114,14 @@ public final class GlassMenus {
     private static final int CORNERS_NONE = 2;
 
     private static final Map<View, GlassSurface> surfaces = new WeakHashMap<>();
+
+    /**
+     * How often the drawables of Litho hosts are checked while a menu is shown, as finding them uses reflection.
+     */
+    private static final long LITHO_SCAN_INTERVAL_MS = 150;
+
+    private static final PorterDuffColorFilter TRANSPARENT_FILTER =
+            new PorterDuffColorFilter(Color.TRANSPARENT, PorterDuff.Mode.SRC);
 
     private static boolean isEnabled() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && GlassMenusSettings.GLASS_MENUS.get();
@@ -370,6 +381,11 @@ public final class GlassMenus {
          * Backgrounds inside the menu that are checked, and if they are of the color of the menu.
          */
         private final Map<Drawable, Boolean> checkedBackgrounds = new WeakHashMap<>();
+        /**
+         * Drawables of Litho hosts that are hidden with a color filter, shown again when the menu is detached.
+         */
+        private final List<Drawable> hiddenLithoDrawables = new ArrayList<>();
+        private long lastLithoScan;
 
         @Nullable
         private Drawable blur;
@@ -428,6 +444,9 @@ public final class GlassMenus {
                 }
                 updateCorners(true);
                 view.getViewTreeObserver().addOnPreDrawListener(this);
+                if (Logger.isDebugEnabled()) {
+                    view.postDelayed(this::logViewTree, 800);
+                }
             } catch (Exception ex) {
                 Logger.printException(() -> "GlassSurface attach failure", ex);
             }
@@ -437,6 +456,10 @@ public final class GlassMenus {
         public void onViewDetachedFromWindow(@NonNull View detached) {
             try {
                 view.getViewTreeObserver().removeOnPreDrawListener(this);
+                for (Drawable drawable : hiddenLithoDrawables) {
+                    drawable.setColorFilter(null);
+                }
+                hiddenLithoDrawables.clear();
                 if (blur != null) {
                     if (windowManager != null) {
                         windowManager.removeCrossWindowBlurEnabledListener(blurListener);
@@ -473,7 +496,10 @@ public final class GlassMenus {
                     sampleOriginalBackground();
                 }
                 updateCorners(false);
-                removeMenuBackgrounds(view);
+                final long now = SystemClock.uptimeMillis();
+                final boolean scanLitho = now - lastLithoScan >= LITHO_SCAN_INTERVAL_MS;
+                if (scanLitho) lastLithoScan = now;
+                removeMenuBackgrounds(view, scanLitho);
             } catch (Exception ex) {
                 Logger.printException(() -> "GlassSurface onPreDraw failure", ex);
             }
@@ -505,16 +531,96 @@ public final class GlassMenus {
             }
         }
 
-        private void removeMenuBackgrounds(View parent) {
+        private void removeMenuBackgrounds(View parent, boolean scanLitho) {
             if (!(parent instanceof ViewGroup group)) return;
 
             for (int i = 0, count = group.getChildCount(); i < count; i++) {
                 View child = group.getChildAt(i);
-                Drawable background = child.getBackground();
-                if (background != null && isMenuBackground(background)) {
-                    child.setBackground(null);
+                try {
+                    Drawable background = child.getBackground();
+                    if (background != null) {
+                        // The view sets the bounds of its background only when it draws it.
+                        if (background.getBounds().isEmpty() && child.getWidth() > 0 && child.getHeight() > 0) {
+                            background.setBounds(0, 0, child.getWidth(), child.getHeight());
+                        }
+                        if (isMenuBackground(background)) {
+                            child.setBackground(null);
+                        }
+                    }
+                    if (scanLitho && LithoDrawables.isHost(child)) {
+                        hideLithoMenuDrawables(child);
+                    }
+                } catch (Exception ex) {
+                    Logger.printDebug(() -> "Menu background check failed: " + child, ex);
                 }
-                removeMenuBackgrounds(child);
+                removeMenuBackgrounds(child, scanLitho);
+            }
+        }
+
+        /**
+         * Hides the drawables of a Litho host that have the color of the menu, such as the background of the
+         * content of a sheet. The drawable itself is not changed, as Litho can draw it again elsewhere: it gets a
+         * transparent color filter, which is removed when the menu is detached.
+         */
+        private void hideLithoMenuDrawables(View host) {
+            boolean hidden = false;
+            for (Drawable drawable : LithoDrawables.drawablesOf(host)) {
+                if (hiddenLithoDrawables.contains(drawable)) continue;
+                try {
+                    if (isMenuBackground(drawable)) {
+                        drawable.setColorFilter(TRANSPARENT_FILTER);
+                        hiddenLithoDrawables.add(drawable);
+                        hidden = true;
+                    }
+                } catch (Exception ex) {
+                    Logger.printDebug(() -> "Litho drawable check failed: " + drawable, ex);
+                }
+            }
+            if (hidden) host.invalidate();
+        }
+
+        /**
+         * Writes the views of the menu to the debug log, to find backgrounds that are not removed.
+         */
+        private void logViewTree() {
+            StringBuilder builder = new StringBuilder("Glass menu views:\n");
+            appendViewTree(builder, view, 0);
+            Logger.printDebug(builder::toString);
+        }
+
+        private void appendViewTree(StringBuilder builder, View current, int depth) {
+            if (depth > 12) return;
+            for (int i = 0; i < depth; i++) builder.append("  ");
+            builder.append(current.getClass().getName());
+            if (current.getId() != View.NO_ID) {
+                try {
+                    builder.append(" #").append(current.getResources().getResourceEntryName(current.getId()));
+                } catch (Exception ignored) {
+                    // No resource name.
+                }
+            }
+            builder.append(' ').append(current.getWidth()).append('x').append(current.getHeight());
+            appendDrawable(builder, "bg", current.getBackground());
+            if (LithoDrawables.isHost(current)) {
+                for (Drawable drawable : LithoDrawables.drawablesOf(current)) {
+                    appendDrawable(builder, "litho", drawable);
+                }
+            }
+            builder.append('\n');
+            if (current instanceof ViewGroup group) {
+                for (int i = 0, count = group.getChildCount(); i < count; i++) {
+                    appendViewTree(builder, group.getChildAt(i), depth + 1);
+                }
+            }
+        }
+
+        private void appendDrawable(StringBuilder builder, String kind, @Nullable Drawable drawable) {
+            if (drawable == null) return;
+            builder.append(' ').append(kind).append('=').append(drawable.getClass().getSimpleName());
+            try {
+                builder.append(String.format("(#%08X)", sampleColor(drawable)));
+            } catch (Exception ex) {
+                builder.append("(?)");
             }
         }
 
