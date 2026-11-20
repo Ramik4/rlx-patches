@@ -298,4 +298,16 @@ Seçilen altyazılar %3$s klasörüne kaydedilir"</string>
     <string name="morphe_external_downloader_quick_quality">İndirme kalitesi</string>
     <string name="morphe_external_downloader_quick_audio_only">Yalnızca ses</string>
     <string name="morphe_external_downloader_quick_download">İndir</string>
+
+    <!-- Cam menüler. -->
+    <string name="morphe_glass_menus_screen_title">Cam menüler</string>
+    <string name="morphe_glass_menus_screen_summary">Menüler, bulanık ekranın üzerinde buzlu cam olarak</string>
+    <string name="morphe_glass_menus_title">Cam menüleri etkinleştir</string>
+    <string name="morphe_glass_menus_summary">Video menüsü, oynatıcı ayarları ve paylaşım menüsü gibi menüleri buzlu cam olarak gösterir: arkadaki ekran bulanıklaşır ve menünün içinden görünür. Android 12 veya üstü gerekir. Sistem bulanıklığı kapattığında (örneğin pil tasarrufunda) menüler neredeyse opak olur</string>
+    <string name="morphe_glass_menus_opacity_title">Cam opaklığı</string>
+    <string name="morphe_glass_menus_opacity_summary">Menünün bulanık ekranı ne kadar örttüğü (0 saydam, 100 opak)</string>
+    <string name="morphe_glass_menus_blur_title">Bulanıklık</string>
+    <string name="morphe_glass_menus_blur_summary">Menünün arkasındaki ekranın ne kadar bulanıklaşacağı</string>
+    <string name="morphe_glass_menus_dim_title">Karartma</string>
+    <string name="morphe_glass_menus_dim_summary">Menünün arkasındaki ekranın ne kadar karartılacağı</string>
 </resources>
