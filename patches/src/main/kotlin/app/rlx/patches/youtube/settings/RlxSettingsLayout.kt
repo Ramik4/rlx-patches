@@ -60,7 +60,7 @@ private const val VOICE_OVER_TRANSLATION_KEY = "morphe_vot_screen_rlx"
 /**
  * Groups and orders the screens of the RLX settings (YouTube):
  *
- * About, RLX Customizations, General, Feed, Video (with *Voice over translation*: Yandex and Morphe), Player,
+ * About, screens whose key starts with 00_ (as About's), RLX Customizations, General, Feed, Video (with *Voice over translation*: Yandex and Morphe), Player,
  * Swipe and seekbar, Shorts, Downloads, Ads, Community services (RYD, SponsorBlock, DeArrow), Miscellaneous.
  *
  * Keys and settings do not change: a Morphe screen is moved as it is, so it is still found by its key (search,
@@ -96,9 +96,12 @@ internal fun applyRlxSettingsLayout() {
         PreferenceScreen.ADS,
         COMMUNITY_SCREEN,
     )
+    // Screens whose key asks for the top of the settings, as About does (00_), such as the update check of a
+    // build made with RLX Patches, go right below About.
+    val top = root.filter { it !in order && it.key?.startsWith(TOP_SCREEN_KEY_PREFIX) == true }
     // Screens Morphe adds later go before Miscellaneous, which stays the last.
-    val ordered = order.filter { it in root } +
-        root.filter { it !in order && it != PreferenceScreen.MISC } +
+    val ordered = top + order.filter { it in root } +
+        root.filter { it !in order && it !in top && it != PreferenceScreen.MISC } +
         listOf(PreferenceScreen.MISC).filter { it in root }
     root.clear()
     root.addAll(ordered)
@@ -110,6 +113,9 @@ internal fun applyRlxSettingsLayout() {
 }
 
 private const val ABOUT_KEY = "morphe_settings_screen_00_about"
+
+/** Key prefix of the screens at the top of the settings root, right below About ([ABOUT_KEY]). */
+private const val TOP_SCREEN_KEY_PREFIX = "morphe_settings_screen_00_"
 
 /** Keys of the preferences of the settings root in their RLX order, or null if the layout did not run. */
 private var rootOrder: List<String>? = null
