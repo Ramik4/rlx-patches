@@ -47,10 +47,9 @@ YouTube.
 
 ## Install
 
-1. Install [Morphe Manager](https://morphe.software).
-2. Add this repository as a patch source with the link above, or add
+1. <a href="https://morphe.software/add-source?github=Ramik4/rlx-patches&name=RLX%20Patches">Add this RLX Patchesrepository</a> as a patch source with the link above, or add
    `https://github.com/Ramik4/rlx-patches` under **Sources → + → Remote**.
-3. Patch YouTube or YouTube Music with the **RLX Patches** source. Morphe Manager shows the
+2. Patch YouTube or YouTube Music with the **RLX Patches** source. Morphe Manager shows the
    supported app versions and lets you know when a new RLX release is out.
 
 Releases are signed with the RLX key; Morphe Manager refuses a file that was changed after it
