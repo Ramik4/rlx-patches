@@ -41,9 +41,12 @@ import androidx.annotation.RequiresApi;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.function.Consumer;
 
@@ -118,6 +121,11 @@ public final class GlassMenus {
      * How often the drawables of Litho hosts are checked while a menu is shown, as finding them uses reflection.
      */
     private static final long LITHO_SCAN_INTERVAL_MS = 150;
+
+    /**
+     * How long the drawables of Litho hosts are checked on every frame after a menu is attached.
+     */
+    private static final long LITHO_SCAN_EVERY_FRAME_MS = 1000;
 
     private static final PorterDuffColorFilter TRANSPARENT_FILTER =
             new PorterDuffColorFilter(Color.TRANSPARENT, PorterDuff.Mode.SRC);
@@ -354,15 +362,16 @@ public final class GlassMenus {
         @Nullable
         private Drawable originalBackground;
         /**
-         * Backgrounds inside the menu that are checked, and if they are of the color of the menu.
-         */
-        private final Map<Drawable, Boolean> checkedBackgrounds = new WeakHashMap<>();
-        /**
          * Backgrounds and drawables of Litho hosts that are hidden with a color filter, shown again when the menu
          * is detached. They are never removed: the app can use the background of a view it set.
          */
-        private final List<Drawable> hiddenDrawables = new ArrayList<>();
+        private final Set<Drawable> hiddenDrawables = Collections.newSetFromMap(new IdentityHashMap<>());
         private long lastLithoScan;
+        /**
+         * When the menu was attached. Litho is checked on every frame right after, so the menu is not shown
+         * opaque before the glass, and then less often.
+         */
+        private long attachedTime;
 
         @Nullable
         private Drawable blur;
@@ -420,6 +429,7 @@ public final class GlassMenus {
                     windowManager.addCrossWindowBlurEnabledListener(blurListener);
                 }
                 updateCorners(true);
+                attachedTime = SystemClock.uptimeMillis();
                 view.getViewTreeObserver().addOnPreDrawListener(this);
                 if (Logger.isDebugEnabled()) {
                     view.postDelayed(this::logViewTree, 800);
@@ -474,7 +484,8 @@ public final class GlassMenus {
                 }
                 updateCorners(false);
                 final long now = SystemClock.uptimeMillis();
-                final boolean scanLitho = now - lastLithoScan >= LITHO_SCAN_INTERVAL_MS;
+                final boolean scanLitho = now - attachedTime < LITHO_SCAN_EVERY_FRAME_MS
+                        || now - lastLithoScan >= LITHO_SCAN_INTERVAL_MS;
                 if (scanLitho) lastLithoScan = now;
                 removeMenuBackgrounds(view, scanLitho);
             } catch (Throwable ex) {
@@ -543,22 +554,20 @@ public final class GlassMenus {
          * @return If the drawable was hidden now.
          */
         private boolean hideIfMenuColor(Drawable drawable) {
-            if (hiddenDrawables.contains(drawable)) return false;
-            Boolean checked = checkedBackgrounds.get(drawable);
-            if (checked != null && !checked) return false;
-
+            // Checked every time: Litho can mount another drawable in the same wrapper.
             List<Drawable> chain = new ArrayList<>();
-            final boolean menuColor = isMenuColor(SolidColors.colorOf(drawable, chain));
-            checkedBackgrounds.put(drawable, menuColor);
-            if (!menuColor) return false;
+            if (!isMenuColor(SolidColors.colorOf(drawable, chain))) return false;
 
             // A wrapper may not pass the filter on, so every drawable down to the color gets it.
+            boolean hidden = false;
             for (Drawable link : chain) {
-                link.setColorFilter(TRANSPARENT_FILTER);
-                hiddenDrawables.add(link);
+                if (hiddenDrawables.add(link)) {
+                    link.setColorFilter(TRANSPARENT_FILTER);
+                    hidden = true;
+                }
             }
-            drawable.invalidateSelf();
-            return true;
+            if (hidden) drawable.invalidateSelf();
+            return hidden;
         }
 
         /**
