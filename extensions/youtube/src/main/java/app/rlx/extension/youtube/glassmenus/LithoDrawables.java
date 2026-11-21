@@ -36,33 +36,28 @@ final class LithoDrawables {
 
     private static final String COMPONENT_HOST = "com.facebook.litho.ComponentHost";
 
-    /**
-     * How deep the fields of the host are searched: host field, sparse array, its array, mount item, content.
-     */
-    private static final int MAX_DEPTH = 4;
-
     @Nullable
     private static Class<?> componentHostClass;
-    private static boolean componentHostLoaded;
 
     private static final Map<Class<?>, List<Field>> fieldsByClass = new IdentityHashMap<>();
 
+    /**
+     * @return The Litho host class, found by its name among the classes of the view, or null.
+     */
     @Nullable
     private static Class<?> componentHostClass(View view) {
-        if (!componentHostLoaded) {
-            componentHostLoaded = true;
-            try {
-                componentHostClass = Class.forName(COMPONENT_HOST, false, view.getClass().getClassLoader());
-            } catch (Throwable ex) {
-                Logger.printDebug(() -> "Litho host not found: " + ex);
+        if (componentHostClass != null) return componentHostClass;
+        for (Class<?> type = view.getClass(); type != null; type = type.getSuperclass()) {
+            if (COMPONENT_HOST.equals(type.getName())) {
+                componentHostClass = type;
+                return type;
             }
         }
-        return componentHostClass;
+        return null;
     }
 
     static boolean isHost(View view) {
-        Class<?> host = componentHostClass(view);
-        return host != null && host.isInstance(view);
+        return componentHostClass(view) != null;
     }
 
     /**
@@ -71,57 +66,41 @@ final class LithoDrawables {
     static List<Drawable> drawablesOf(View host) {
         List<Drawable> drawables = new ArrayList<>();
         Class<?> hostClass = componentHostClass(host);
-        if (hostClass == null || !hostClass.isInstance(host)) return drawables;
+        if (hostClass == null) return drawables;
 
-        Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+        Set<Object> mountItems = Collections.newSetFromMap(new IdentityHashMap<>());
         try {
             for (Field field : fieldsOf(hostClass)) {
-                collect(field.get(host), MAX_DEPTH, drawables, visited);
+                Object value = field.get(host);
+                if (value == null) continue;
+                if (value instanceof Collection<?> collection) {
+                    // A list of mount items.
+                    mountItems.addAll(collection);
+                } else if (!isPlatformClass(value.getClass())) {
+                    // A sparse array of mount items: its values are an object array.
+                    for (Field arrayField : fieldsOf(value.getClass())) {
+                        if (arrayField.get(value) instanceof Object[] array) {
+                            Collections.addAll(mountItems, array);
+                        }
+                    }
+                }
+            }
+            for (Object item : mountItems) {
+                if (item == null || item instanceof Drawable || isPlatformClass(item.getClass())) continue;
+                // The content of the mount item.
+                for (Field contentField : fieldsOf(item.getClass())) {
+                    if (contentField.get(item) instanceof Drawable drawable && drawable.getCallback() == host) {
+                        drawables.add(drawable);
+                    }
+                }
             }
         } catch (Throwable ex) {
             Logger.printDebug(() -> "Litho drawables not found: " + ex);
         }
-        // Only those the host draws.
-        drawables.removeIf(drawable -> drawable.getCallback() != host);
         return drawables;
     }
 
-    private static void collect(@Nullable Object value, int depth, List<Drawable> out, Set<Object> visited)
-            throws IllegalAccessException {
-        if (value == null || depth < 0 || !visited.add(value)) return;
-
-        if (value instanceof Drawable drawable) {
-            out.add(drawable);
-            return;
-        }
-        if (value instanceof View || value instanceof CharSequence || value instanceof Class) return;
-
-        if (value instanceof Object[] array) {
-            for (Object element : array) {
-                collect(element, depth - 1, out, visited);
-            }
-            return;
-        }
-        if (value instanceof Collection<?> collection) {
-            for (Object element : collection) {
-                collect(element, depth - 1, out, visited);
-            }
-            return;
-        }
-        if (value instanceof android.util.SparseArray<?> sparseArray) {
-            for (int i = 0, size = sparseArray.size(); i < size; i++) {
-                collect(sparseArray.valueAt(i), depth - 1, out, visited);
-            }
-            return;
-        }
-        if (isPlatformClass(value.getClass())) return;
-
-        for (Field field : fieldsOf(value.getClass())) {
-            collect(field.get(value), depth - 1, out, visited);
-        }
-    }
-
-    private static boolean isPlatformClass(Class<?> type) {
+    static boolean isPlatformClass(Class<?> type) {
         final String name = type.getName();
         return name.startsWith("java.") || name.startsWith("javax.") || name.startsWith("android.")
                 || name.startsWith("kotlin.") || name.startsWith("dalvik.") || type.isPrimitive();
@@ -130,7 +109,7 @@ final class LithoDrawables {
     /**
      * @return The object fields declared by the class and its superclasses of the app.
      */
-    private static List<Field> fieldsOf(Class<?> type) {
+    static List<Field> fieldsOf(Class<?> type) {
         List<Field> fields = fieldsByClass.get(type);
         if (fields != null) return fields;
 

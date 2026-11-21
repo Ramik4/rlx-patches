@@ -9,7 +9,6 @@ package app.rlx.extension.youtube.glassmenus;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -231,7 +230,7 @@ public final class GlassMenus {
             View content = decor.findViewById(android.R.id.content);
             Drawable background = decor.getBackground();
             if (content == null || background == null || surfaces.containsKey(content)) return;
-            if (!isMenuColor(decor.getContext(), sampleColor(background))) return;
+            if (!isMenuColor(decor.getContext(), SolidColors.colorOf(background))) return;
 
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.setDimAmount(dimAmount());
@@ -304,29 +303,6 @@ public final class GlassMenus {
             if (radius > 0) return radius;
         }
         return DEFAULT_CORNER_RADIUS;
-    }
-
-    /**
-     * @return The color in the middle of the drawable, or transparent if it has no size.
-     */
-    @ColorInt
-    private static int sampleColor(Drawable drawable) {
-        if (drawable instanceof ColorDrawable color) return color.getColor();
-        if (drawable instanceof ShapeDrawable shape) return shape.getPaint().getColor();
-
-        Rect bounds = drawable.getBounds();
-        if (bounds.width() <= 0 || bounds.height() <= 0) return Color.TRANSPARENT;
-
-        Bitmap bitmap = Bitmap.createBitmap(3, 3, Bitmap.Config.ARGB_8888);
-        try {
-            Canvas canvas = new Canvas(bitmap);
-            canvas.scale(3f / bounds.width(), 3f / bounds.height());
-            canvas.translate(-bounds.left, -bounds.top);
-            drawable.draw(canvas);
-            return bitmap.getPixel(1, 1);
-        } finally {
-            bitmap.recycle();
-        }
     }
 
     private static boolean isSimilarOpaqueColor(@ColorInt int color, @ColorInt int other) {
@@ -423,7 +399,7 @@ public final class GlassMenus {
 
         private void sampleOriginalBackground() {
             if (originalBackground == null) return;
-            final int color = sampleColor(originalBackground);
+            final int color = SolidColors.colorOf(originalBackground);
             if (Color.alpha(color) != 0) {
                 menuColors.add(color);
                 originalBackground = null;
@@ -538,14 +514,8 @@ public final class GlassMenus {
                 View child = group.getChildAt(i);
                 try {
                     Drawable background = child.getBackground();
-                    if (background != null) {
-                        // The view sets the bounds of its background only when it draws it.
-                        if (background.getBounds().isEmpty() && child.getWidth() > 0 && child.getHeight() > 0) {
-                            background.setBounds(0, 0, child.getWidth(), child.getHeight());
-                        }
-                        if (isMenuBackground(background)) {
-                            child.setBackground(null);
-                        }
+                    if (background != null && isMenuBackground(background)) {
+                        child.setBackground(null);
                     }
                     if (scanLitho && LithoDrawables.isHost(child)) {
                         hideLithoMenuDrawables(child);
@@ -567,9 +537,13 @@ public final class GlassMenus {
             for (Drawable drawable : LithoDrawables.drawablesOf(host)) {
                 if (hiddenLithoDrawables.contains(drawable)) continue;
                 try {
-                    if (isMenuBackground(drawable)) {
-                        drawable.setColorFilter(TRANSPARENT_FILTER);
-                        hiddenLithoDrawables.add(drawable);
+                    List<Drawable> chain = new ArrayList<>();
+                    if (isMenuColor(SolidColors.colorOf(drawable, chain))) {
+                        // The wrapper may not pass the filter on, so every drawable down to the color gets it.
+                        for (Drawable link : chain) {
+                            link.setColorFilter(TRANSPARENT_FILTER);
+                            hiddenLithoDrawables.add(link);
+                        }
                         hidden = true;
                     }
                 } catch (Exception ex) {
@@ -618,7 +592,7 @@ public final class GlassMenus {
             if (drawable == null) return;
             builder.append(' ').append(kind).append('=').append(drawable.getClass().getSimpleName());
             try {
-                builder.append(String.format("(#%08X)", sampleColor(drawable)));
+                builder.append(String.format("(#%08X)", SolidColors.colorOf(drawable)));
             } catch (Exception ex) {
                 builder.append("(?)");
             }
@@ -628,19 +602,16 @@ public final class GlassMenus {
             Boolean checked = checkedBackgrounds.get(background);
             if (checked != null) return checked;
 
-            final int color = sampleColor(background);
-            if (background.getBounds().isEmpty()) {
-                return false; // Checked again once it has a size.
-            }
-            boolean menuColor = false;
-            for (int menu : menuColors) {
-                if (isSimilarOpaqueColor(color, menu)) {
-                    menuColor = true;
-                    break;
-                }
-            }
+            final boolean menuColor = isMenuColor(SolidColors.colorOf(background));
             checkedBackgrounds.put(background, menuColor);
             return menuColor;
+        }
+
+        private boolean isMenuColor(@ColorInt int color) {
+            for (int menu : menuColors) {
+                if (isSimilarOpaqueColor(color, menu)) return true;
+            }
+            return false;
         }
     }
 
