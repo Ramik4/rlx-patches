@@ -386,6 +386,13 @@ public final class GlassMenus {
         private final int[] hostLocation = new int[2];
         private long lastLithoScan;
         /**
+         * If the views of the menu were laid out again since the fills of Litho were checked. Litho mounts new
+         * fills when it lays out, such as on every letter typed in the comment box, and a new fill must be hidden
+         * before it is drawn, or the menu flickers opaque.
+         */
+        private boolean laidOut;
+        private final ViewTreeObserver.OnGlobalLayoutListener layoutListener = () -> laidOut = true;
+        /**
          * When the menu was attached. Litho is checked on every frame right after, so the menu is not shown
          * opaque before the glass, and then less often.
          */
@@ -460,6 +467,7 @@ public final class GlassMenus {
                 updateCorners(true);
                 attachedTime = SystemClock.uptimeMillis();
                 view.getViewTreeObserver().addOnPreDrawListener(this);
+                view.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
                 if (Logger.isDebugEnabled()) {
                     view.postDelayed(this::logViewTree, 800);
                 }
@@ -472,6 +480,7 @@ public final class GlassMenus {
         public void onViewDetachedFromWindow(@NonNull View detached) {
             try {
                 view.getViewTreeObserver().removeOnPreDrawListener(this);
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(layoutListener);
                 for (Drawable drawable : hiddenDrawables) {
                     drawable.setColorFilter(null);
                 }
@@ -606,9 +615,13 @@ public final class GlassMenus {
                 }
                 updateCorners(false);
                 final long now = SystemClock.uptimeMillis();
-                final boolean scanLitho = now - attachedTime < LITHO_SCAN_EVERY_FRAME_MS
+                final boolean scanLitho = laidOut
+                        || now - attachedTime < LITHO_SCAN_EVERY_FRAME_MS
                         || now - lastLithoScan >= LITHO_SCAN_INTERVAL_MS;
-                if (scanLitho) lastLithoScan = now;
+                if (scanLitho) {
+                    lastLithoScan = now;
+                    laidOut = false;
+                }
                 removeMenuBackgrounds(view, scanLitho);
                 updatePanel();
             } catch (Throwable ex) {
