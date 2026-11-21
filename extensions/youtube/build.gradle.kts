@@ -21,8 +21,6 @@ dependencies {
 
     implementation(libs.collections4)
 
-    // Used by the Glass menus of RLX Patches (app.rlx.extension.youtube.glassmenus.BlurRegion).
-    implementation(libs.hiddenapi)
     implementation(libs.protobuf.javalite)
 }
 
