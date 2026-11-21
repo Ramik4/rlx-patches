@@ -154,7 +154,7 @@ public final class GlassMenus {
             if (sheet != null) {
                 GlassSurface.apply(sheet, CORNERS_AUTO);
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             Logger.printException(() -> "onBottomSheetDialog failure", ex);
         }
     }
@@ -176,7 +176,7 @@ public final class GlassMenus {
                         ? parent
                         : content;
                 GlassSurface.apply(surface, CORNERS_AUTO);
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 Logger.printException(() -> "onPopupWindow failure", ex);
             }
         }, 0);
@@ -197,7 +197,7 @@ public final class GlassMenus {
             if (closeBar != null) {
                 GlassSurface.apply(closeBar, CORNERS_NONE);
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             Logger.printException(() -> "onAddToPlaylistView failure", ex);
         }
     }
@@ -218,7 +218,7 @@ public final class GlassMenus {
             View decor = window.getDecorView();
             // After the fragment sets the window background, right after it shows the dialog.
             decor.post(() -> styleWindowPanel(window, decor));
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             Logger.printException(() -> "onDialogShown failure", ex);
         }
     }
@@ -235,7 +235,7 @@ public final class GlassMenus {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.setDimAmount(dimAmount());
             GlassSurface.apply(content, CORNERS_AUTO);
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             Logger.printException(() -> "styleWindowPanel failure", ex);
         }
     }
@@ -266,7 +266,7 @@ public final class GlassMenus {
                     }
                 }
             }
-        } catch (Exception ex) {
+        } catch (Throwable ex) {
             Logger.printException(() -> "onSlideDialog failure", ex);
         }
     }
@@ -423,7 +423,7 @@ public final class GlassMenus {
                 if (Logger.isDebugEnabled()) {
                     view.postDelayed(this::logViewTree, 800);
                 }
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 Logger.printException(() -> "GlassSurface attach failure", ex);
             }
         }
@@ -446,7 +446,7 @@ public final class GlassMenus {
                     updateOpacity();
                 }
                 windowManager = null;
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 Logger.printException(() -> "GlassSurface detach failure", ex);
             }
         }
@@ -476,7 +476,7 @@ public final class GlassMenus {
                 final boolean scanLitho = now - lastLithoScan >= LITHO_SCAN_INTERVAL_MS;
                 if (scanLitho) lastLithoScan = now;
                 removeMenuBackgrounds(view, scanLitho);
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 Logger.printException(() -> "GlassSurface onPreDraw failure", ex);
             }
             return true;
@@ -520,7 +520,7 @@ public final class GlassMenus {
                     if (scanLitho && LithoDrawables.isHost(child)) {
                         hideLithoMenuDrawables(child);
                     }
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     Logger.printDebug(() -> "Menu background check failed: " + child, ex);
                 }
                 removeMenuBackgrounds(child, scanLitho);
@@ -546,7 +546,7 @@ public final class GlassMenus {
                         }
                         hidden = true;
                     }
-                } catch (Exception ex) {
+                } catch (Throwable ex) {
                     Logger.printDebug(() -> "Litho drawable check failed: " + drawable, ex);
                 }
             }
@@ -557,9 +557,13 @@ public final class GlassMenus {
          * Writes the views of the menu to the debug log, to find backgrounds that are not removed.
          */
         private void logViewTree() {
-            StringBuilder builder = new StringBuilder("Glass menu views:\n");
-            appendViewTree(builder, view, 0);
-            Logger.printDebug(builder::toString);
+            try {
+                StringBuilder builder = new StringBuilder("Glass menu views:\n");
+                appendViewTree(builder, view, 0);
+                Logger.printDebug(builder::toString);
+            } catch (Throwable ex) {
+                Logger.printException(() -> "logViewTree failure", ex);
+            }
         }
 
         private void appendViewTree(StringBuilder builder, View current, int depth) {
@@ -593,7 +597,7 @@ public final class GlassMenus {
             builder.append(' ').append(kind).append('=').append(drawable.getClass().getSimpleName());
             try {
                 builder.append(String.format("(#%08X)", SolidColors.colorOf(drawable)));
-            } catch (Exception ex) {
+            } catch (Throwable ex) {
                 builder.append("(?)");
             }
         }

@@ -42,22 +42,19 @@ final class LithoDrawables {
     private static final Map<Class<?>, List<Field>> fieldsByClass = new IdentityHashMap<>();
 
     /**
-     * @return The Litho host class, found by its name among the classes of the view, or null.
+     * @return If the view is a Litho host. The host class is found by its name among the classes of the view.
      */
-    @Nullable
-    private static Class<?> componentHostClass(View view) {
-        if (componentHostClass != null) return componentHostClass;
+    static boolean isHost(View view) {
+        Class<?> host = componentHostClass;
+        if (host != null) return host.isInstance(view);
+
         for (Class<?> type = view.getClass(); type != null; type = type.getSuperclass()) {
             if (COMPONENT_HOST.equals(type.getName())) {
                 componentHostClass = type;
-                return type;
+                return true;
             }
         }
-        return null;
-    }
-
-    static boolean isHost(View view) {
-        return componentHostClass(view) != null;
+        return false;
     }
 
     /**
@@ -65,8 +62,8 @@ final class LithoDrawables {
      */
     static List<Drawable> drawablesOf(View host) {
         List<Drawable> drawables = new ArrayList<>();
-        Class<?> hostClass = componentHostClass(host);
-        if (hostClass == null) return drawables;
+        if (!isHost(host)) return drawables;
+        Class<?> hostClass = componentHostClass;
 
         Set<Object> mountItems = Collections.newSetFromMap(new IdentityHashMap<>());
         try {
