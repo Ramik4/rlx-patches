@@ -521,7 +521,7 @@ public final class GlassMenus {
                         hideLithoMenuDrawables(child);
                     }
                 } catch (Throwable ex) {
-                    Logger.printDebug(() -> "Menu background check failed: " + child, ex);
+                    Logger.printDebug(() -> "Menu background check failed: " + child + ": " + ex);
                 }
                 removeMenuBackgrounds(child, scanLitho);
             }
@@ -547,7 +547,7 @@ public final class GlassMenus {
                         hidden = true;
                     }
                 } catch (Throwable ex) {
-                    Logger.printDebug(() -> "Litho drawable check failed: " + drawable, ex);
+                    Logger.printDebug(() -> "Litho drawable check failed: " + drawable + ": " + ex);
                 }
             }
             if (hidden) host.invalidate();
