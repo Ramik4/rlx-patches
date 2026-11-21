@@ -341,4 +341,16 @@ Subtitles, if chosen, are saved to %3$s"</string>
     <string name="morphe_external_downloader_quick_quality">Download quality</string>
     <string name="morphe_external_downloader_quick_audio_only">Audio only</string>
     <string name="morphe_external_downloader_quick_download">Download</string>
+
+    <!-- Glass menus. -->
+    <string name="morphe_glass_menus_screen_title">Glass menus</string>
+    <string name="morphe_glass_menus_screen_summary">Menus as frosted glass over the blurred content behind them</string>
+    <string name="morphe_glass_menus_title">Enable glass menus</string>
+    <string name="morphe_glass_menus_summary">Shows the menus, such as the menu of a video, the player settings, the video quality, the playback speed, the voice over translation, the share sheet and the sheet to save to a playlist, as frosted glass: the content behind the menu is blurred and shows through it. Needs Android 12 or later. While the system turns the blur off, such as with the battery saver, the menus are nearly opaque</string>
+    <string name="morphe_glass_menus_opacity_title">Glass opacity</string>
+    <string name="morphe_glass_menus_opacity_summary">How much the menu covers the blurred content (0 is clear, 100 is opaque)</string>
+    <string name="morphe_glass_menus_blur_title">Blur</string>
+    <string name="morphe_glass_menus_blur_summary">How much the content behind the menu is blurred</string>
+    <string name="morphe_glass_menus_dim_title">Dim</string>
+    <string name="morphe_glass_menus_dim_summary">How much the screen around a bottom sheet is darkened</string>
 </resources>

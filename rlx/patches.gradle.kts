@@ -70,3 +70,30 @@ val rlxBuildInfo = tasks.register("rlxBuildInfo") {
 the<SourceSetContainer>().named("main") {
     resources.srcDir(rlxBuildInfo)
 }
+
+// Patches a stock YouTube APK with the patches Morphe Manager selects by default, with fingerprint validation:
+// ./gradlew :patches:validateRlxApk -PrlxApk=/absolute/path/youtube.apk [-PrlxExtraPatches="Glass menus"]
+//     [-PrlxOnly=true] [-PrlxApkOutput=/absolute/path/patched-unsigned.apk]
+// With -PrlxOnly=true, only the extra patches (and their dependencies) are applied.
+tasks.register<JavaExec>("validateRlxApk") {
+    description = "Applies the default RLX patches to a stock YouTube APK with fingerprint validation"
+    group = "verification"
+    dependsOn("testClasses", "jar")
+    val sourceSets = project.the<SourceSetContainer>()
+    classpath = sourceSets["test"].runtimeClasspath
+    mainClass.set("app.rlx.patches.RlxApkValidationKt")
+    maxHeapSize = "6g"
+    val bundle = tasks.named<Jar>("jar").flatMap { it.archiveFile }
+    systemProperty("rlxOnly", providers.gradleProperty("rlxOnly").getOrElse("false"))
+    doFirst {
+        val apk = providers.gradleProperty("rlxApk").orNull
+            ?: throw GradleException("validateRlxApk requires -PrlxApk=/absolute/path/youtube.apk")
+        setArgs(
+            listOf(
+                bundle.get().asFile.absolutePath,
+                apk,
+                providers.gradleProperty("rlxExtraPatches").getOrElse(""),
+            ) + listOfNotNull(providers.gradleProperty("rlxApkOutput").orNull)
+        )
+    }
+}
