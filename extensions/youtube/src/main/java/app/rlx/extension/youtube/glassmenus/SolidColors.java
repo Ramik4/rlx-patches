@@ -9,6 +9,7 @@ package app.rlx.extension.youtube.glassmenus;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ColorStateListDrawable;
 import android.graphics.drawable.Drawable;
@@ -82,13 +83,27 @@ final class SolidColors {
                     : null;
         }
 
-        // A wrapper of the app, such as the drawable Litho mounts around the background of a component.
         if (!LithoDrawables.isPlatformClass(drawable.getClass())) {
             try {
-                for (Field field : LithoDrawables.fieldsOf(drawable.getClass())) {
+                List<Field> fields = LithoDrawables.fieldsOf(drawable.getClass());
+                // A wrapper of the app, such as the drawable Litho mounts around the background of a component.
+                for (Field field : fields) {
                     if (field.get(drawable) instanceof Drawable wrapped && wrapped != drawable) {
                         return resolve(wrapped, depth + 1, chain);
                     }
+                }
+                // A fill of the app, such as the background of an Elements component: one paint that fills
+                // a rectangle or a rounded rectangle with a color. Outlines, shadows and gradients are not a fill.
+                Paint fill = null;
+                for (Field field : fields) {
+                    if (field.get(drawable) instanceof Paint paint) {
+                        if (fill != null) return null;
+                        fill = paint;
+                    }
+                }
+                if (fill != null && fill.getStyle() == Paint.Style.FILL
+                        && fill.getShader() == null && fill.getMaskFilter() == null) {
+                    return fill.getColor();
                 }
             } catch (Throwable ignored) {
                 // Not accessible.

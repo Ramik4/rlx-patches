@@ -358,9 +358,10 @@ public final class GlassMenus {
          */
         private final Map<Drawable, Boolean> checkedBackgrounds = new WeakHashMap<>();
         /**
-         * Drawables of Litho hosts that are hidden with a color filter, shown again when the menu is detached.
+         * Backgrounds and drawables of Litho hosts that are hidden with a color filter, shown again when the menu
+         * is detached. They are never removed: the app can use the background of a view it set.
          */
-        private final List<Drawable> hiddenLithoDrawables = new ArrayList<>();
+        private final List<Drawable> hiddenDrawables = new ArrayList<>();
         private long lastLithoScan;
 
         @Nullable
@@ -432,10 +433,10 @@ public final class GlassMenus {
         public void onViewDetachedFromWindow(@NonNull View detached) {
             try {
                 view.getViewTreeObserver().removeOnPreDrawListener(this);
-                for (Drawable drawable : hiddenLithoDrawables) {
+                for (Drawable drawable : hiddenDrawables) {
                     drawable.setColorFilter(null);
                 }
-                hiddenLithoDrawables.clear();
+                hiddenDrawables.clear();
                 if (blur != null) {
                     if (windowManager != null) {
                         windowManager.removeCrossWindowBlurEnabledListener(blurListener);
@@ -510,15 +511,23 @@ public final class GlassMenus {
         private void removeMenuBackgrounds(View parent, boolean scanLitho) {
             if (!(parent instanceof ViewGroup group)) return;
 
+            final int minWidth = view.getWidth() / 2;
             for (int i = 0, count = group.getChildCount(); i < count; i++) {
                 View child = group.getChildAt(i);
                 try {
                     Drawable background = child.getBackground();
-                    if (background != null && isMenuBackground(background)) {
-                        child.setBackground(null);
+                    // Only fills of the menu, not small views such as buttons or a progress circle.
+                    if (background != null && child.getWidth() >= minWidth) {
+                        hideIfMenuColor(background);
                     }
                     if (scanLitho && LithoDrawables.isHost(child)) {
-                        hideLithoMenuDrawables(child);
+                        boolean hidden = false;
+                        for (Drawable drawable : LithoDrawables.drawablesOf(child)) {
+                            if (drawable.getBounds().width() >= minWidth) {
+                                hidden |= hideIfMenuColor(drawable);
+                            }
+                        }
+                        if (hidden) child.invalidate();
                     }
                 } catch (Throwable ex) {
                     Logger.printDebug(() -> "Menu background check failed: " + child + ": " + ex);
@@ -528,29 +537,28 @@ public final class GlassMenus {
         }
 
         /**
-         * Hides the drawables of a Litho host that have the color of the menu, such as the background of the
-         * content of a sheet. The drawable itself is not changed, as Litho can draw it again elsewhere: it gets a
-         * transparent color filter, which is removed when the menu is detached.
+         * Hides a drawable of the color of the menu with a transparent color filter. The drawable itself is not
+         * changed, as the app can draw it again elsewhere, and the filter is removed when the menu is detached.
+         *
+         * @return If the drawable was hidden now.
          */
-        private void hideLithoMenuDrawables(View host) {
-            boolean hidden = false;
-            for (Drawable drawable : LithoDrawables.drawablesOf(host)) {
-                if (hiddenLithoDrawables.contains(drawable)) continue;
-                try {
-                    List<Drawable> chain = new ArrayList<>();
-                    if (isMenuColor(SolidColors.colorOf(drawable, chain))) {
-                        // The wrapper may not pass the filter on, so every drawable down to the color gets it.
-                        for (Drawable link : chain) {
-                            link.setColorFilter(TRANSPARENT_FILTER);
-                            hiddenLithoDrawables.add(link);
-                        }
-                        hidden = true;
-                    }
-                } catch (Throwable ex) {
-                    Logger.printDebug(() -> "Litho drawable check failed: " + drawable + ": " + ex);
-                }
+        private boolean hideIfMenuColor(Drawable drawable) {
+            if (hiddenDrawables.contains(drawable)) return false;
+            Boolean checked = checkedBackgrounds.get(drawable);
+            if (checked != null && !checked) return false;
+
+            List<Drawable> chain = new ArrayList<>();
+            final boolean menuColor = isMenuColor(SolidColors.colorOf(drawable, chain));
+            checkedBackgrounds.put(drawable, menuColor);
+            if (!menuColor) return false;
+
+            // A wrapper may not pass the filter on, so every drawable down to the color gets it.
+            for (Drawable link : chain) {
+                link.setColorFilter(TRANSPARENT_FILTER);
+                hiddenDrawables.add(link);
             }
-            if (hidden) host.invalidate();
+            drawable.invalidateSelf();
+            return true;
         }
 
         /**
@@ -594,21 +602,19 @@ public final class GlassMenus {
 
         private void appendDrawable(StringBuilder builder, String kind, @Nullable Drawable drawable) {
             if (drawable == null) return;
-            builder.append(' ').append(kind).append('=').append(drawable.getClass().getSimpleName());
+            builder.append(' ').append(kind).append('=');
             try {
-                builder.append(String.format("(#%08X)", SolidColors.colorOf(drawable)));
+                List<Drawable> chain = new ArrayList<>();
+                final int color = SolidColors.colorOf(drawable, chain);
+                for (int i = 0; i < chain.size(); i++) {
+                    if (i > 0) builder.append('>');
+                    builder.append(chain.get(i).getClass().getSimpleName());
+                }
+                builder.append(String.format("(#%08X %dx%d%s)", color, drawable.getBounds().width(),
+                        drawable.getBounds().height(), hiddenDrawables.contains(drawable) ? " hidden" : ""));
             } catch (Throwable ex) {
-                builder.append("(?)");
+                builder.append(drawable.getClass().getSimpleName()).append("(?)");
             }
-        }
-
-        private boolean isMenuBackground(Drawable background) {
-            Boolean checked = checkedBackgrounds.get(background);
-            if (checked != null) return checked;
-
-            final boolean menuColor = isMenuColor(SolidColors.colorOf(background));
-            checkedBackgrounds.put(background, menuColor);
-            return menuColor;
         }
 
         private boolean isMenuColor(@ColorInt int color) {
