@@ -2,6 +2,12 @@
 
 ## Workflow
 
+- Commits are authored by the owner: set `git config user.name "Ramik ☆"` and
+  `git config user.email "60112744+Ramik4@users.noreply.github.com"` in every clone before the first commit (also
+  in a fork such as `Ramik4/morphe-patches`), so GitHub shows the owner as the author, and end the message with a
+  `Co-Authored-By:` line for Claude. A commit made by mistake with another author is amended only while it is not
+  on `main` yet.
+
 - Every change that needs testing goes into a pull request to `main`. The Build workflow builds a test bundle
   (`rlx-patches-<version>-build<run>.mpp`) for every push and pull request, so no merge is needed for a test build.
 - Do not merge right away: merge a pull request only after the owner has tested it on a device and says so.
