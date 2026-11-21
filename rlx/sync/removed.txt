@@ -9,3 +9,5 @@
 .github/workflows/crowdin_push.yml
 .github/workflows/open_pull_request.yml
 .github/workflows/release.yml
+.github/workflows/issue_cleanup.yml
+.github/workflows/issue_triage.yml
