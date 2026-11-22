@@ -29,3 +29,12 @@
   `Ramik4/yt-morphe` on `main`, inputs `rlx` = the branch name and **`publish` = false** (its default is true,
   which would publish the build for everyone). The owner downloads the APK from the Actions artifacts of
   yt-morphe and installs it over the app on the phone.
+
+## Release notes
+
+- Written by `rlx/scripts/release_notes.py` (layout in `rlx/README.md`, "GitHub Actions"): *Based on Morphe
+  Patches X*, `## ✨ New features` (also of the Morphe versions RLX did not release), `## 🔧 Other improvements`
+  (the heading alone), `## 🌟 RLX extras` (`rlx/extras.md`, in every release), `## 📥 Install`,
+  `## 📱 Supported versions`.
+- No fix lists, no count of Morphe's fixes, no pull request titles and no line on the signature.
+- This session type cannot edit a published release: give the owner the notes to paste.

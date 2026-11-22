@@ -351,15 +351,21 @@ python3 -m unittest discover -s rlx/scripts
   permissions of this repository as the `RLX_SYNC_TOKEN` secret.
 - **Release**: a draft by default (visible to maintainers only, no tag, `patches-bundle.json`
   unchanged); *publish* makes it public and points Morphe Manager to it. When the version of `rlx.properties` is already released, it is an RLX-only
-  release and the version is raised by one first. The release notes name the Morphe base version,
-  add the notes given when it is started, and list the RLX changes since the last release: the
-  titles of the pull requests and the direct commits on `main` (first parents, so without Morphe's
-  history).
-  The notes are, in this order: the Morphe base version; *New features*, the features of the Morphe
-  releases since the base of the last RLX release (from Morphe's `CHANGELOG.md`; YouTube, then YouTube
-  Music, then the ones of every app; the number of fixes with a link to Morphe's notes); *RLX extras*,
-  the RLX changes (the first release: everything RLX adds, [`first-release.md`](first-release.md));
-  *Supported versions* (from the patches list of the build); *Install*. Drafts of earlier runs are
+  release and the version is raised by one first. The notes are written by
+  [`scripts/release_notes.py`](scripts/release_notes.py), in this order (the owner's rules, also for
+  later releases):
+  1. *Based on Morphe Patches X* (the Morphe base version).
+  2. *✨ New features*: the features of every Morphe release since the base of the last RLX release, so
+     also of the Morphe versions RLX did not release (from Morphe's `CHANGELOG.md`; YouTube, then
+     YouTube Music, then the ones of every app); the notes given when the release is started follow.
+  3. *🔧 Other improvements*: the heading alone. Fixes are not listed, neither Morphe's (no count, no
+     link) nor RLX's (no pull request titles).
+  4. *🌟 RLX extras*: what RLX adds to Morphe Patches ([`extras.md`](extras.md)), in every release, like
+     the mod features of the YT Morphe builds.
+  5. *📥 Install*, without a line on the signature.
+  6. *📱 Supported versions* (from the patches list of the build).
+
+  Drafts of earlier runs are
   deleted, so there is one draft at most. The tag and the `.mpp` file are published before `patches-bundle.json` points to
   them, so Morphe Manager never gets a link to a missing file.
 
