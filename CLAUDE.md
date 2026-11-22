@@ -36,5 +36,8 @@
   Patches X*, `## ✨ New features` (also of the Morphe versions RLX did not release), `## 🔧 Other improvements`
   (the heading alone), `## 🌟 RLX extras` (`rlx/extras.md`, in every release), `## 📥 Install`,
   `## 📱 Supported versions`.
+- Morphe Manager shows the `description` of `patches-bundle.json` as the notes of the update: the release
+  workflow writes the same notes there with `--manager` (Morphe's layout: `## [version](release) (date)`, `###`
+  sections, no install section).
 - No fix lists, no count of Morphe's fixes, no pull request titles and no line on the signature.
 - This session type cannot edit a published release: give the owner the notes to paste.

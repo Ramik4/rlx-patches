@@ -6,6 +6,10 @@ commit that is released (with its patches-list.json).
 Environment: VERSION (RLX version), MORPHE (the Morphe base version), PREVIOUS_TAG (the last RLX release,
 empty for the first one), EXTRA_NOTES (optional Markdown, after the new features).
 
+With --manager: the notes for Morphe Manager (the "description" of patches-bundle.json), in the layout of
+Morphe's own bundle: "## [version](release) (date)", the sections as "###", without the install section
+(the source is already added there).
+
 Layout (see rlx/README.md, "Release notes"):
 
     Based on **Morphe Patches X.Y.Z**
@@ -20,6 +24,8 @@ import json
 import os
 import re
 import subprocess
+import sys
+from datetime import datetime, timezone
 
 ROOT = os.getcwd()
 
@@ -100,6 +106,7 @@ def supported_versions():
 
 
 def main():
+    manager = "--manager" in sys.argv[1:]
     morphe = os.environ["MORPHE"]
     start = os.environ.get("PREVIOUS_TAG")
     previous = None
@@ -123,18 +130,27 @@ def main():
     extras = re.sub(r"(?s)<!--.*?-->", "", extras).strip()
     lines += ["## 🌟 RLX extras", "", extras, ""]
 
-    lines += [
-        "## 📥 Install",
-        "",
-        "[Add RLX Patches to Morphe Manager](https://morphe.software/add-source?github=Ramik4/rlx-patches&name=RLX%20Patches),"
-        " or add `https://github.com/Ramik4/rlx-patches` under *Sources → + → Remote*, then patch YouTube or"
-        " YouTube Music with the RLX Patches source.",
-        "",
-    ]
+    if not manager:
+        lines += [
+            "## 📥 Install",
+            "",
+            "[Add RLX Patches to Morphe Manager](https://morphe.software/add-source?github=Ramik4/rlx-patches&name=RLX%20Patches),"
+            " or add `https://github.com/Ramik4/rlx-patches` under *Sources → + → Remote*, then patch YouTube or"
+            " YouTube Music with the RLX Patches source.",
+            "",
+        ]
 
     supported = supported_versions()
     if supported:
         lines += ["## 📱 Supported versions", "", *supported, ""]
+
+    if manager:
+        version = os.environ["VERSION"]
+        date = os.environ.get("RELEASE_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        url = f"https://github.com/Ramik4/rlx-patches/releases/tag/v{version}"
+        lines = [f"## [{version}]({url}) ({date})", ""] + [
+            "#" + line if line.startswith("## ") else line for line in lines
+        ]
 
     print("\n".join(lines).strip())
 

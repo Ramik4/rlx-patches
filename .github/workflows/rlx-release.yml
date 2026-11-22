@@ -116,6 +116,8 @@ jobs:
         run: |
           python3 rlx/scripts/release_notes.py > "$RUNNER_TEMP/notes.md"
           cat "$RUNNER_TEMP/notes.md"
+          # The notes Morphe Manager shows for the update (patches-bundle.json), in Morphe's layout
+          python3 rlx/scripts/release_notes.py --manager > "$RUNNER_TEMP/manager-notes.md"
 
       - name: Draft release
         if: ${{ !inputs.publish }}
@@ -166,7 +168,8 @@ jobs:
           version, morphe = os.environ["VERSION"], os.environ["MORPHE"]
           bundle = {
               "created_at": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%S"),
-              "description": f"RLX Patches {version}\n\nBased on Morphe {morphe}",
+              # Shown by Morphe Manager as the notes of the update (Markdown, like Morphe's own bundle).
+              "description": pathlib.Path(os.environ["RUNNER_TEMP"], "manager-notes.md").read_text().strip(),
               "download_url": f"https://github.com/Ramik4/rlx-patches/releases/download/v{version}/rlx-patches-{version}.mpp",
               "signature_download_url": "",
               "version": version,
