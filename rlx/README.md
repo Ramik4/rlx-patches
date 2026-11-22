@@ -366,8 +366,8 @@ python3 -m unittest discover -s rlx/scripts
   6. *📱 Supported versions* (from the patches list of the build).
 
   Morphe Manager shows the `description` of `patches-bundle.json` as the notes of the update: the
-  workflow writes the same notes there (`release_notes.py --manager`), in the layout of Morphe's own
-  bundle (`## [version](release) (date)`, the sections as `###`, without *📥 Install*).
+  workflow writes the same notes there (`release_notes.py --manager`): the sections as `###`, without a
+  version line (the Manager shows the version, and would show the line as it is) and without *📥 Install*.
 
   Drafts of earlier runs are
   deleted, so there is one draft at most. The tag and the `.mpp` file are published before `patches-bundle.json` points to

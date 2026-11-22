@@ -6,9 +6,9 @@ commit that is released (with its patches-list.json).
 Environment: VERSION (RLX version), MORPHE (the Morphe base version), PREVIOUS_TAG (the last RLX release,
 empty for the first one), EXTRA_NOTES (optional Markdown, after the new features).
 
-With --manager: the notes for Morphe Manager (the "description" of patches-bundle.json), in the layout of
-Morphe's own bundle: "## [version](release) (date)", the sections as "###", without the install section
-(the source is already added there).
+With --manager: the notes for Morphe Manager (the "description" of patches-bundle.json): the sections as
+"###", without a version line (the Manager shows the version) and without the install section (the source
+is already added there).
 
 Layout (see rlx/README.md, "Release notes"):
 
@@ -25,7 +25,6 @@ import os
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
 
 ROOT = os.getcwd()
 
@@ -145,12 +144,9 @@ def main():
         lines += ["## 📱 Supported versions", "", *supported, ""]
 
     if manager:
-        version = os.environ["VERSION"]
-        date = os.environ.get("RELEASE_DATE") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        url = f"https://github.com/Ramik4/rlx-patches/releases/tag/v{version}"
-        lines = [f"## [{version}]({url}) ({date})", ""] + [
-            "#" + line if line.startswith("## ") else line for line in lines
-        ]
+        # No "## [version](link) (date)" line: Morphe Manager shows it as it is, as a section of its own,
+        # and shows the version above the notes anyway.
+        lines = ["#" + line if line.startswith("## ") else line for line in lines]
 
     print("\n".join(lines).strip())
 
