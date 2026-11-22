@@ -61,7 +61,10 @@ Dəyişikliklərə aşağıdakılar daxildir:
   <string name="morphe_hide_account_menu_title">Kitabxananı / Aşağı menyu filtrinizi aktivləşdirin</string>
   <string name="morphe_hide_account_menu_filter_strings_title">Kitabxana / Aşağı menyu filtriniz</string>
   <string name="morphe_hide_account_menu_filter_strings_summary">Filtrləmək üçün Kitabxana / Siz alt menyu adlarını yeni sətirlərlə ayrılmış şəkildə qeyd et</string>
+  <string name="morphe_hide_account_menu_badges_title">Nişanları Gizlət</string>
   <string name="morphe_hide_account_menu_downloads_title">Yükləmələri Gizlət</string>
+  <string name="morphe_hide_account_menu_liked_videos_title">\"Bəyənilmiş videoları\" Gizlət</string>
+  <string name="morphe_hide_account_menu_watch_later_title">\"Sonra izləni\" Gizlət</string>
   <string name="morphe_hide_album_cards_title">Albom kartlarını gizlət</string>
   <string name="morphe_hide_album_cards_summary">Albom kartlarını sənətkar təsviri altında gizlədir</string>
   <string name="morphe_hide_artist_cards_title">Sənətkar kartlarını gizlət</string>
@@ -427,6 +430,8 @@ Məhdudiyyətlər:
   <string name="morphe_minimal_comments_button_summary">Şərhlər düyməsində göstərilən sürüşən kartları və səhifə seçicisini gizlədir</string>
   <string name="morphe_hide_comments_timestamp_button_title">Vaxt möhürü düyməsini gizlət</string>
   <string name="morphe_hide_comments_top_fans_button_title">\"Ən aktiv fanatlar\" düyməsini gizlət</string>
+  <string name="morphe_hide_comments_topics_title">\'Mövzuları\' Gizlət</string>
+  <string name="morphe_hide_comments_topics_summary">Videonun altındakı \"Mövzular\" filtr zolağı seçimini və \"Mövzu\" şərh önizləmələrini gizlədir</string>
   <string name="morphe_hide_comments_translate_button_title">Tərcümə et düyməsini gizlət</string>
   <string name="morphe_hide_comments_zero_state_title">​\'Hələ ki şərh yoxdur\' bildirişini gizlət</string>
   <string name="morphe_sanitize_comments_highlighted_search_links_title">Vurğulanmış axtarış linklərini təmizlə</string>
@@ -1029,6 +1034,39 @@ Bunu düzəltmək üçün 'Video yayımlarını saxtalaşdır'-ı aktivləşdir 
   <string name="morphe_swipe_overlay_style_entry_7">Şaquli örtük (ən kiçik)</string>
   <string name="morphe_swipe_change_video_title">Videoları dəyişmək üçün sürüşdürməni aktivləşdir</string>
   <string name="morphe_swipe_change_video_summary">Növbəti yaxud əvvəlki videoya keçmək üçün tam ekran rejimində sürüşdür</string>
+  <!-- interaction.holdgesture.holdGesturePatch -->
+  <string name="morphe_hold_gesture_screen_title">Saxlama jesti</string>
+  <string name="morphe_hold_gesture_screen_summary">Toxunub saxladıqdan sonra sürükləyərək oynatma sürətini dəyişdir və kilidlə</string>
+  <string name="morphe_hold_gesture_title">Saxlama jestini aktivləşdir</string>
+  <string name="morphe_hold_gesture_summary">Videoya toxunub saxlamağın ardınca sürüklənə bilər. Saxlanarkən sürət toxunub saxlama oynatma sürətidir</string>
+  <string name="morphe_hold_gesture_press_to_swipe_summary">Sürüşdürmək üçün basma aktiv olduqda istifadə edilmir. Dəyişdirmək üçün toxun</string>
+  <string name="morphe_hold_gesture_press_to_swipe_dialog_title">Sürüşdürmək üçün basma açıqdır</string>
+  <string name="morphe_hold_gesture_press_to_swipe_dialog_message">Saxlama jesti və sürüşdürmə idarəetmələrinin basıb sürüşdürmə jesti - hər ikisi toxunub saxlamaqla başlayır, buna görə də onlardan yalnız biri aktiv ola bilər.</string>
+  <string name="morphe_hold_gesture_press_to_swipe_dialog_turn_off">Sürüşdürmək üçün basmanı bağla</string>
+  <string name="morphe_hold_gesture_press_to_swipe_toast">Sürüşdürmək üçün basma aktiv olduqda saxlama jesti istifadə edilmir</string>
+  <string name="morphe_hold_gesture_dialog_title">Saxlama jesti aktivdir</string>
+  <string name="morphe_hold_gesture_dialog_turn_off">Saxlama jestini bağla</string>
+  <string name="morphe_hold_gesture_haptic_feedback_title">Əks-əlaqə reaksiyasını aktivləşdir</string>
+  <string name="morphe_hold_gesture_haptic_feedback_summary">Sürət dəyişdikdə və sürət kilidləndikdə titrəyir</string>
+  <string name="morphe_hold_gesture_speed_swipe_title">Sürəti dəyişmək üçün yana sürüklə</string>
+  <string name="morphe_hold_gesture_speed_swipe_summary">Toxunub saxladıqdan sonra daha yavaş oynatmaq üçün sola, daha sürətli oynatmaq üçün sağa sürüklə. Daha uzağa çəkildikdə barmaq geri qayıdana qədər sürət dəyişməyə davam edir</string>
+  <string name="morphe_hold_gesture_speed_step_title">Sürət pilləsi</string>
+  <string name="morphe_hold_gesture_speed_sensitivity_title">Sürükləmə həssaslığı</string>
+  <string name="morphe_hold_gesture_speed_sensitivity_entry_1">Aşağı</string>
+  <string name="morphe_hold_gesture_speed_sensitivity_entry_2">Normal</string>
+  <string name="morphe_hold_gesture_speed_sensitivity_entry_3">Yüksək</string>
+  <string name="morphe_hold_gesture_speed_min_title">Ən yavaş sürət</string>
+  <string name="morphe_hold_gesture_speed_min_summary">Sürükləmənin çata biləcəyi ən yavaş sürət</string>
+  <string name="morphe_hold_gesture_speed_max_title">Ən yüksək sürət</string>
+  <string name="morphe_hold_gesture_speed_max_summary">Sürükləmənin çata biləcəyi ən yüksək sürət (8-ə qədər)</string>
+  <string name="morphe_hold_gesture_lock_title">Sürəti kilidləmək üçün aşağı sürüklə</string>
+  <string name="morphe_hold_gesture_lock_summary">Toxunub saxladıqdan sonra barmaq qaldırıldıqda sürəti saxlamaq üçün aşağı sürüklə. Kilidi açmaq üçün nişana toxun və ya yenidən toxunub saxla</string>
+  <string name="morphe_hold_gesture_lock_badge_always_title">Həmişə kilid nişanını göstər</string>
+  <string name="morphe_hold_gesture_lock_badge_always_summary">Oynadıcı idarəetmələri gizlədildikdə kilidli sürətin nişanı görünən qalır</string>
+  <string name="morphe_hold_gesture_unlock_on_video_change_title">Video dəyişdikdə kilidini aç</string>
+  <string name="morphe_hold_gesture_unlock_on_video_change_summary">Başqa video başlayanda kilidlənmiş sürət bitir</string>
+  <string name="morphe_hold_gesture_lock_hint">Kilidləmək üçün aşağı çək</string>
+  <string name="morphe_hold_gesture_lock_release">%s \'i kilidləmək üçün burax</string>
   <!-- layout.captions.captionsPatch -->
   <string name="morphe_captions_screen_title">Titrlər</string>
   <string name="morphe_captions_screen_summary">Avtomatik titrləri və titr bazaların idarə et</string>
@@ -1609,6 +1647,7 @@ Avtomobil tərtibatı
   <string name="morphe_video_delay_button_overlay_summary">Gecikməni 0 ms-ə sıfırlamaq üçün toxunub saxla</string>
   <string name="morphe_video_delay_button_flyout_title">Video gecikməsi menyusunu göstər</string>
   <string name="morphe_video_delay_dialog_input_hint">Millisaniyə ilə gecikmə</string>
+  <!-- video.effects.videoEffectsPatch -->
   <!-- video.quality.rememberVideoQualityPatch -->
   <string name="morphe_remember_shorts_quality_last_selected_title">Shorts keyfiyyətin xatırla</string>
   <string name="morphe_remember_shorts_quality_last_selected_summary">Əl ilə keyfiyyət seçiminizi bütün gələcək Shorts-lara tətbiq edir</string>
@@ -1697,10 +1736,6 @@ Məhdudiyyətlər:
   <string name="morphe_advanced_video_quality_menu_summary">Keyfiyyət seçimi menyusunu ötürür və birbaşa Təkmil keyfiyyət menyusunu açır</string>
   <!-- video.quality.hidePremiumVideoQualityPatch -->
   <string name="morphe_hide_premium_video_quality_title">Premium keyfiyyət seçimlərini gizlət</string>
-  <!-- video.quality.prioritizeVideoQualityPatch -->
-  <string name="morphe_video_quality_prioritize_title">Video keyfiyyətinə üstünlük ver</string>
-  <string name="morphe_video_quality_prioritize_summary">Kodek səmərəliliyindən artıq mövcud ən yüksək video keyfiyyətinə üstünlük verir</string>
-  <string name="morphe_video_quality_prioritize_dialog">Bu seçim qapalıdırsa, daha köhnə videolar video keyfiyyəti seçimlərini göstərməyə bilər</string>
   <!-- misc.spoof.spoofVideoStreamsPatch -->
   <string name="morphe_spoof_video_streams_av1_title">\'Android VR\' / \'visionOS\' AV1-ə icazə ver</string>
   <string name="morphe_spoof_video_streams_av1_summary">\'Android VR\' / \'visionOS\' qəbuledici istifadə edərkən AV1 təminatını dekodlamağa icazə verir</string>

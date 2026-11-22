@@ -141,7 +141,7 @@ Second \"item\" text"</string>
   <string name="morphe_spoof_video_streams_no_clients_suggest_vr_toast">Спробуйте увімкнути: Підміна відеопотоків > Android VR з входом</string>
   <string name="morphe_spoof_video_streams_client_type_title">Типовий клієнт</string>
   <!-- Ensure this translation matches the translation of morphe_spoof_video_streams_no_clients_suggest_vr_toast -->
-  <string name="morphe_spoof_video_streams_sign_in_android_vr_about_title">Вхід у \'Android\' VR</string>
+  <string name="morphe_spoof_video_streams_sign_in_android_vr_about_title">Вхід у \'Android VR\'</string>
   <string name="morphe_spoof_video_streams_sign_in_android_vr_about_summary">\'Android VR\' потребує окремого входу. Натисніть тут, щоб продовжити</string>
   <string name="morphe_spoof_video_streams_sign_in_android_vr_about_summary_signed_in">Наразі ви ввійшли в \'Android VR\'</string>
   <!-- "Default client" must be the same translated text as morphe_spoof_video_streams_client_type_title -->
@@ -168,7 +168,7 @@ Second \"item\" text"</string>
 • Налаштування Morphe не імпортують/експортують автентифікацію Android VR
 • Якщо застосунок не використовується 6 місяців, Google видалить цю автентифікацію
 • Вам потрібно буде увійти знову, якщо ви зміните пароль Google або скасуєте реєстрацію цього пристрою в налаштуваннях Google"</string>
-  <string name="morphe_spoof_video_streams_sign_in_mweb_about_title">Вхід у Mobile Web</string>
+  <string name="morphe_spoof_video_streams_sign_in_mweb_about_title">Вхід у \'Mobile Web\'</string>
   <string name="morphe_spoof_video_streams_sign_in_mweb_about_summary">Необов\'язково: увійдіть на вебсайт YouTube, щоб відтворювати відео зі своїм обліковим записом. Натисніть тут, щоб продовжити</string>
   <string name="morphe_spoof_video_streams_sign_in_mweb_about_summary_signed_in">Наразі ви ввійшли в \"Mobile Web\"</string>
   <!-- "Default client" must be the same translated text as morphe_spoof_video_streams_client_type_title -->
@@ -214,8 +214,15 @@ Second \"item\" text"</string>
   <string name="morphe_seek_notification_media_length_invalid">Тривалість перемотування має бути від 1 до %s секунд. Використовується типове значення</string>
   <!-- misc.quic.disableQUICProtocolPatch -->
   <string name="morphe_disable_quic_protocol_title">Вимкнути протокол QUIC</string>
+  <!-- video.quality.prioritizeVideoQualityPatch -->
+  <string name="morphe_prioritize_video_quality_title">Пріоритет якості відео</string>
+  <string name="morphe_prioritize_video_quality_summary">Надає пріоритет найвищій доступній якості відео над ефективністю кодека</string>
+  <string name="morphe_prioritize_video_quality_dialog">Якщо це налаштування вимкнено, старіші відео можуть не показувати параметри якості відео</string>
   <!-- misc.audio.drc.disableDRCAudioPatch  -->
-  <string name="morphe_disable_drc_audio_title">Вимкнути аудіо DRC</string>
+  <string name="morphe_disable_drc_audio_stream_title">Вимкнути аудіо DRC</string>
+  <string name="morphe_disable_drc_audio_stream_summary">Відтворює оригінальний аудіопотік замість версії зі стиснутим динамічним діапазоном</string>
+  <string name="morphe_disable_loudness_normalization_title">Вимкнути нормалізацію гучності</string>
+  <string name="morphe_disable_loudness_normalization_summary">Відтворює гучне аудіо з оригінальною гучністю замість її зниження до стандартного рівня</string>
   <!-- misc.audio.tracks.forceOriginalAudioPatch -->
   <string name="morphe_force_original_audio_title">Примусово оригінальна мова звукової доріжки</string>
   <string name="morphe_force_original_audio_summary">Завжди відтворює оригінальну аудіодоріжку відео замість дубльованої</string>
@@ -224,6 +231,29 @@ Second \"item\" text"</string>
   <string name="morphe_skip_silence_summary">Автоматично пропускає тихі паузи у звуку відео</string>
   <string name="morphe_skip_silence_minimum_pause_title">Мінімальна тривалість паузи</string>
   <string name="morphe_skip_silence_minimum_pause_summary">Скорочуються лише паузи, не коротші за це значення. Набуває чинності при запуску наступного відео</string>
+  <!-- misc.videoeffects.videoEffectsPatch -->
+  <string name="morphe_video_effect_title">Відеоефект</string>
+  <string name="morphe_video_effect_entry_none">Вимк.</string>
+  <string name="morphe_video_effects_custom_title">Редагувати відеоефекти</string>
+  <string name="morphe_video_effects_custom_summary">Змінюйте, перейменовуйте, видаляйте або додавайте відеоефекти. Ефекти є кодом шейдера, тому AI-чатбот може написати нові</string>
+  <string name="morphe_video_effects_custom_empty">Відеоефектів немає. Натисніть «Додати ефект», щоб створити один.</string>
+  <string name="morphe_video_effects_custom_add">Додати ефект</string>
+  <string name="morphe_video_effects_custom_restore">Відновити типові налаштування</string>
+  <string name="morphe_video_effects_custom_add_title">Новий ефект</string>
+  <string name="morphe_video_effects_custom_edit_title">Редагувати ефект</string>
+  <string name="morphe_video_effects_custom_name_hint">Назва</string>
+  <string name="morphe_video_effects_custom_name_empty">Введіть назву ефекту</string>
+  <string name="morphe_video_effects_custom_name_exists">Ефект із такою назвою вже існує</string>
+  <string name="morphe_video_effects_custom_copy_code">Скопіювати код</string>
+  <string name="morphe_video_effects_custom_error_title">Помилка в ефекті</string>
+  <string name="morphe_video_effects_custom_error_message">"Відео відображаються без ефекту, доки код не буде виправлено. Передайте цю помилку ШІ, який написав код:
+
+%s"</string>
+  <string name="morphe_video_effects_custom_copy_error">Скопіювати помилку</string>
+  <string name="morphe_video_effects_custom_save_anyway">Все одно зберегти</string>
+  <string name="morphe_video_effects_custom_delete">Видалити</string>
+  <string name="morphe_video_effects_custom_delete_title">Видалити ефект?</string>
+  <string name="morphe_video_effects_custom_delete_message">%s буде видалено.</string>
   <!-- misc.proxy.networkProxyPatch -->
   <string name="morphe_proxy_screen_title">Мережевий проксі</string>
   <string name="morphe_proxy_screen_summary">Спрямовувати підтримувані мережеві запити через проксі</string>
@@ -340,6 +370,18 @@ Second \"item\" text"</string>
   <string name="morphe_custom_font_file_summary">Виберіть файл шрифту TTF або OTF</string>
   <string name="morphe_custom_font_file_invalid">Вибраний файл не є шрифтом TTF або OTF</string>
   <string name="morphe_custom_font_failed_to_load">Не вдалося завантажити власний шрифт, його вимкнено</string>
+  <!-- layout.glassmenus.glassMenusPatch -->
+  <string name="morphe_glass_menus_screen_title">Скляні меню</string>
+  <string name="morphe_glass_menus_screen_summary">Меню у вигляді матового скла над розмитим вмістом за ними</string>
+  <string name="morphe_glass_menus_title">Увімкнути скляні меню</string>
+  <string name="morphe_glass_menus_summary">Відображає меню та нижні панелі як матове скло, при цьому вміст за ними розмивається</string>
+  <string name="morphe_glass_menus_user_dialog_message">Меню відображаються майже непрозорими, якщо увімкнено режим заощадження заряду або якщо пристрій не підтримує розмиття</string>
+  <string name="morphe_glass_menus_opacity_title">Непрозорість скла</string>
+  <string name="morphe_glass_menus_opacity_summary">Наскільки меню перекриває розмитий вміст (0 — прозоре, 100 — непрозоре)</string>
+  <string name="morphe_glass_menus_blur_title">Розмиття</string>
+  <string name="morphe_glass_menus_blur_summary">Ступінь розмиття вмісту за меню</string>
+  <string name="morphe_glass_menus_dim_title">Затемнення</string>
+  <string name="morphe_glass_menus_dim_summary">Наскільки затемнюється екран навколо нижньої панелі</string>
   <!-- layout.returnyoutubedislike.returnYouTubeDislikePatch -->
   <!-- Brief notification (toast) shown if network connection times out. Translations of this should not be longer than the original English text, otherwise the text can be clipped and not entirely shown. -->
   <string name="morphe_ryd_failure_connection_timeout">Дизлайки тимчасово недоступні (тайм-аут API)</string>

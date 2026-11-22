@@ -38,6 +38,8 @@ import app.morphe.extension.shared.settings.preference.SeekBarPreference;
 import app.morphe.extension.shared.settings.preference.SeekBarPreference.SeekBarConfig;
 import app.morphe.extension.shared.sponsorblock.SegmentPlaybackController.SponsorBlockDuration;
 import app.morphe.extension.shared.spoof.ClientType;
+import app.morphe.extension.youtube.holdgesture.HoldGestureController.Sensitivity;
+import app.morphe.extension.youtube.holdgesture.HoldGestureController.SpeedStep;
 import app.morphe.extension.youtube.patches.AddToQueuePatch.NativeQueueAvailability;
 import app.morphe.extension.youtube.patches.AddToQueuePatch.NotLocalQueueAvailability;
 import app.morphe.extension.youtube.patches.AddToQueuePatch.QueueType;
@@ -131,7 +133,6 @@ public class Settings extends SharedYouTubeSettings {
     public static final BooleanSetting FORCE_HDR_VIDEO = new BooleanSetting("morphe_force_hdr_video", FALSE, true, "morphe_force_hdr_video_user_dialog_message", parentNot(DISABLE_HDR_VIDEO));
     public static final EnumSetting<VideoCodec> VIDEO_CODEC = new EnumSetting<>("morphe_video_codec", DisableVideoCodecsPatch.getDefaultVideoCodec(), true, "morphe_video_codec_user_dialog_message");
     public static final BooleanSetting HIDE_PREMIUM_VIDEO_QUALITY = new BooleanSetting("morphe_hide_premium_video_quality", TRUE, true);
-    public static final BooleanSetting VIDEO_QUALITY_PRIORITIZE = new BooleanSetting("morphe_video_quality_prioritize", TRUE, true, "morphe_video_quality_prioritize_dialog");
     public static final IntegerSetting SHORTS_QUALITY_DEFAULT_WIFI = new IntegerSetting("morphe_shorts_quality_default_wifi", -2, true);
     public static final IntegerSetting SHORTS_QUALITY_DEFAULT_MOBILE = new IntegerSetting("morphe_shorts_quality_default_mobile", -2, true);
     public static final BooleanSetting REMEMBER_SHORTS_QUALITY_LAST_SELECTED = new BooleanSetting("morphe_remember_shorts_quality_last_selected", FALSE);
@@ -175,7 +176,10 @@ public class Settings extends SharedYouTubeSettings {
     // Feed
     public static final BooleanSetting HIDE_ACCOUNT_MENU = new BooleanSetting("morphe_hide_account_menu", FALSE);
     public static final StringSetting HIDE_ACCOUNT_MENU_FILTER_STRINGS = new StringSetting("morphe_hide_account_menu_filter_strings", "", true, parent(HIDE_ACCOUNT_MENU));
-    public static final BooleanSetting HIDE_ACCOUNT_MENU_DOWNLOADS = new BooleanSetting("morphe_hide_account_menu_downloads", FALSE, parent(HIDE_ACCOUNT_MENU));
+    public static final BooleanSetting HIDE_ACCOUNT_MENU_BADGES = new BooleanSetting("morphe_hide_account_menu_badges", FALSE);
+    public static final BooleanSetting HIDE_ACCOUNT_MENU_DOWNLOADS = new BooleanSetting("morphe_hide_account_menu_downloads", FALSE);
+    public static final BooleanSetting HIDE_ACCOUNT_MENU_LIKED_VIDEOS = new BooleanSetting("morphe_hide_account_menu_liked_videos", FALSE);
+    public static final BooleanSetting HIDE_ACCOUNT_MENU_WATCH_LATER = new BooleanSetting("morphe_hide_account_menu_watch_later", FALSE);
     public static final BooleanSetting HIDE_ALBUM_CARDS = new BooleanSetting("morphe_hide_album_cards", FALSE, true);
     public static final BooleanSetting HIDE_ARTIST_CARDS = new BooleanSetting("morphe_hide_artist_cards", FALSE);
     public static final BooleanSetting HIDE_CHANNEL_BUTTONS = new BooleanSetting("morphe_hide_channel_buttons", FALSE);
@@ -387,6 +391,7 @@ public class Settings extends SharedYouTubeSettings {
     public static final BooleanSetting RESTORE_OLD_PLAYER_BUTTONS = new BooleanSetting("morphe_restore_old_player_buttons", FALSE, true, new RestoreOldPlayerButtonsAvailability());
     public static final BooleanSetting VIDEO_DELAY_OVERLAY_BUTTON = new BooleanSetting("morphe_video_delay_button_overlay", FALSE, true);
     public static final BooleanSetting VIDEO_DELAY_FLYOUT_BUTTON = new BooleanSetting("morphe_video_delay_button_flyout", FALSE);
+    public static final BooleanSetting VIDEO_EFFECT_FLYOUT_BUTTON = new BooleanSetting("morphe_video_effect_button_flyout", TRUE);
     public static final BooleanSetting SAVE_TO_WATCH_LATER_OVERLAY_BUTTON = new BooleanSetting("morphe_save_to_watch_later_button", FALSE, true);
     public static final BooleanSetting SAVE_TO_WATCH_LATER_FLYOUT_BUTTON = new BooleanSetting("morphe_save_to_watch_later_flyout_button", FALSE);
     /**
@@ -541,6 +546,7 @@ public class Settings extends SharedYouTubeSettings {
     public static final BooleanSetting HIDE_COMMENTS_THANKS_BUTTON = new BooleanSetting("morphe_hide_comments_thanks_button", TRUE, true);
     public static final BooleanSetting HIDE_COMMENTS_TIMESTAMP_BUTTON = new BooleanSetting("morphe_hide_comments_timestamp_button", FALSE);
     public static final BooleanSetting HIDE_COMMENTS_TOP_FANS_BUTTON = new BooleanSetting("morphe_hide_comments_top_fans_button", FALSE);
+    public static final BooleanSetting HIDE_COMMENTS_TOPICS = new BooleanSetting("morphe_hide_comments_topics", FALSE);
     public static final BooleanSetting HIDE_COMMENTS_TRANSLATE_BUTTON = new BooleanSetting("morphe_hide_comments_translate_button", FALSE);
     public static final BooleanSetting HIDE_COMMENTS_ZERO_STATE = new BooleanSetting("morphe_hide_comments_zero_state", FALSE);
     public static final BooleanSetting SANITIZE_COMMENTS_HIGHLIGHTED_SEARCH_LINKS = new BooleanSetting("morphe_sanitize_comments_highlighted_search_links", FALSE, true);
@@ -847,6 +853,18 @@ public class Settings extends SharedYouTubeSettings {
     public static final FloatSetting SWIPE_BRIGHTNESS_VALUE = new FloatSetting("morphe_swipe_brightness_value", -1f);
     public static final BooleanSetting SWIPE_LOWEST_VALUE_ENABLE_AUTO_BRIGHTNESS = new BooleanSetting("morphe_swipe_lowest_value_enable_auto_brightness", FALSE, true, new SwipeActionAvailability(SwipeZoneAction.BRIGHTNESS));
     public static final IntegerSetting SWIPE_ZONE_WIDTH = new IntegerSetting("morphe_swipe_zone_width", 37, true, new SideSwipeZonesAvailability());
+
+    // Hold gesture
+    public static final BooleanSetting HOLD_GESTURE = new BooleanSetting("morphe_hold_gesture", FALSE, true);
+    public static final BooleanSetting HOLD_GESTURE_HAPTIC_FEEDBACK = new BooleanSetting("morphe_hold_gesture_haptic_feedback", TRUE, parent(HOLD_GESTURE));
+    public static final BooleanSetting HOLD_GESTURE_SPEED_SWIPE = new BooleanSetting("morphe_hold_gesture_speed_swipe", TRUE, parent(HOLD_GESTURE));
+    public static final EnumSetting<SpeedStep> HOLD_GESTURE_SPEED_STEP = new EnumSetting<>("morphe_hold_gesture_speed_step", SpeedStep.STEP_025, parent(HOLD_GESTURE_SPEED_SWIPE));
+    public static final EnumSetting<Sensitivity> HOLD_GESTURE_SPEED_SENSITIVITY = new EnumSetting<>("morphe_hold_gesture_speed_sensitivity", Sensitivity.NORMAL, parent(HOLD_GESTURE_SPEED_SWIPE));
+    public static final FloatSetting HOLD_GESTURE_SPEED_MIN = new FloatSetting("morphe_hold_gesture_speed_min", 0.25f, parent(HOLD_GESTURE_SPEED_SWIPE));
+    public static final FloatSetting HOLD_GESTURE_SPEED_MAX = new FloatSetting("morphe_hold_gesture_speed_max", 4.0f, parent(HOLD_GESTURE_SPEED_SWIPE));
+    public static final BooleanSetting HOLD_GESTURE_LOCK = new BooleanSetting("morphe_hold_gesture_lock", TRUE, parent(HOLD_GESTURE));
+    public static final BooleanSetting HOLD_GESTURE_LOCK_BADGE_ALWAYS = new BooleanSetting("morphe_hold_gesture_lock_badge_always", FALSE, parent(HOLD_GESTURE_LOCK));
+    public static final BooleanSetting HOLD_GESTURE_UNLOCK_ON_VIDEO_CHANGE = new BooleanSetting("morphe_hold_gesture_unlock_on_video_change", TRUE, parent(HOLD_GESTURE_LOCK));
 
     // Niconico comments
     public static final BooleanSetting NICONICO_COMMENTS = new BooleanSetting("morphe_niconico_comments", FALSE, true);
