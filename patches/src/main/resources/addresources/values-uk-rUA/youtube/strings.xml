@@ -61,7 +61,10 @@ Second \"item\" text"</string>
   <string name="morphe_hide_account_menu_title">Увімкнути фільтр нижнього меню \"Бібліотека\" / \"Ви\"</string>
   <string name="morphe_hide_account_menu_filter_strings_title">Фільтр нижнього меню \"Бібліотека\" / \"Ви\"</string>
   <string name="morphe_hide_account_menu_filter_strings_summary">Введіть назви елементів нижнього меню \"Бібліотека\" / \"Ви\", які потрібно приховати, кожен з нового рядка</string>
+  <string name="morphe_hide_account_menu_badges_title">Приховати значки</string>
   <string name="morphe_hide_account_menu_downloads_title">Приховати \"Завантаження\"</string>
+  <string name="morphe_hide_account_menu_liked_videos_title">Приховати \"Подобаються\"</string>
+  <string name="morphe_hide_account_menu_watch_later_title">Приховати \"Дивитися пізніше\"</string>
   <string name="morphe_hide_album_cards_title">Приховати картки альбому</string>
   <string name="morphe_hide_album_cards_summary">Приховує картки альбомів під описом виконавця</string>
   <string name="morphe_hide_artist_cards_title">Приховати картки виконавця</string>
@@ -427,6 +430,8 @@ Second \"item\" text"</string>
   <string name="morphe_minimal_comments_button_summary">Приховує кнопки-картки, що з\'являються, та їхній перемикач сторінок на кнопці коментарів</string>
   <string name="morphe_hide_comments_timestamp_button_title">Приховати кнопку позначки часу</string>
   <string name="morphe_hide_comments_top_fans_button_title">Приховати кнопку \"Топ фанати\"</string>
+  <string name="morphe_hide_comments_topics_title">Приховати \"Теми\"</string>
+  <string name="morphe_hide_comments_topics_summary">Приховує опцію \"Теми\" на панелі фільтрів і попередній перегляд коментарів за темами під відео</string>
   <string name="morphe_hide_comments_translate_button_title">Приховати кнопку \"Перекласти\"</string>
   <string name="morphe_hide_comments_zero_state_title">Приховати повідомлення \"Коментарів поки немає\"</string>
   <string name="morphe_sanitize_comments_highlighted_search_links_title">Очищувати виділені пошукові посилання</string>
@@ -1029,6 +1034,39 @@ Second \"item\" text"</string>
   <string name="morphe_swipe_overlay_style_entry_7">Вертикальна панель (мінімальна)</string>
   <string name="morphe_swipe_change_video_title">Увімкнути зміну відео жестом</string>
   <string name="morphe_swipe_change_video_summary">Жест у повноекранному режимі перемикає на наступне або попереднє відео</string>
+  <!-- interaction.holdgesture.holdGesturePatch -->
+  <string name="morphe_hold_gesture_screen_title">Жест утримання</string>
+  <string name="morphe_hold_gesture_screen_summary">Змінюйте та фіксуйте швидкість відтворення, перетягуючи після натискання та утримання</string>
+  <string name="morphe_hold_gesture_title">Увімкнути жест швидкості</string>
+  <string name="morphe_hold_gesture_summary">Після натискання та утримання відео можна виконати перетягування. Швидкість під час утримання відповідає швидкості відтворення при натисканні та утриманні</string>
+  <string name="morphe_hold_gesture_press_to_swipe_summary">Не використовується, коли ввімкнено натискання та утримання для жесту. Натисніть, щоб змінити</string>
+  <string name="morphe_hold_gesture_press_to_swipe_dialog_title">Натискання та утримання для жесту ввімкнено</string>
+  <string name="morphe_hold_gesture_press_to_swipe_dialog_message">Жест утримання та жест натискання та утримання для прокручування в елементах керування прокручуванням починаються з натискання та утримання, тому може бути ввімкнено лише один із них.</string>
+  <string name="morphe_hold_gesture_press_to_swipe_dialog_turn_off">Вимкнути натискання та утримання для жесту</string>
+  <string name="morphe_hold_gesture_press_to_swipe_toast">Жест утримання не використовується, коли ввімкнено натискання та утримання для жесту</string>
+  <string name="morphe_hold_gesture_dialog_title">Жест утримання ввімкнено</string>
+  <string name="morphe_hold_gesture_dialog_turn_off">Вимкнути жест утримання</string>
+  <string name="morphe_hold_gesture_haptic_feedback_title">Вібрація при жестах</string>
+  <string name="morphe_hold_gesture_haptic_feedback_summary">Вібрує під час зміни швидкості та коли швидкість зафіксовано</string>
+  <string name="morphe_hold_gesture_speed_swipe_title">Перетягніть убік, щоб змінити швидкість</string>
+  <string name="morphe_hold_gesture_speed_swipe_summary">Після натискання та утримання перетягніть вліво, щоб відтворити повільніше, і вправо, щоб відтворити швидше. Чим далі від центру, тим більше змінюється швидкість, доки палець не повернеться назад</string>
+  <string name="morphe_hold_gesture_speed_step_title">Крок швидкості</string>
+  <string name="morphe_hold_gesture_speed_sensitivity_title">Чутливість перетягування</string>
+  <string name="morphe_hold_gesture_speed_sensitivity_entry_1">Низький</string>
+  <string name="morphe_hold_gesture_speed_sensitivity_entry_2">Нормальна</string>
+  <string name="morphe_hold_gesture_speed_sensitivity_entry_3">Висока</string>
+  <string name="morphe_hold_gesture_speed_min_title">Найнижча швидкість</string>
+  <string name="morphe_hold_gesture_speed_min_summary">Найнижча швидкість, якої можна досягти перетягуванням</string>
+  <string name="morphe_hold_gesture_speed_max_title">Найвища швидкість</string>
+  <string name="morphe_hold_gesture_speed_max_summary">Максимальна швидкість перетягування (до 8)</string>
+  <string name="morphe_hold_gesture_lock_title">Перетягніть вниз, щоб зафіксувати швидкість</string>
+  <string name="morphe_hold_gesture_lock_summary">Після натискання та утримування перетягніть вниз, щоб зберегти швидкість після відпускання пальця. Натисніть на значок або знову натисніть і утримуйте, щоб розфіксувати</string>
+  <string name="morphe_hold_gesture_lock_badge_always_title">Завжди показувати значок фіксації</string>
+  <string name="morphe_hold_gesture_lock_badge_always_summary">Значок зафіксованої швидкості залишається видимим, коли елементи керування плеєром приховані</string>
+  <string name="morphe_hold_gesture_unlock_on_video_change_title">Розфіксувати при зміні відео</string>
+  <string name="morphe_hold_gesture_unlock_on_video_change_summary">Фіксація швидкості скасовується, коли починається інше відео</string>
+  <string name="morphe_hold_gesture_lock_hint">Потягніть вниз, щоб зафіксувати</string>
+  <string name="morphe_hold_gesture_lock_release">Відпустіть, щоб заблокувати %s</string>
   <!-- layout.captions.captionsPatch -->
   <string name="morphe_captions_screen_title">Субтитри</string>
   <string name="morphe_captions_screen_summary">Керування автоматичними субтитрами та cookies субтитрів</string>
@@ -1608,6 +1646,8 @@ Second \"item\" text"</string>
   <string name="morphe_video_delay_button_overlay_summary">Натисніть і утримуйте, щоб скинути затримку до 0 мс</string>
   <string name="morphe_video_delay_button_flyout_title">Показувати меню \"Затримка відео\"</string>
   <string name="morphe_video_delay_dialog_input_hint">Затримка в мілісекундах</string>
+  <!-- video.effects.videoEffectsPatch -->
+  <string name="morphe_video_effect_button_flyout_title">Показувати меню \"Ефект відео\"</string>
   <!-- video.quality.rememberVideoQualityPatch -->
   <string name="morphe_remember_shorts_quality_last_selected_title">Запам’ятовувати якість Shorts</string>
   <string name="morphe_remember_shorts_quality_last_selected_summary">Застосовує вибраний рівень якості до всіх наступних Shorts</string>
@@ -1696,10 +1736,6 @@ AVC (H.264)
   <string name="morphe_advanced_video_quality_menu_summary">Пропускає меню вибору якості та відкриває меню \"Розширенні налаштування\" безпосередньо</string>
   <!-- video.quality.hidePremiumVideoQualityPatch -->
   <string name="morphe_hide_premium_video_quality_title">Приховати опції Premium якості</string>
-  <!-- video.quality.prioritizeVideoQualityPatch -->
-  <string name="morphe_video_quality_prioritize_title">Пріоритет якості відео</string>
-  <string name="morphe_video_quality_prioritize_summary">Надає пріоритет найвищій доступній якості відео над ефективністю кодека</string>
-  <string name="morphe_video_quality_prioritize_dialog">Якщо це налаштування вимкнено, старіші відео можуть не показувати параметри якості відео</string>
   <!-- misc.spoof.spoofVideoStreamsPatch -->
   <string name="morphe_spoof_video_streams_av1_title">Дозволити AV1 для \"Android VR\" / \"visionOS\"</string>
   <string name="morphe_spoof_video_streams_av1_summary">Дозволяє програмне декодування AV1 при використанні клієнта \"Android VR\" / \"visionOS\"</string>

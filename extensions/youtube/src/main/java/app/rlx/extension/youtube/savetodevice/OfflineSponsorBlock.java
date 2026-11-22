@@ -168,7 +168,8 @@ final class OfflineSponsorBlock {
 
         Selection selection() {
             boolean available = result != null && result.status() == Status.OK;
-            return new Selection(include && available, List.copyOf(categories), result);
+            // RLX: nothing while the picker does not offer SponsorBlock.
+            return new Selection(include && available && OfflineOptions.offerExtras(), List.copyOf(categories), result);
         }
 
         private void render() {

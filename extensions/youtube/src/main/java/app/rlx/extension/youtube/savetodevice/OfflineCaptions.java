@@ -75,7 +75,8 @@ final class OfflineCaptions {
         }
 
         Selection selection() {
-            if (!include) return Selection.none();
+            // RLX: nothing while the picker does not offer subtitles.
+            if (!include || !OfflineOptions.offerExtras()) return Selection.none();
             List<Track> result = new ArrayList<>();
             // Selection order is retained, so the default English track is also the player's first track.
             for (String key : selected) {

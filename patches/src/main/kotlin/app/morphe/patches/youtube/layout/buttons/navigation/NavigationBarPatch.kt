@@ -41,6 +41,7 @@ import app.morphe.patches.shared.misc.settings.preference.NonInteractivePreferen
 import app.morphe.patches.shared.misc.settings.preference.PreferenceScreenPreference
 import app.morphe.patches.shared.misc.settings.preference.PreferenceScreenPreference.Sorting
 import app.morphe.patches.shared.misc.settings.preference.SwitchPreference
+import app.morphe.patches.youtube.layout.hide.general.MoreCommentsIconFingerprint
 import app.morphe.patches.youtube.layout.hide.shorts.ShortsBottomBarContainerFingerprint
 import app.morphe.patches.youtube.misc.contexthook.Endpoint
 import app.morphe.patches.youtube.misc.contexthook.addOSNameHook
@@ -53,9 +54,11 @@ import app.morphe.patches.youtube.misc.navigation.addBottomBarContainerHook
 import app.morphe.patches.youtube.misc.navigation.hookNavigationButtonCreated
 import app.morphe.patches.youtube.misc.navigation.navigationBarHookPatch
 import app.morphe.patches.youtube.misc.playservice.is_20_31_or_greater
+import app.morphe.patches.youtube.misc.playservice.is_21_20_or_greater
 import app.morphe.patches.youtube.misc.playservice.is_21_23_or_greater
 import app.morphe.patches.youtube.misc.playservice.is_21_30_or_greater
 import app.morphe.patches.youtube.misc.playservice.is_21_35_or_greater
+import app.morphe.patches.youtube.misc.playservice.is_21_42_or_greater
 import app.morphe.patches.youtube.misc.playservice.is_21_45_or_greater
 import app.morphe.patches.youtube.misc.playservice.versionCheckPatch
 import app.morphe.patches.youtube.misc.settings.PreferenceScreen
@@ -96,6 +99,9 @@ private const val TOOLBAR_BUTTON_PROVIDER_INTERFACE =
 
 private const val PIVOT_BAR_ACCESS_INTERFACE =
     $$"Lapp/morphe/extension/youtube/patches/NavigationBarPatch$PivotBarAccess;"
+
+private const val BOTTOM_UI_HEIGHTS_INTERFACE =
+    $$"Lapp/morphe/extension/youtube/patches/NavigationBarPatch$BottomUiHeightsAccess;"
 
 private const val EXTENSION_SUBSCRIPTIONS_CLASS =
     "Lapp/morphe/extension/youtube/patches/ClassicSubscriptionsLayoutPatch;"
@@ -493,6 +499,24 @@ val navigationBarPatch = patch(
             )
         }
 
+        // The live chat hides its scroll to bottom button by moving it below its container. With the bar covering
+        // the system navigation buttons, the room for them is left below the container, so the hidden button
+        // is still shown there. The container is set to cut the button off at its bounds.
+        MoreCommentsIconFingerprint.apply {
+            clearMatch()
+            matchAll().forEach { match ->
+                match.method.apply {
+                    val index = match.instructionMatches.last().index
+                    val buttonRegister = getInstruction<OneRegisterInstruction>(index).registerA
+
+                    addInstruction(
+                        index + 1,
+                        "invoke-static { v$buttonRegister }, $EXTENSION_CLASS->clipLiveChatScrollButton(Landroid/view/View;)V"
+                    )
+                }
+            }
+        }
+
         // The slim status bar ("No connection", "Back online") is laid out below the bar covering
         // the system navigation buttons, so the buttons cover it. The room for the buttons is moved
         // below it while it is shown.
@@ -614,19 +638,80 @@ val navigationBarPatch = patch(
         }
 
         if (is_20_31_or_greater) {
-            buildList {
-                add(AutoHideNavigationBarOnFeedScrollingFingerprint)
-                if (is_21_23_or_greater) add(AutoHideNavigationBarOnDismissMiniplayerFingerprint)
-            }.forEach {
-                it.method.addInstructionsWithLabels(
+            AutoHideNavigationBarOnFeedScrollingFingerprint.let {
+                it.method.apply {
+                    val index = it.instructionMatches.last().index
+                    val register = getInstruction<OneRegisterInstruction>(index).registerA
+
+                    addInstructions(
+                        index + 1,
+                        """
+                            invoke-static { }, $EXTENSION_CLASS->getFeedScrollNavigationBarBehavior()I
+                            move-result v$register
+                        """
+                    )
+
+                    if (!is_21_20_or_greater) {
+                        insertLiteralOverride(
+                            45677535L,
+                            "$EXTENSION_CLASS->useAutoHideNavigationBarFlag(Z)Z"
+                        )
+                    }
+                }
+            }
+
+            // The app hides the navigation bar while scrolling only on the pages the server sets, and how
+            // it hides the bar depends on the account, so the app never hides it and the extension hides it
+            // for every page and account instead. The parameters are the list and the distance scrolled.
+            ListScrolledFingerprint.method.addInstruction(
+                0,
+                "invoke-static { p0, p2 }, $EXTENSION_CLASS->onListScrolled(Landroid/view/View;I)V"
+            )
+
+            // The app places the miniplayer and other views above the height it keeps for the navigation bar,
+            // which it sets to none only when it hides the bar itself. The extension sets the height again
+            // when it hides or shows the bar, and the height is none while the bar is hidden on scroll.
+            setBottomUiHeightFingerprint(BottomUiEnumFingerprint.originalClassDef.type).let {
+                it.method.addInstructions(
+                    0,
+                    """
+                        invoke-static { p0, p1, p2 }, $EXTENSION_CLASS->getBottomUiHeight(${BOTTOM_UI_HEIGHTS_INTERFACE}Ljava/lang/Enum;I)I
+                        move-result p2
+                    """
+                )
+                it.classDef.addPatchInterface(BOTTOM_UI_HEIGHTS_INTERFACE, "patch_setBottomUiHeight", it.method)
+            }
+
+            // The AI search results hide the navigation bar through the controllers whatever the page sets.
+            // The controllers are not called, and the header of the page still follows the scroll.
+            if (is_21_42_or_greater) {
+                SearchResultsAutoHideNavigationBarFingerprint.let {
+                    it.method.apply {
+                        val flagResult = it.instructionMatches[6]
+                        addInstruction(
+                            flagResult.index + 1,
+                            "const/4 v${flagResult.getInstruction<OneRegisterInstruction>().registerA}, 0x0"
+                        )
+
+                        val nullCheck = it.instructionMatches[2]
+                        addInstruction(
+                            nullCheck.index,
+                            "const/4 v${nullCheck.getInstruction<OneRegisterInstruction>().registerA}, 0x0"
+                        )
+                    }
+                }
+            }
+
+            if (is_21_23_or_greater) {
+                AutoHideNavigationBarOnDismissMiniplayerFingerprint.method.addInstructionsWithLabels(
                     0,
                     """
                         invoke-static { }, $EXTENSION_CLASS->disableAutoHidingNavigationBar()Z
-                        move-result v0      
+                        move-result v0
                         if-eqz v0, :show
-                        return-void      
+                        return-void
                         :show
-                        nop      
+                        nop
                     """
                 )
             }

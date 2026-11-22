@@ -27,8 +27,25 @@ if git merge-base --is-ancestor "$ref" HEAD; then
   exit 0
 fi
 
-# A conflicting merge exits non-zero; the conflicts are handled below.
-git merge --no-ff --no-commit "$ref" || true
+# Morphe merges its main branch (stable releases) into dev, and RLX merges both, so there can be
+# several merge bases (e.g. the last dev release and the last stable release). Git then merges
+# them into a virtual base, which reports conflicts in files RLX never changed. The newest base
+# is the Morphe release RLX was last synced with: merge against it alone.
+mapfile -t bases < <(git merge-base --all HEAD "$ref")
+if (( ${#bases[@]} > 1 )); then
+  base="$(git log --no-walk --format='%ct %H' "${bases[@]}" | sort -rn | head -n1 | cut -d' ' -f2)"
+  echo "Several merge bases, merging against the newest: $(git log --no-walk --oneline "$base")"
+  git read-tree -m -u "$base" HEAD "$ref"
+  # A conflicting file makes git-merge-one-file fail; the conflicts are handled below.
+  git merge-index -o -q git-merge-one-file -a >/dev/null 2>&1 || true
+  # So that `git commit` makes a merge commit and `git merge --abort` works.
+  git rev-parse "$ref^{commit}" > "$(git rev-parse --git-path MERGE_HEAD)"
+  echo "Merge Morphe" > "$(git rev-parse --git-path MERGE_MSG)"
+  echo "no-ff" > "$(git rev-parse --git-path MERGE_MODE)"
+else
+  # A conflicting merge exits non-zero; the conflicts are handled below.
+  git merge --no-ff --no-commit "$ref" || true
+fi
 
 mapfile -t removed < <(list rlx/sync/removed.txt)
 mapfile -t ours < <(list rlx/sync/ours.txt)

@@ -34,6 +34,10 @@ conflicts that are expected on every release by itself:
 - [`sync/ours.txt`](sync/ours.txt): files RLX owns entirely (`README.md`,
   `patches-bundle.json`, `patches-list.json`, `patches-bundle.png`, `morphe-signing.pub`).
 
+When there are several merge bases (Morphe merges its stable releases from `main` into `dev`, and
+RLX merges both), the script merges against the newest one, the Morphe release RLX was last synced
+with; git's virtual base would report conflicts in files RLX never changed.
+
 Any other conflict stops the script with the list of files and leaves the merge in progress.
 
 ## Release signing
@@ -89,7 +93,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | patch option "App icon" with the RLX icons in place of the Morphe icons (`RlxPatchOptions.kt`) |
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | default app name "YouTube RLX" / "YT Music RLX" (`RLX_DEFAULT_APP_NAME_INDEX`) |
 | `patches/.../youtube/layout/branding/CustomBrandingPatch.kt`, `patches/.../music/layout/branding/CustomBrandingPatch.kt` | number of app names (`RLX_APP_NAME_COUNT`) |
-| `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | application label *YouTube Morphe* / *YT Music Morphe* (name 7): the app list of the system settings and the file Morphe Manager saves (`YouTube_Morphe-v21.46.522-RLX_Patches-v2.4.5.apk`); the launcher shows the selected name |
+| `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | application label *YouTube RLX* / *YT Music RLX* (`rlx_application_label` in `values/rlx-youtube` and `rlx-music`), the default app names: the app list of the system settings, the share and "open with" menus and the file Morphe Manager saves (`YouTube_RLX-v21.46.522-RLX_Patches-v2.4.8.apk`). "Morphe" stays only in the APK file names of the YT Morphe builds; the launcher shows the selected name |
 | `extensions/shared-youtube/.../shared/patches/CustomBrandingPatch.java` | default app name (`RlxBranding.DEFAULT_APP_NAME_INDEX`); no placeholder name "Custom" without a custom name (`RlxBranding.checkAppName`) |
 | `extensions/youtube/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
 | `extensions/music/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
@@ -280,6 +284,11 @@ lavinhoque33. Maintained here as RLX code.
 - Download buttons of the app (below the video, feed menus, Shorts menu of Morphe) open a quality
   picker and save videos, audio, thumbnails and subtitles to `Download/YouTube`. Off by default
   (`morphe_save_to_device`); when off, Morphe's download mode is used.
+- RLX quality picker: laid out like the quick download menu, one stream per quality (the best of the
+  sorted streams: Premium, the higher frame rate, then H.264, playable AV1, playable VP9), the qualities
+  below 480p only for videos without 480p, audio only as M4A (no Ogg file), the thumbnail and one line
+  with the folder. Subtitles and SponsorBlock are offered only with *Subtitles and SponsorBlock*
+  (`morphe_offline_picker_extras`, off by default; while off, neither is saved).
 - Library of the saved videos and an offline player with subtitles and offline SponsorBlock,
   shown in the activity of the settings. It can replace the Downloads page of the app.
 - The offline player uses the stock `BackgroundPlayerService`, the downloads keep the process

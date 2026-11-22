@@ -12,6 +12,9 @@ package app.morphe.extension.youtube.patches;
 
 import static app.morphe.extension.shared.StringRef.str;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +30,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.view.ViewStub;
 import android.view.WindowInsets;
 import android.widget.ImageView;
@@ -92,6 +96,8 @@ import app.morphe.extension.youtube.patches.spoof.SpoofOSNamePatch;
 import app.morphe.extension.youtube.settings.Settings;
 import app.morphe.extension.youtube.settings.YouTubeActivityHook;
 import app.morphe.extension.youtube.shared.NavigationBar;
+import app.morphe.extension.youtube.shared.PlayerType;
+import app.morphe.extension.youtube.shared.ShortsPlayerState;
 
 @SuppressWarnings("unused")
 public final class NavigationBarPatch {
@@ -320,9 +326,329 @@ public final class NavigationBarPatch {
     }
 
     /**
+     * Feed scroll behavior of the navigation bar of a page that does not set it, with which it is always shown.
+     */
+    private static final int FEED_SCROLL_KEEPS_NAVIGATION_BAR = 1;
+
+    /**
+     * Injection point.
+     * <p>
+     * The server sets for each feed page if the app hides the navigation bar while scrolling, and how
+     * the app hides it depends on the account, so some accounts never get the bar hidden.
+     * The app never hides it, and the bar is hidden while scrolling by {@link #onListScrolled(View, int)}.
+     */
+    @SuppressWarnings("SameReturnValue")
+    public static int getFeedScrollNavigationBarBehavior() {
+        return FEED_SCROLL_KEEPS_NAVIGATION_BAR;
+    }
+
+    /**
+     * If the navigation bar is hidden while scrolling the pages.
+     */
+    private static final boolean HIDE_NAVIGATION_BAR_ON_SCROLL = !DISABLE_AUTO_HIDE_NAVIGATION_BAR && !HIDE_NAVIGATION_BAR;
+
+    private static final long NAVIGATION_BAR_SCROLL_ANIMATION_MILLISECONDS = 250;
+
+    /**
+     * Bottom bar container, which holds the navigation bar of any layout the app uses.
+     */
+    private static WeakReference<View> bottomBarContainerRef = new WeakReference<>(null);
+
+    /**
+     * Distance the lists scrolled in the same direction since the last change, accessed only on the main thread.
+     */
+    private static int listScrollDistance;
+
+    /**
+     * Distance in pixels a touch can move before it scrolls, or -1 if not yet read.
+     */
+    private static int listScrollTouchSlop = -1;
+
+    /**
+     * If the navigation bar is hidden by scrolling, accessed only on the main thread.
+     */
+    private static boolean navigationBarHiddenOnScroll;
+
+    @Nullable
+    private static ObjectAnimator navigationBarScrollAnimator;
+
+    private static boolean navigationBarScrollObserversAdded;
+
+    /**
+     * Container of the pages, whose bottom padding is the room the app leaves for the navigation bar
+     * when the pages are not laid out behind it.
+     */
+    private static final int paneFragmentContainerId = HIDE_NAVIGATION_BAR_ON_SCROLL
+            ? ResourceUtils.getIdentifier(ResourceType.ID, "pane_fragment_container")
+            : 0;
+
+    /**
+     * Container of the pages whose room for the navigation bar was removed while the bar is hidden,
+     * the room removed, and the padding it was left with.
+     */
+    private static WeakReference<View> pageRoomViewRef = new WeakReference<>(null);
+    private static int pageRoomRemoved;
+    private static int pageRoomPadding;
+
+    /**
+     * The heights the app keeps of the views at the bottom of the screen, with a method added during patching.
+     */
+    public interface BottomUiHeightsAccess {
+        /**
+         * Sets the height of a view at the bottom of the screen.
+         */
+        void patch_setBottomUiHeight(Enum<?> view, int height);
+    }
+
+    /**
+     * Name of the navigation bar in the views at the bottom of the screen.
+     */
+    private static final String BOTTOM_UI_NAVIGATION_BAR = "PIVOT_BAR";
+
+    /**
+     * The navigation bar in the views at the bottom of the screen.
+     */
+    @Nullable
+    private static Enum<?> bottomUiNavigationBar;
+
+    /**
+     * The heights the app set the height of the navigation bar in, as it keeps the heights in more than one place,
+     * each with the last height the app set. Accessed only on the main thread.
+     */
+    private static final Map<BottomUiHeightsAccess, Integer> bottomUiNavigationBarHeights = new WeakHashMap<>();
+
+    /**
+     * Injection point.
+     * <p>
+     * The app places the miniplayer and other views above the height it keeps for the navigation bar,
+     * which it sets to none only when it hides the bar itself. While the bar is hidden on scroll,
+     * the height of the bar is none.
+     *
+     * @return The height of the view to set.
+     */
+    public static int getBottomUiHeight(BottomUiHeightsAccess heights, Enum<?> view, int height) {
+        if (!HIDE_NAVIGATION_BAR_ON_SCROLL) return height;
+
+        try {
+            if (view != bottomUiNavigationBar) {
+                if (!BOTTOM_UI_NAVIGATION_BAR.equals(view.name())) return height;
+                bottomUiNavigationBar = view;
+            }
+            bottomUiNavigationBarHeights.put(heights, height);
+            return navigationBarHiddenOnScroll ? 0 : height;
+        } catch (Exception ex) {
+            Logger.printException(() -> "getBottomUiHeight failure", ex);
+        }
+
+        return height;
+    }
+
+    /**
+     * Injection point.
+     * <p>
+     * Called on the main thread when any list scrolls, before its scroll listeners.
+     * The navigation bar is hidden when the list of a page scrolls down, and shown when it scrolls up.
+     *
+     * @param dy The vertical distance scrolled, more than zero when scrolling down.
+     */
+    public static void onListScrolled(View list, int dy) {
+        if (!HIDE_NAVIGATION_BAR_ON_SCROLL || dy == 0) return;
+
+        try {
+            if ((dy > 0) != (listScrollDistance > 0)) {
+                listScrollDistance = 0;
+            }
+            listScrollDistance += dy;
+            if (listScrollTouchSlop < 0) {
+                listScrollTouchSlop = ViewConfiguration.get(list.getContext()).getScaledTouchSlop();
+            }
+            if (Math.abs(listScrollDistance) < listScrollTouchSlop) return;
+
+            final boolean hide = listScrollDistance > 0;
+            listScrollDistance = 0;
+            if (hide == navigationBarHiddenOnScroll) return;
+
+            View container = bottomBarContainerRef.get();
+            if (container == null || (hide && !canHideNavigationBarOnScroll(list, container))) return;
+
+            if (!navigationBarScrollObserversAdded) {
+                navigationBarScrollObserversAdded = true;
+                // Opening the player, the Shorts, or another tab shows the navigation bar again.
+                // The feed videos that play while scrolling, and the miniplayer, do not.
+                PlayerType.getOnChange().addObserver(type -> {
+                    if (!type.isNoneHiddenOrMinimized() && type != PlayerType.INLINE_MINIMAL) {
+                        Utils.runOnMainThreadNowOrLater(NavigationBarPatch::showNavigationBarHiddenOnScroll);
+                    }
+                });
+                ShortsPlayerState.getOnChange().addObserver(open ->
+                        Utils.runOnMainThreadNowOrLater(NavigationBarPatch::showNavigationBarHiddenOnScroll));
+                NavigationBar.addOnNavigationButtonChangedListener(button ->
+                        Utils.runOnMainThreadNowOrLater(NavigationBarPatch::showNavigationBarHiddenOnScroll));
+            }
+            animateNavigationBarOnScroll(container, list, hide);
+        } catch (Exception ex) {
+            Logger.printException(() -> "onListScrolled failure", ex);
+        }
+    }
+
+    /**
+     * Only the lists of the pages behind or above the navigation bar hide it, also while the miniplayer is shown,
+     * not the lists of the player, the Shorts or other windows, and not the navigation rail along the side.
+     */
+    private static boolean canHideNavigationBarOnScroll(View list, View container) {
+        PlayerType playerType = PlayerType.getCurrent();
+        if ((!playerType.isNoneHiddenOrMinimized() && playerType != PlayerType.INLINE_MINIMAL) || ShortsPlayerState.isOpen()) {
+            return false;
+        }
+        if (!container.isShown() || !list.isShown() || list.getRootView() != container.getRootView()
+                || container.getWidth() < container.getHeight()) {
+            return false;
+        }
+
+        int[] location = new int[2];
+        list.getLocationOnScreen(location);
+        final int listBottom = location[1] + list.getHeight();
+        container.getLocationOnScreen(location);
+        return listBottom >= location[1];
+    }
+
+    /**
+     * The navigation bar slides out of the screen, and is then removed from the layout so the page fills
+     * the room it leaves, as the app does when it hides the bar. It is added back before it slides in.
+     */
+    private static void animateNavigationBarOnScroll(View container, View list, boolean hide) {
+        navigationBarHiddenOnScroll = hide;
+        ObjectAnimator running = navigationBarScrollAnimator;
+        if (running != null) {
+            running.cancel();
+        }
+        setBottomUiNavigationBarHeight();
+
+        if (!hide) {
+            restorePageRoom();
+            if (container.getVisibility() == View.GONE) {
+                container.setTranslationY(container.getHeight());
+            }
+            container.setVisibility(View.VISIBLE);
+        }
+        ObjectAnimator animator = ObjectAnimator.ofFloat(container, View.TRANSLATION_Y,
+                hide ? container.getHeight() : 0);
+        animator.setDuration(NAVIGATION_BAR_SCROLL_ANIMATION_MILLISECONDS);
+        if (hide) {
+            animator.addListener(new AnimatorListenerAdapter() {
+                private boolean cancelled;
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    cancelled = true;
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    if (!cancelled) {
+                        container.setVisibility(View.GONE);
+                        removePageRoom(list, container);
+                    }
+                }
+            });
+        }
+        navigationBarScrollAnimator = animator;
+        animator.start();
+    }
+
+    /**
+     * Shows at once the navigation bar hidden by scrolling. Called on the main thread.
+     */
+    private static void showNavigationBarHiddenOnScroll() {
+        if (!navigationBarHiddenOnScroll) return;
+
+        try {
+            navigationBarHiddenOnScroll = false;
+            listScrollDistance = 0;
+            ObjectAnimator running = navigationBarScrollAnimator;
+            if (running != null) {
+                running.cancel();
+            }
+            restorePageRoom();
+            setBottomUiNavigationBarHeight();
+            View container = bottomBarContainerRef.get();
+            if (container != null) {
+                container.setTranslationY(0);
+                container.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception ex) {
+            Logger.printException(() -> "showNavigationBarHiddenOnScroll failure", ex);
+        }
+    }
+
+    /**
+     * Sets again the height of the navigation bar the app last set, which is none while the bar is hidden on scroll.
+     */
+    private static void setBottomUiNavigationBarHeight() {
+        Enum<?> view = bottomUiNavigationBar;
+        if (view == null) return;
+
+        for (Map.Entry<BottomUiHeightsAccess, Integer> entry : new ArrayList<>(bottomUiNavigationBarHeights.entrySet())) {
+            BottomUiHeightsAccess heights = entry.getKey();
+            if (heights != null) {
+                heights.patch_setBottomUiHeight(view, entry.getValue());
+            }
+        }
+    }
+
+    /**
+     * The pages that are not laid out behind the navigation bar keep the room for it below them,
+     * which the app removes only when it hides the bar itself. The room of the bar is removed from the
+     * container of the pages of the scrolled list, so the page fills the room the hidden bar leaves.
+     */
+    private static void removePageRoom(View list, View container) {
+        for (View view = list; view != null; view = view.getParent() instanceof View parent ? parent : null) {
+            if (view.getId() != paneFragmentContainerId) continue;
+
+            final int padding = view.getPaddingBottom();
+            final int removed = Math.min(padding, container.getHeight());
+            if (removed > 0) {
+                pageRoomViewRef = new WeakReference<>(view);
+                pageRoomRemoved = removed;
+                pageRoomPadding = padding - removed;
+                view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(), pageRoomPadding);
+            }
+            return;
+        }
+    }
+
+    /**
+     * The room of the navigation bar is added back, unless the app set another room meanwhile.
+     */
+    private static void restorePageRoom() {
+        View view = pageRoomViewRef.get();
+        pageRoomViewRef = new WeakReference<>(null);
+        if (view != null && view.getPaddingBottom() == pageRoomPadding) {
+            view.setPadding(view.getPaddingLeft(), view.getPaddingTop(), view.getPaddingRight(),
+                    pageRoomPadding + pageRoomRemoved);
+        }
+    }
+
+    /**
+     * Injection point.
+     * <p>
+     * Before 21.20 this flag also hides the navigation bar while scrolling, whatever the page sets,
+     * so it is turned off and only {@link #getFeedScrollNavigationBarBehavior()} decides.
+     */
+    @SuppressWarnings("SameReturnValue")
+    public static boolean useAutoHideNavigationBarFlag(boolean original) {
+        return false;
+    }
+
+    /**
      * Injection point.
      */
     public static void hideNavigationBar(View view) {
+        // The navigation bar of a recreated activity is shown.
+        if (bottomBarContainerRef.get() != view) {
+            showNavigationBarHiddenOnScroll();
+        }
+        bottomBarContainerRef = new WeakReference<>(view);
         Utils.hideViewUnderCondition(HIDE_NAVIGATION_BAR, view);
     }
 
@@ -519,6 +845,35 @@ public final class NavigationBarPatch {
             return false;
         }
         return original;
+    }
+
+    /**
+     * The container of the scroll to bottom button of the live chat.
+     */
+    private static final int liveChatScrollButtonContainerId = NAVIGATION_BAR_STYLE != NavigationBarStyle.DEFAULT
+            ? ResourceUtils.getIdentifier(ResourceType.ID, "more_comments_icon_container")
+            : 0;
+
+    /**
+     * Injection point.
+     * <p>
+     * The live chat hides its scroll to bottom button by moving it below its container, where the bottom
+     * of the chat cuts it off. With the navigation bar covering the system navigation buttons, the chat
+     * keeps the room for the system navigation buttons below the container, so half of the hidden button
+     * is still shown there (<a href="https://github.com/MorpheApp/morphe-patches/issues/5100">...</a>).
+     * The container cuts the button off at its own bounds instead.
+     */
+    public static void clipLiveChatScrollButton(@Nullable View button) {
+        try {
+            if (translucentNavigationBarForced && button != null
+                    && button.getParent() instanceof View container
+                    && container.getId() == liveChatScrollButtonContainerId) {
+                container.setOutlineProvider(ViewOutlineProvider.BOUNDS);
+                container.setClipToOutline(true);
+            }
+        } catch (Exception ex) {
+            Logger.printException(() -> "clipLiveChatScrollButton failure", ex);
+        }
     }
 
     /**

@@ -17,4 +17,6 @@
     <string name="morphe_external_downloader_quick_menu_summary">Download shows the qualities and file sizes before downloading. Works with YTindir</string>
     <string name="morphe_external_downloader_quick_menu_header">Quick download</string>
     <string name="morphe_external_downloader_quick_options">All options</string>
+    <!-- Application label: the app list of the system settings, the share and "open with" menus, and the file name of Morphe Manager. -->
+    <string name="rlx_application_label" translatable="false">YT Music RLX</string>
 </resources>

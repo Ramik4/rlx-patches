@@ -12,4 +12,6 @@
     <string name="morphe_custom_branding_name_entry_6" translatable="false">YouTube X</string>
     <string name="morphe_custom_branding_name_entry_7" translatable="false">YouTube Morphe</string>
     <string name="morphe_custom_branding_name_entry_8" translatable="false">YT Morphe</string>
+    <!-- Application label: the app list of the system settings, the share and "open with" menus, and the file name of Morphe Manager. -->
+    <string name="rlx_application_label" translatable="false">YouTube RLX</string>
 </resources>

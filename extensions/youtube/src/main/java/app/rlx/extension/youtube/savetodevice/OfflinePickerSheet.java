@@ -63,6 +63,8 @@ import app.morphe.extension.shared.theme.ThemeUtils;
 final class OfflinePickerSheet {
     private static final String THUMBNAIL_URL = "https://i.ytimg.com/vi/%s/mqdefault.jpg";
     private static final int ANIMATION_DURATION_MS = 180;
+    /** RLX: lowest quality that is shown for videos that have this quality or a higher one. */
+    static final int MIN_SHOWN_HEIGHT = 480;
 
     private final Activity activity;
     private final SheetBottomDialog.SlideDialog dialog;
@@ -250,16 +252,17 @@ final class OfflinePickerSheet {
         };
         LinearLayout list = new LinearLayout(activity);
         list.setOrientation(LinearLayout.VERTICAL);
-        OfflineSubtitlePicker.add(activity, list, resolved.captions(), foreground);
-        sponsorPicker.add(activity, list, foreground);
+        // RLX: subtitles and SponsorBlock only with the setting, the menu shows only the choices otherwise.
+        if (OfflineOptions.offerExtras()) {
+            OfflineSubtitlePicker.add(activity, list, resolved.captions(), foreground);
+            sponsorPicker.add(activity, list, foreground);
+        }
         addVideoSection(list, resolved, video -> once.accept(() -> onPick.accept(video)));
         addAudioSection(list, resolved, audio -> once.accept(() -> onPick.accept(audio)));
         addThumbnailSection(list, () -> once.accept(onThumbnail));
 
         addCappedList(list, str("morphe_offline_picker_footer",
-                OfflineMediaStore.Collection.VIDEO.relativePath(OfflineOptions.videoFolder()),
-                OfflineMediaStore.Collection.AUDIO.relativePath(OfflineOptions.audioFolder()),
-                OfflineMediaStore.Collection.SUBTITLE.relativePath(OfflineOptions.subtitleFolder())));
+                OfflineMediaStore.Collection.VIDEO.relativePath(OfflineOptions.videoFolder())));
     }
 
     private void showDetails(OfflineFormats.Resolved resolved) {
@@ -277,7 +280,7 @@ final class OfflinePickerSheet {
         list.addView(sectionTitle(str("morphe_offline_picker_subtitle")));
         if (OfflineOptions.allVideoCodecsOff()) list.addView(note(str("morphe_offline_codecs_all_off")));
 
-        List<OfflineFormats.Stream> videos = OfflineOptions.filterVideos(resolved.videos());
+        List<OfflineFormats.Stream> videos = onePerQuality(OfflineOptions.filterVideos(resolved.videos()));
         if (videos.isEmpty()) list.addView(note(str("morphe_offline_picker_no_video_match")));
         for (OfflineFormats.Stream video : videos) {
             long size = video.contentLength() > 0 && resolved.audioFor(video).contentLength() > 0
@@ -288,27 +291,50 @@ final class OfflinePickerSheet {
         }
     }
 
+    /**
+     * RLX: one stream per quality, like the quick download menu: the first of each height, which is the best
+     * of the sorted streams (Premium, then the higher frame rate, then H.264, playable AV1, playable VP9).
+     * The qualities below {@link #MIN_SHOWN_HEIGHT} only for videos that have none of the higher ones.
+     */
+    static List<OfflineFormats.Stream> onePerQuality(List<OfflineFormats.Stream> sorted) {
+        List<OfflineFormats.Stream> best = new ArrayList<>();
+        boolean hasHigher = false;
+        int lastHeight = -1;
+        for (OfflineFormats.Stream video : sorted) {
+            if (video.height() == lastHeight) continue;
+            lastHeight = video.height();
+            best.add(video);
+            hasHigher |= video.height() >= MIN_SHOWN_HEIGHT;
+        }
+        if (hasHigher) best.removeIf(video -> video.height() < MIN_SHOWN_HEIGHT);
+        return best;
+    }
+
     private void addAudioSection(LinearLayout list, OfflineFormats.Resolved resolved,
                                  Consumer<OfflineFormats.Stream> onPick) {
+        // RLX: audio only as M4A (the AAC stream as it is), no Ogg file.
         List<OfflineFormats.Stream> audio = OfflineOptions.filterAudio(resolved.audioOnly());
+        audio.removeIf(stream -> OfflineFormats.CODEC_OPUS.equals(stream.codec()));
         if (audio.isEmpty()) return;
 
         list.addView(sectionTitle(str("morphe_offline_picker_audio_section")));
         for (OfflineFormats.Stream stream : audio) {
-            boolean opus = OfflineFormats.CODEC_OPUS.equals(stream.codec());
-            String label = str(opus ? "morphe_offline_picker_audio_opus" : "morphe_offline_picker_audio_m4a");
-            String detail = stream.codec() + " · " + Math.round(stream.bitrate() / 1000f) + " kbps · "
-                    + str(opus ? "morphe_offline_picker_opus_hint" : "morphe_offline_picker_m4a_hint");
-            list.addView(row(label, null, withFormatId(detail, stream), stream.contentLength(),
-                    v -> onPick.accept(stream)));
+            String detail = stream.codec() + " · " + str("morphe_external_downloader_quick_source_audio");
+            list.addView(row(str("morphe_offline_picker_audio_m4a"), Math.round(stream.bitrate() / 1000f) + " kbps",
+                    withFormatId(detail, stream), stream.contentLength(), v -> onPick.accept(stream)));
         }
     }
 
     private void addThumbnailSection(LinearLayout list, Runnable onPick) {
-        list.addView(sectionTitle(str("morphe_offline_picker_thumbnail_section")));
-        String folder = OfflineMediaStore.Collection.IMAGE.relativePath(OfflineOptions.thumbnailFolder());
-        list.addView(row(str("morphe_offline_picker_thumbnail"), null,
-                str("morphe_offline_picker_thumbnail_hint", folder), -1, v -> onPick.run()));
+        // RLX: like the quick download menu, below a divider.
+        View line = new View(activity);
+        line.setBackgroundColor(divider);
+        LinearLayout.LayoutParams lineParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, Math.max(1, Dim.dp1));
+        lineParams.setMargins(Dim.dp16, Dim.dp6, Dim.dp16, Dim.dp4);
+        list.addView(line, lineParams);
+        list.addView(row(str("morphe_external_downloader_quick_thumbnail"), "JPG",
+                str("morphe_external_downloader_quick_thumbnail_summary"), -1, v -> onPick.run()));
     }
 
     private TextView sectionTitle(String text) {
@@ -404,15 +430,17 @@ final class OfflinePickerSheet {
     private static String badge(OfflineFormats.Stream video) {
         if (video.height() >= 2160) return "4K";
         if (video.height() >= 1440) return "2K";
+        if (video.height() >= 1080) return "FHD";
         return video.height() >= 720 ? "HD" : null;
     }
 
     private CharSequence videoDetail(OfflineFormats.Stream video) {
-        String hint = switch (video.codec()) {
-            case OfflineFormats.CODEC_AV1 -> "morphe_offline_picker_av1_hint";
-            case OfflineFormats.CODEC_VP9 -> "morphe_offline_picker_vp9_hint";
-            default -> "morphe_offline_picker_h264_hint";
-        };
+        // RLX: what the quality is good for, as in the quick download menu.
+        final int height = video.height();
+        String hint = height >= 2160 ? "morphe_external_downloader_quick_best_quality"
+                : height >= 1440 ? "morphe_external_downloader_quick_better_quality"
+                : height >= 1080 ? "morphe_external_downloader_quick_recommended"
+                : "morphe_external_downloader_quick_smaller_file";
         SpannableStringBuilder detail = new SpannableStringBuilder(withFormatId(
                 video.codec() + " · " + str(hint), video));
         // AV1 this device cannot decode is listed, with a warning note.
