@@ -93,7 +93,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | patch option "App icon" with the RLX icons in place of the Morphe icons (`RlxPatchOptions.kt`) |
 | `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | default app name "YouTube RLX" / "YT Music RLX" (`RLX_DEFAULT_APP_NAME_INDEX`) |
 | `patches/.../youtube/layout/branding/CustomBrandingPatch.kt`, `patches/.../music/layout/branding/CustomBrandingPatch.kt` | number of app names (`RLX_APP_NAME_COUNT`) |
-| `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | application label *YouTube Morphe* / *YT Music Morphe* (name 7): the app list of the system settings and the file Morphe Manager saves (`YouTube_Morphe-v21.46.522-RLX_Patches-v2.4.5.apk`); the launcher shows the selected name |
+| `patches/.../shared/layout/branding/BaseCustomBrandingPatch.kt` | application label *YT Morphe* / *YT Music Morphe* (`rlx_application_label` in `values/rlx-youtube` and `rlx-music`): the app list of the system settings and the file Morphe Manager saves (`YT_Morphe-v21.46.522-RLX_Patches-v2.4.8.apk`); the launcher shows the selected name |
 | `extensions/shared-youtube/.../shared/patches/CustomBrandingPatch.java` | default app name (`RlxBranding.DEFAULT_APP_NAME_INDEX`); no placeholder name "Custom" without a custom name (`RlxBranding.checkAppName`) |
 | `extensions/youtube/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |
 | `extensions/music/.../patches/ChangeHeaderPatch.java` | RLX header logos in `HeaderLogo` |

@@ -477,10 +477,10 @@ internal fun baseCustomBrandingPatch(
                             // YouTube app, such as the settings app list and in the "open with" file picker.
                             // Because the YouTube app cannot be completely uninstalled and only disabled,
                             // use a custom name for this situation to disambiguate which app is which.
-                            // RLX: "YouTube Morphe" / "YT Music Morphe" (name 7), so the app list of the
-                            // system settings and the file Morphe Manager saves name Morphe; the launcher
+                            // RLX: "YT Morphe" / "YT Music Morphe" (rlx_application_label), so the app list of
+                            // the system settings and the file Morphe Manager saves name Morphe; the launcher
                             // shows the selected name.
-                            "@string/morphe_custom_branding_name_entry_7"
+                            "@string/rlx_application_label"
                         }
                     )
                 }
