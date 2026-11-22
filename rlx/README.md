@@ -284,6 +284,11 @@ lavinhoque33. Maintained here as RLX code.
 - Download buttons of the app (below the video, feed menus, Shorts menu of Morphe) open a quality
   picker and save videos, audio, thumbnails and subtitles to `Download/YouTube`. Off by default
   (`morphe_save_to_device`); when off, Morphe's download mode is used.
+- RLX quality picker: laid out like the quick download menu, one stream per quality (the best of the
+  sorted streams: Premium, the higher frame rate, then H.264, playable AV1, playable VP9), the qualities
+  below 480p only for videos without 480p, audio only as M4A (no Ogg file), the thumbnail and one line
+  with the folder. Subtitles and SponsorBlock are offered only with *Subtitles and SponsorBlock*
+  (`morphe_offline_picker_extras`, off by default; while off, neither is saved).
 - Library of the saved videos and an offline player with subtitles and offline SponsorBlock,
   shown in the activity of the settings. It can replace the Downloads page of the app.
 - The offline player uses the stock `BackgroundPlayerService`, the downloads keep the process

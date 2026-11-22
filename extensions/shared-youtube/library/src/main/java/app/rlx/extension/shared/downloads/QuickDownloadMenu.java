@@ -208,7 +208,10 @@ public final class QuickDownloadMenu {
         list.setPadding(0, 0, 0, Dim.dp4);
         ScrollView scrollView = SheetBottomDialog.createCappedScrollView(context);
         scrollView.addView(list);
-        mainLayout.addView(scrollView);
+        // The weight shrinks the list when the sheet does not fit on screen, such as in landscape,
+        // so the buttons below it stay visible.
+        mainLayout.addView(scrollView, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f));
 
         SheetBottomDialog.SlideDialog dialog =
                 SheetBottomDialog.createSlideDialog(context, mainLayout, animationDuration);

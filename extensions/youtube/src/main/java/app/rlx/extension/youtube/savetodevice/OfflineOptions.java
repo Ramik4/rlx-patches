@@ -35,6 +35,11 @@ final class OfflineOptions {
 
     // region formats
 
+    /** RLX: the subtitle and SponsorBlock choices of the quality picker. */
+    static boolean offerExtras() {
+        return SaveToDeviceSettings.PICKER_EXTRAS.get();
+    }
+
     static boolean showFormatIds() {
         return SaveToDeviceSettings.SHOW_FORMAT_IDS.get();
     }

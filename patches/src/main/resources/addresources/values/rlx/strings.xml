@@ -126,12 +126,7 @@
     <string name="morphe_offline_notification_channel_playback">Offline playback</string>
     <string name="morphe_offline_loading_formats">Loading available qualities…</string>
     <string name="morphe_offline_picker_subtitle">Download quality</string>
-    <string name="morphe_offline_picker_footer">"Videos are saved to %1$s
-Audio is saved to %2$s
-Subtitles, if chosen, are saved to %3$s"</string>
-    <string name="morphe_offline_picker_h264_hint">Plays everywhere</string>
-    <string name="morphe_offline_picker_av1_hint">Smaller file</string>
-    <string name="morphe_offline_picker_vp9_hint">WebM with Opus audio</string>
+    <string name="morphe_offline_picker_footer">Downloads are saved to %1$s</string>
     <string name="morphe_offline_picker_av1_unplayable">can\'t play on this device</string>
     <string name="morphe_offline_av1_unplayable_toast">This device may not be able to play this AV1 video. The picture may stay blank.</string>
     <string name="morphe_offline_no_formats">No downloadable quality found for this video</string>
@@ -197,9 +192,6 @@ Subtitles, if chosen, are saved to %3$s"</string>
     <string name="morphe_offline_codec_av1_title">AV1 video</string>
     <string name="morphe_offline_codec_av1_summary_on">AV1 (MP4) qualities are offered</string>
     <string name="morphe_offline_codec_av1_summary_off">AV1 qualities are hidden</string>
-    <string name="morphe_offline_audio_opus_title">Opus audio</string>
-    <string name="morphe_offline_audio_opus_summary_on">Audio-only Opus downloads are offered</string>
-    <string name="morphe_offline_audio_opus_summary_off">Audio-only Opus downloads are hidden</string>
     <string name="morphe_offline_audio_aac_title">M4A audio</string>
     <string name="morphe_offline_audio_aac_summary_on">Audio-only M4A (AAC) downloads are offered</string>
     <string name="morphe_offline_audio_aac_summary_off">Audio-only M4A downloads are hidden</string>
@@ -222,11 +214,6 @@ Subtitles, if chosen, are saved to %3$s"</string>
     <string name="morphe_offline_picker_audio_section">Audio only</string>
     <string name="morphe_offline_picker_audio_opus">Opus</string>
     <string name="morphe_offline_picker_audio_m4a">M4A</string>
-    <string name="morphe_offline_picker_opus_hint">Ogg file</string>
-    <string name="morphe_offline_picker_m4a_hint">Plays everywhere</string>
-    <string name="morphe_offline_picker_thumbnail_section">Thumbnail</string>
-    <string name="morphe_offline_picker_thumbnail">Thumbnail image</string>
-    <string name="morphe_offline_picker_thumbnail_hint">Original size, saved to %s</string>
     <string name="morphe_offline_picker_format_id">id: %d</string>
     <string name="morphe_offline_picker_no_video_match">No video quality matches the codecs and the quality range in Download options</string>
     <string name="morphe_offline_codecs_all_off">Every video codec is turned off in Download options, so all codecs are used</string>
@@ -253,6 +240,9 @@ Subtitles, if chosen, are saved to %3$s"</string>
     <string name="morphe_offline_batch_part_failed">%d failed</string>
     <string name="morphe_offline_batch_part_cancelled">%d cancelled</string>
     <string name="morphe_offline_batch_part_already_downloaded">%d already downloaded</string>
+    <string name="morphe_offline_picker_extras_title">Subtitles and SponsorBlock</string>
+    <string name="morphe_offline_picker_extras_summary_on">The download menu offers to include subtitles and SponsorBlock segments</string>
+    <string name="morphe_offline_picker_extras_summary_off">The download menu shows only the qualities</string>
     <string name="morphe_offline_subtitles_include">Include subtitles</string>
     <string name="morphe_offline_subtitles_none">No subtitles to download</string>
     <string name="morphe_offline_sponsorblock_include">Include SponsorBlock</string>

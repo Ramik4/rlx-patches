@@ -114,12 +114,7 @@
     <string name="morphe_offline_notification_channel_playback">Офлайн-воспроизведение</string>
     <string name="morphe_offline_loading_formats">Загрузка доступного качества…</string>
     <string name="morphe_offline_picker_subtitle">Качество загрузки</string>
-    <string name="morphe_offline_picker_footer">"Видео сохраняется в %1$s
-Аудио сохраняется в %2$s
-Выбранные субтитры сохраняются в %3$s"</string>
-    <string name="morphe_offline_picker_h264_hint">Воспроизводится везде</string>
-    <string name="morphe_offline_picker_av1_hint">Меньший размер</string>
-    <string name="morphe_offline_picker_vp9_hint">WebM с аудио Opus</string>
+    <string name="morphe_offline_picker_footer">Загрузки сохраняются в %1$s</string>
     <string name="morphe_offline_picker_av1_unplayable">не воспроизводится на этом устройстве</string>
     <string name="morphe_offline_av1_unplayable_toast">Устройство может не воспроизвести это видео AV1. Изображение может остаться пустым.</string>
     <string name="morphe_offline_no_formats">Для этого видео не найдено доступного качества</string>
@@ -185,9 +180,6 @@
     <string name="morphe_offline_codec_av1_title">Видео AV1</string>
     <string name="morphe_offline_codec_av1_summary_on">Предлагаются качества AV1 (MP4)</string>
     <string name="morphe_offline_codec_av1_summary_off">Качества AV1 скрыты</string>
-    <string name="morphe_offline_audio_opus_title">Аудио Opus</string>
-    <string name="morphe_offline_audio_opus_summary_on">Предлагается загрузка только аудио в Opus</string>
-    <string name="morphe_offline_audio_opus_summary_off">Загрузка только аудио в Opus скрыта</string>
     <string name="morphe_offline_audio_aac_title">Аудио M4A</string>
     <string name="morphe_offline_audio_aac_summary_on">Предлагается загрузка только аудио в M4A (AAC)</string>
     <string name="morphe_offline_audio_aac_summary_off">Загрузка только аудио в M4A скрыта</string>
@@ -210,11 +202,6 @@
     <string name="morphe_offline_picker_audio_section">Только аудио</string>
     <string name="morphe_offline_picker_audio_opus">Opus</string>
     <string name="morphe_offline_picker_audio_m4a">M4A</string>
-    <string name="morphe_offline_picker_opus_hint">Файл Ogg</string>
-    <string name="morphe_offline_picker_m4a_hint">Воспроизводится везде</string>
-    <string name="morphe_offline_picker_thumbnail_section">Миниатюра</string>
-    <string name="morphe_offline_picker_thumbnail">Изображение миниатюры</string>
-    <string name="morphe_offline_picker_thumbnail_hint">Исходный размер, сохраняется в %s</string>
     <string name="morphe_offline_picker_format_id">id: %d</string>
     <string name="morphe_offline_picker_no_video_match">Нет качества видео, подходящего под кодеки и диапазон качества в параметрах загрузки</string>
     <string name="morphe_offline_codecs_all_off">В параметрах загрузки выключены все видеокодеки, поэтому используются все кодеки</string>
@@ -230,6 +217,9 @@
     <string name="morphe_offline_aspect_stretch">Растянуть</string>
     <string name="morphe_offline_aspect_zoom">Увеличить</string>
     <string name="morphe_offline_aspect_original">Исходный (100%)</string>
+    <string name="morphe_offline_picker_extras_title">Субтитры и SponsorBlock</string>
+    <string name="morphe_offline_picker_extras_summary_on">В меню загрузки можно добавить субтитры и сегменты SponsorBlock</string>
+    <string name="morphe_offline_picker_extras_summary_off">В меню загрузки показываются только качества</string>
     <string name="morphe_offline_subtitles_include">Добавить субтитры</string>
     <string name="morphe_offline_subtitles_none">Нет субтитров для загрузки</string>
     <string name="morphe_offline_sponsorblock_include">Добавить SponsorBlock</string>

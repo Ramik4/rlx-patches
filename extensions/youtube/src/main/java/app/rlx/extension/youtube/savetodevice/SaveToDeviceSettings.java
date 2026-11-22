@@ -45,6 +45,10 @@ public final class SaveToDeviceSettings {
     public static final BooleanSetting SPONSORBLOCK_INCLUDE =
             new BooleanSetting("morphe_offline_sponsorblock_include", FALSE, false, false);
 
+    // RLX: the two choices above are offered in the quality picker only with this setting.
+    public static final BooleanSetting PICKER_EXTRAS =
+            new BooleanSetting("morphe_offline_picker_extras", FALSE, parent(ENABLED));
+
     public static final StringSetting SUBTITLES_LANGUAGES =
             new StringSetting("morphe_offline_subtitles_languages", "", false, false);
 

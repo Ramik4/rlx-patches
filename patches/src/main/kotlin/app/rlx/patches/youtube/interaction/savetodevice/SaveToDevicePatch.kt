@@ -91,6 +91,7 @@ private val saveToDeviceResourcePatch = patch {
                 preferences = setOf(
                     SwitchPreference("morphe_save_to_device"),
                     SwitchPreference("morphe_offline_replace_downloads_page"),
+                    SwitchPreference("morphe_offline_picker_extras"),
                     PreferenceScreenPreference(
                         key = "morphe_offline_download_options",
                         sorting = Sorting.UNSORTED,
@@ -103,7 +104,6 @@ private val saveToDeviceResourcePatch = patch {
                                     SwitchPreference("morphe_offline_codec_h264"),
                                     SwitchPreference("morphe_offline_codec_vp9"),
                                     SwitchPreference("morphe_offline_codec_av1"),
-                                    SwitchPreference("morphe_offline_audio_opus"),
                                     SwitchPreference("morphe_offline_audio_aac"),
                                     SwitchPreference("morphe_offline_show_format_ids"),
                                 )
