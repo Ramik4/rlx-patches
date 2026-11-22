@@ -34,6 +34,10 @@ conflicts that are expected on every release by itself:
 - [`sync/ours.txt`](sync/ours.txt): files RLX owns entirely (`README.md`,
   `patches-bundle.json`, `patches-list.json`, `patches-bundle.png`, `morphe-signing.pub`).
 
+When there are several merge bases (Morphe merges its stable releases from `main` into `dev`, and
+RLX merges both), the script merges against the newest one, the Morphe release RLX was last synced
+with; git's virtual base would report conflicts in files RLX never changed.
+
 Any other conflict stops the script with the list of files and leaves the merge in progress.
 
 ## Release signing
