@@ -105,6 +105,7 @@ Hooks in Morphe files, each marked with an `RLX` comment:
 | `extensions/shared-youtube/.../shared/patches/BaseInAppDownloadsPatch.java` | quick download menu: `DOWNLOAD_CLIENTS` public |
 | `extensions/shared-youtube/.../innertube/player_response.proto` | quick download menu: `fps` and `qualityLabel` of a format |
 | `extensions/youtube/.../videoplayer/ExternalDownloadButton.java` | quick download menu with qualities for YTindir (`showQualityMenu`) |
+| `extensions/shared-youtube/.../shared/patches/GmsCoreSupportPatch.java` | the update button of the "MicroG is outdated" dialog downloads the MicroG-RE file without icon for the device (`microg-<version>-noicon-arm64-v8a.apk`, `RlxMicroG`) instead of the download page (universal file with icon) |
 | `extensions/music/.../patches/DownloadsPatch.java`, `extensions/music/.../settings/Settings.java`, `patches/.../music/interaction/downloads/DownloadsPatch.kt` | quick download menu of YouTube Music: Download of a song, setting `morphe_external_downloader_quick_menu` |
 
 Patches of other apps (Reddit) stay in the tree untouched and are left out of the bundle by
@@ -358,6 +359,8 @@ python3 -m unittest discover -s rlx/scripts
   2. *✨ New features*: the features of every Morphe release since the base of the last RLX release, so
      also of the Morphe versions RLX did not release (from Morphe's `CHANGELOG.md`; YouTube, then
      YouTube Music, then the ones of every app); the notes given when the release is started follow.
+     A release based on a stable Morphe release (X.Y.0) lists all of its features (Morphe's notes of
+     the stable release), also those already in earlier RLX releases based on its dev releases.
   3. *🔧 Other improvements*: the heading alone. Fixes are not listed, neither Morphe's (no count, no
      link) nor RLX's (no pull request titles).
   4. *🌟 RLX extras*: what RLX adds to Morphe Patches ([`extras.md`](extras.md)), in every release, like
