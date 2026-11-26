@@ -361,6 +361,9 @@ python3 -m unittest discover -s rlx/scripts
      YouTube Music, then the ones of every app); the notes given when the release is started follow.
      A release based on a stable Morphe release (X.Y.0) lists all of its features (Morphe's notes of
      the stable release), also those already in earlier RLX releases based on its dev releases.
+     Only the features of a patch (an entry with a scope, such as **YouTube - Navigation bar:** or
+     **Spoof video streams:**): entries without one are about Morphe's own screens (its About dialog,
+     its contributor list), which RLX replaces with its own About page.
   3. *🔧 Other improvements*: the heading alone. Fixes are not listed, neither Morphe's (no count, no
      link) nor RLX's (no pull request titles).
   4. *🌟 RLX extras*: what RLX adds to Morphe Patches ([`extras.md`](extras.md)), in every release, like
