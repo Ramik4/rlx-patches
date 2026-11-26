@@ -264,7 +264,7 @@ Translation (ilyhalight). Maintained here as RLX code, not as a subtree.
 - It does not conflict with Morphe's own Google-based voice over translation (`vot_*` keys):
   starting one stops the other.
 - Changes to YaVoT: compiled against Morphe's current `Event` API (fixes the crash on long press
-  of the button, YT Morphe 1.49.0-dev.9); API client updated to vot.js 3.2.2 (component version,
+  of the button, YT Morphe 1.49.0-dev.9); API client updated to vot.js 3.2.5 (component version,
   user agent, browser client hints, session request signature, empty-audio file id); network and
   API failures stop the translation with a short notice and never crash the app.
 - YouTube Music: not supported. Music has none of the player button and video hooks the
