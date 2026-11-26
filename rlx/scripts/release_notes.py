@@ -69,6 +69,10 @@ def features(morphe, previous):
             continue
         if previous and key(release) <= key(previous) or not previous and not release.startswith(base):
             continue
+        # A stable release (X.Y.0) lists every feature of its dev releases again: after an RLX release
+        # based on one of them, only the dev releases after it are new.
+        if previous and "-" not in release and previous.startswith(release + "-"):
+            continue
         for part in re.split(r"(?m)^### ", section)[1:]:
             title, _, items = part.partition("\n")
             if "Features" in title:
