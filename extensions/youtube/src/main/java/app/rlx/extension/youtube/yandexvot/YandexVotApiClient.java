@@ -79,24 +79,24 @@ public class YandexVotApiClient {
     private static final String YANDEX_API_HOST = "api.browser.yandex.ru";
 
     private static final String HMAC_KEY = "bt8xH3VOlb4mqf0nqAibnDOoiPlXsisf";
-    // RLX: values of vot.js 3.2.2 (FOSWLY/vot.js, packages/shared/src/data/config.ts and secure.ts),
+    // RLX: values of vot.js 3.2.5 (FOSWLY/vot.js, packages/shared/src/data/config.ts and secure.ts),
     // used by the Voice Over Translation browser extension. The component version is part of
     // the signed token, so an outdated one can make Yandex reject requests.
-    private static final String COMPONENT_VERSION = "26.10.0.1854";
-    private static final String CHROMIUM_REVISION = "1854";
+    private static final String COMPONENT_VERSION = "26.11.1.1124";
+    private static final String CHROMIUM_REVISION = "1124";
     private static final String VOT_MODULE = "video-translation";
     private static final double DEFAULT_DURATION = 310.0;
 
     private static final String USER_AGENT =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-            "(KHTML, like Gecko) Chrome/152.0.0.0 YaBrowser/26.10.0.0 Safari/537.36";
+            "(KHTML, like Gecko) Chrome/154.0.0.0 YaBrowser/26.11.0.0 Safari/537.36";
 
     /** Browser client hints the browser extension sends with every Yandex API request. */
-    private static final String SEC_CH_UA = "\"Chromium\";v=\"152\", \"Not?A_Brand\";v=\"24\", "
-            + "\"YaBrowser\";v=\"" + COMPONENT_VERSION.substring(0, 5) + "\", \"Yowser\";v=\"2.5\"";
-    private static final String SEC_CH_UA_FULL_VERSION_LIST = "\"Chromium\";v=\"152.0.7977." + CHROMIUM_REVISION
-            + "\", \"Not?A_Brand\";v=\"24.0.0.0\", \"YaBrowser\";v=\"" + COMPONENT_VERSION
-            + "\", \"Yowser\";v=\"2.5\"";
+    private static final String SEC_CH_UA = "\"Chromium\";v=\"154\", \"YaBrowser\";v=\""
+            + COMPONENT_VERSION.substring(0, 5) + "\", \"Not A(Brand\";v=\"99\", \"Yowser\";v=\"2.5\"";
+    private static final String SEC_CH_UA_FULL_VERSION_LIST = "\"Chromium\";v=\"154.0.8037." + CHROMIUM_REVISION
+            + "\", \"YaBrowser\";v=\"" + COMPONENT_VERSION
+            + "\", \"Not A(Brand\";v=\"99.0.0.0\", \"Yowser\";v=\"2.5\"";
 
     private static void putBrowserHeaders(Map<String, String> headers) {
         headers.put("sec-ch-ua", SEC_CH_UA);

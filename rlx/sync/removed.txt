@@ -11,3 +11,6 @@
 .github/workflows/release.yml
 .github/workflows/issue_cleanup.yml
 .github/workflows/issue_triage.yml
+.github/workflows/issue_closed.yml
+.github/workflows/issue_comment.yml
+.github/workflows/issue_edited.yml

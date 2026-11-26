@@ -710,7 +710,8 @@ public class GmsCoreSupportPatch {
                     str("gms_core_dialog_outdated_message", installedVersion, latestVersion), // Message.
                     null, // No EditText.
                     str("gms_core_dialog_update_text"), // Update button text.
-                    () -> open(context, getGmsCoreDownload()), // Update action.
+                    // RLX: the MicroG-RE file without icon for this device, see RlxMicroG.
+                    () -> open(context, app.rlx.extension.shared.RlxMicroG.updateDownload(getGmsCoreDownload())), // Update action.
                     null, // No Cancel button.
                     str("gms_core_dialog_ignore_text"), // Ignore button text.
                     () -> GMS_CORE_IGNORED_VERSION.save(latestVersion), // Ignore action: persist and dismiss.
@@ -774,7 +775,10 @@ public class GmsCoreSupportPatch {
         }
         try {
             // The latest release endpoint returns the newest stable (non-prerelease) tag.
-            String tagName = Requester.parseJSONObjectAndDisconnect(connection).optString("tag_name");
+            org.json.JSONObject release = Requester.parseJSONObjectAndDisconnect(connection);
+            // RLX: the update button downloads the MicroG-RE file without icon for this device.
+            app.rlx.extension.shared.RlxMicroG.setLatestRelease(release);
+            String tagName = release.optString("tag_name");
             return tagName.isEmpty() ? null : tagName;
         } catch (JSONException ex) {
             return null;
