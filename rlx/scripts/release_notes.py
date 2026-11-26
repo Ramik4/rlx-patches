@@ -14,7 +14,8 @@ Layout (see rlx/README.md, "Release notes"):
 
     Based on **Morphe Patches X.Y.Z**
     ## ✨ New features         the Morphe features since the base of the last RLX release, so also of the
-                              Morphe versions RLX did not release; YouTube, YouTube Music, then every app
+                              Morphe versions RLX did not release; YouTube, YouTube Music, then every app;
+                              only those of a patch (a "**scope:**" entry), not Morphe's own screens
     ## 🔧 Other improvements   the heading alone: fixes are not listed, neither Morphe's nor RLX's
     ## 🌟 RLX extras          what RLX adds to Morphe Patches (rlx/extras.md), in every release
     ## 📥 Install
@@ -60,7 +61,12 @@ def order(entry):
 
 def features(morphe, previous):
     """New features of the Morphe releases after `previous` (the first release: of every release of this
-    Morphe version, X.Y.0-dev.N) up to `morphe`, from Morphe's CHANGELOG.md. Reddit is not in RLX."""
+    Morphe version, X.Y.0-dev.N) up to `morphe`, from Morphe's CHANGELOG.md. Reddit is not in RLX.
+
+    Only the features of a patch ("* **YouTube - Navigation bar:** ...", "* **Spoof video streams:** ...").
+    An entry without a scope is about Morphe's own screens, such as its About dialog and its contributor
+    list. When one also changes RLX (the RLX About page uses Morphe's About style), it is given with
+    EXTRA_NOTES."""
     base = morphe.split("-")[0]
     found = []
     for section in re.split(r"(?m)^## ", open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8").read())[1:]:
@@ -73,7 +79,7 @@ def features(morphe, previous):
             title, _, items = part.partition("\n")
             if "Features" in title:
                 for line in items.splitlines():
-                    if line.startswith("* ") and not line.startswith("* **Reddit"):
+                    if line.startswith("* **") and not line.startswith("* **Reddit"):
                         entry = clean(line[2:])
                         if entry not in found:  # A change listed again in a later version
                             found.append(entry)
