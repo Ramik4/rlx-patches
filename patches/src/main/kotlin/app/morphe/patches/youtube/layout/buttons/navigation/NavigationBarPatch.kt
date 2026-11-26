@@ -43,6 +43,7 @@ import app.morphe.patches.shared.misc.settings.preference.PreferenceScreenPrefer
 import app.morphe.patches.shared.misc.settings.preference.SwitchPreference
 import app.morphe.patches.youtube.layout.hide.general.MoreCommentsIconFingerprint
 import app.morphe.patches.youtube.layout.hide.shorts.ShortsBottomBarContainerFingerprint
+import app.morphe.patches.youtube.misc.commandrouter.commandRouterHookPatch
 import app.morphe.patches.youtube.misc.contexthook.Endpoint
 import app.morphe.patches.youtube.misc.contexthook.addOSNameHook
 import app.morphe.patches.youtube.misc.contexthook.clientContextHookPatch
@@ -228,6 +229,7 @@ val navigationBarPatch = patch(
         fixProtoLibraryPatch,
         navigationBarResourcePatch,
         translucentNavigationBarFeatureFlagsPatch,
+        commandRouterHookPatch,
     )
 
     compatibleWith(COMPATIBILITY_YOUTUBE)
@@ -246,6 +248,7 @@ val navigationBarPatch = patch(
             SwitchPreference("morphe_show_watch_later_button"),
             SwitchPreference("morphe_show_settings_button"),
             SwitchPreference("morphe_show_settings_button_type", summary = true),
+            SwitchPreference("morphe_you_button_account_switcher", summary = true),
             NonInteractivePreference(
                 "morphe_navigation_buttons_order",
                 tag = "app.morphe.extension.youtube.settings.preference.NavigationButtonsOrderPreference",
@@ -763,10 +766,15 @@ val navigationBarPatch = patch(
         implementPivotBarItemBuilder(PivotBarItemBuilderFingerprint)
 
         // The navigation bar handles the touches of its buttons itself, so the long press
-        // of the Settings button is found from the touches of the navigation bar.
-        PivotBarDispatchTouchEventFingerprint.method.addInstruction(
+        // of the Settings and 'You' buttons is found from the touches of the navigation bar.
+        // The touch that ends a long press is replaced, so the button is not tapped.
+        // This runs before the touch hook of the navigation bar hook patch, so it is not seen as a tap either.
+        PivotBarDispatchTouchEventFingerprint.method.addInstructions(
             0,
-            "invoke-static { p1 }, $EXTENSION_CLASS->navigationBarTouched(Landroid/view/MotionEvent;)V"
+            """
+                invoke-static { p1 }, $EXTENSION_CLASS->navigationBarTouched(Landroid/view/MotionEvent;)Landroid/view/MotionEvent;
+                move-result-object p1
+            """
         )
 
         // Allow the extension to read the proto of navigation bar items,
@@ -1372,7 +1380,8 @@ val navigationBarPatch = patch(
                             move-result v$iconRegister
                             invoke-static { v$iconRegister }, $iconTypeLookupMethod
                             move-result-object v$iconRegister
-                            const/4 v$iconOnlyRegister, 0x0
+                            invoke-static { }, $EXTENSION_SUBSCRIPTIONS_CLASS->isSubscriptionsIconOnly()Z
+                            move-result v$iconOnlyRegister
                             invoke-static { v$browseIdRegister, v$labelRegister, v$iconRegister, v$iconOnlyRegister }, ${PivotBarItemProtoFactoryFingerprint.method}
                             move-result-object v$browseIdRegister
                             invoke-static { v$browseIdRegister }, ${PivotBarRendererFingerprint.method}

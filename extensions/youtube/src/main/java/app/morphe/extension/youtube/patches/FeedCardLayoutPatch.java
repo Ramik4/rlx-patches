@@ -10,6 +10,7 @@
 package app.morphe.extension.youtube.patches;
 
 import static app.morphe.extension.shared.StringRef.str;
+import static app.morphe.extension.youtube.shared.LithoDrawables.getDrawableView;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -247,13 +248,13 @@ public class FeedCardLayoutPatch {
      * Templates of the feed videos, with the field of their model and the known fields of the model
      * where the theme and the capabilities are written when the element is bound.
      */
-    private static final VideoTemplate CLASSIC = new VideoTemplate(CLASSIC_TEMPLATE, 232954548, 6, 29);
-    private static final VideoTemplate CARD = new VideoTemplate(CARD_TEMPLATE, 413471385, 4, 6);
+    private static final VideoTemplate CLASSIC = new VideoTemplate(CLASSIC_TEMPLATE, null, 232954548, 6, 29);
+    private static final VideoTemplate CARD = new VideoTemplate(CARD_TEMPLATE, null, 413471385, 4, 6);
     /**
      * Bottom overlay of the thumbnails, with the same model of the cards.
      */
     private static final VideoTemplate THUMBNAIL_BOTTOM_OVERLAY = new VideoTemplate(
-            THUMBNAIL_BOTTOM_OVERLAY_TEMPLATE, 413471385, 4, 6);
+            THUMBNAIL_BOTTOM_OVERLAY_TEMPLATE, null, 413471385, 4, 6);
     /**
      * Suffix of the template names of newer app versions, before "|hash", such as "-fe".
      */
@@ -325,6 +326,10 @@ public class FeedCardLayoutPatch {
     private static final int LIKE_STATUS_LIKE = 0;
     private static final int LIKE_STATUS_INDIFFERENT = 2;
     private static final int LIKE_STATUS_ENTITY_TYPE = 62;
+    /**
+     * Entity of the playlists that a video is saved to, which the save button of the watch page shows.
+     */
+    static final int SAVE_TO_PLAYLIST_LIST_ENTITY_TYPE = 231;
     private static final int ACTION_ADD_VIDEO = PlaylistEdit.PlaylistEditActionType.ACTION_ADD_VIDEO_VALUE;
 
     /**
@@ -624,6 +629,11 @@ public class FeedCardLayoutPatch {
      */
     static final class VideoTemplate {
         final String name;
+        /**
+         * Name of another variant of the template, used only while no version of {@link #name} is cached.
+         */
+        @Nullable
+        private final String fallbackName;
         final int modelField;
         final ByteTrieSearch search;
         volatile int themeField;
@@ -643,8 +653,10 @@ public class FeedCardLayoutPatch {
         private volatile long synchronousLookupTime;
         private long checkTime;
 
-        VideoTemplate(String name, int modelField, int themeField, int capabilitiesField) {
+        VideoTemplate(String name, @Nullable String fallbackName, int modelField, int themeField,
+                      int capabilitiesField) {
             this.name = name;
+            this.fallbackName = fallbackName;
             this.modelField = modelField;
             this.themeField = themeField;
             this.capabilitiesField = capabilitiesField;
@@ -677,6 +689,7 @@ public class FeedCardLayoutPatch {
                 Runnable lookup = () -> {
                     // The cached versions of the template, from the oldest to the newest.
                     List<String> cached = new ArrayList<>();
+                    List<String> fallbackCached = new ArrayList<>();
                     try {
                         File metadata = new File(Utils.getContext().getFilesDir(), "ElementsResourceCacheMetadata");
                         if (metadata.isFile()) {
@@ -698,6 +711,8 @@ public class FeedCardLayoutPatch {
                                         String key = entry.readString();
                                         if (isTemplate(key, name)) {
                                             cached.add(key);
+                                        } else if (fallbackName != null && isTemplate(key, fallbackName)) {
+                                            fallbackCached.add(key);
                                         }
                                     } else {
                                         entry.skipField(entryTag);
@@ -715,6 +730,9 @@ public class FeedCardLayoutPatch {
                     } catch (Exception ex) {
                         Logger.printException(() -> "getUri failure", ex);
                         return;
+                    }
+                    if (cached.isEmpty()) {
+                        cached = fallbackCached;
                     }
                     // An element of the template can be seen while the cache is read.
                     synchronized (this) {
@@ -785,7 +803,7 @@ public class FeedCardLayoutPatch {
 
         try {
             final String elementText = FeedVideoCardsPatch.getElementText(bytes);
-            if (LAYOUT != FeedCardLayout.DEFAULT && !FeedVideoCardsPatch.containsAny(elementText, elementTemplates)) {
+            if (LAYOUT != FeedCardLayout.DEFAULT && FeedVideoCardsPatch.lacksAll(elementText, elementTemplates)) {
                 // The elements of the layout of the setting give the current version of its template:
                 // the uri and the fields are taken from the element, if it's an element of the template.
                 // After the first element, the elements are checked once in a while, to follow a new version.
@@ -1141,13 +1159,11 @@ public class FeedCardLayoutPatch {
                                         .build();
                             }
 
-                            String entityKey = Base64.encodeToString(LikeStatusEntityKey.newBuilder()
-                                            .setVideoId(contentId)
-                                            .setEntityType(LIKE_STATUS_ENTITY_TYPE)
-                                            .setVersion(1)
-                                            .build()
-                                            .toByteArray(),
-                                    Base64.URL_SAFE | Base64.NO_WRAP).replace("=", "%3D");
+                            String entityKey = videoEntityKey(contentId, LIKE_STATUS_ENTITY_TYPE);
+                            // The save button is filled while the video is saved, the same as the save button
+                            // of the watch page, and opens the playlists of the video once it's saved.
+                            String saveEntityKey = videoEntityKey(contentId, SAVE_TO_PLAYLIST_LIST_ENTITY_TYPE);
+                            FeedVideoActionsPatch.onCardSaveButton(contentId, saveEntityKey);
 
                             metadata.addActionButtons(ActionButton.newBuilder()
                                             .setLikeButtonViewModel(LikeButtonViewModel.newBuilder()
@@ -1170,7 +1186,8 @@ public class FeedCardLayoutPatch {
                                             .setAddToPlaylistButtonViewModel(AddToPlaylistButtonViewModel.newBuilder()
                                                     .setToggleButtonViewModel(toggleButton(
                                                             button(icons.save, "", saveOnTap),
-                                                            button(icons.saved, "", saveOnTap)))));
+                                                            button(icons.saved, "", saveOnTap)))
+                                                    .setAddToPlaylistEntityKey(saveEntityKey)));
                         }
 
                         // The template draws the background below the thumbnail only for the cards with inline
@@ -1689,15 +1706,6 @@ public class FeedCardLayoutPatch {
         }
     }
 
-    @Nullable
-    private static View getDrawableView(Drawable drawable) {
-        Drawable.Callback callback = drawable.getCallback();
-        while (callback instanceof Drawable parent) {
-            callback = parent.getCallback();
-        }
-        return callback instanceof View view ? view : null;
-    }
-
     private static void updateCardOutline(View child) {
         if (isCardRow(child)) {
             setCardOutline(child, null);
@@ -2192,7 +2200,6 @@ public class FeedCardLayoutPatch {
             }
 
             for (View row : scaledShelfRows.keySet().toArray(new View[0])) {
-                //noinspection EqualsBetweenInconvertibleTypes
                 if (row != null && row.getParent() == list && !scaledRows.contains(row)) {
                     scaledShelfRows.remove(row);
                     row.setScaleX(1);
@@ -2971,6 +2978,15 @@ public class FeedCardLayoutPatch {
         String label = rendererContext.getAccessibilityContext().getLabel();
         LockupMetadataViewModel metadata = lockupViewModel.getMetadata().getLockupMetadataViewModel();
         final int contentType = lockupViewModel.getContentType();
+        if (ACTION_BUTTONS && contentType == LOCKUP_CONTENT_TYPE_VIDEO) {
+            // The save button shows only the videos saved in the app session, see onCardSaveButton().
+            for (ActionButton button : metadata.getActionButtonsList()) {
+                String saveEntityKey = button.getAddToPlaylistButtonViewModel().getAddToPlaylistEntityKey();
+                if (!saveEntityKey.isEmpty()) {
+                    FeedVideoActionsPatch.onCardSaveButton(lockupViewModel.getContentId(), saveEntityKey);
+                }
+            }
+        }
         // The card layout without buttons removes the buttons of the videos and the Shorts that YouTube
         // sends as cards with buttons. The other cards, such as the playlists and the promotions,
         // keep their buttons, as their menu may not have their actions.
@@ -3109,6 +3125,19 @@ public class FeedCardLayoutPatch {
                         .setOpenPopupAction(openPopupAction.toBuilder()
                                 .setPopup(popup.toBuilder().setMenuRenderer(menu).build().toByteString())))
                 .build();
+    }
+
+    /**
+     * @return The key of an entity of a video, such as its like status.
+     */
+    static String videoEntityKey(String videoId, int entityType) {
+        return Base64.encodeToString(LikeStatusEntityKey.newBuilder()
+                        .setVideoId(videoId)
+                        .setEntityType(entityType)
+                        .setVersion(1)
+                        .build()
+                        .toByteArray(),
+                Base64.URL_SAFE | Base64.NO_WRAP).replace("=", "%3D");
     }
 
     private static InnertubeCommandHolder likeCommand(String videoId, int status) {
