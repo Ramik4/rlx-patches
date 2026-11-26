@@ -363,7 +363,8 @@ python3 -m unittest discover -s rlx/scripts
      the stable release), also those already in earlier RLX releases based on its dev releases.
      Only the features of a patch (an entry with a scope, such as **YouTube - Navigation bar:** or
      **Spoof video streams:**): entries without one are about Morphe's own screens (its About dialog,
-     its contributor list), which RLX replaces with its own About page.
+     its contributor list). When one of them also changes RLX (the RLX About page uses Morphe's About
+     style), it is given with the notes of the release, or the published notes are kept as they are.
   3. *🔧 Other improvements*: the heading alone. Fixes are not listed, neither Morphe's (no count, no
      link) nor RLX's (no pull request titles).
   4. *🌟 RLX extras*: what RLX adds to Morphe Patches ([`extras.md`](extras.md)), in every release, like

@@ -65,7 +65,8 @@ def features(morphe, previous):
 
     Only the features of a patch ("* **YouTube - Navigation bar:** ...", "* **Spoof video streams:** ...").
     An entry without a scope is about Morphe's own screens, such as its About dialog and its contributor
-    list, which RLX replaces with its own About page."""
+    list. When one also changes RLX (the RLX About page uses Morphe's About style), it is given with
+    EXTRA_NOTES."""
     base = morphe.split("-")[0]
     found = []
     for section in re.split(r"(?m)^## ", open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8").read())[1:]:
