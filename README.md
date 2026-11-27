@@ -28,7 +28,7 @@ patch of [Morphe Patches](https://github.com/MorpheApp/morphe-patches), plus:
   audio only (M4A or MP3) and the thumbnail; *Download* queues the marked one in YTindir, *All
   options* opens YTindir's download window with all its settings.
 - **RLX branding**: RLX app icons (red, green, layered), header logos, startup animation and app
-  names, next to the original YouTube ones.
+  names, next to the original YT ones.
 - **RLX settings**: the settings in fewer, clearer sections (YouTube): *RLX Customizations* (app
   name, icon, logo, font, theme colors, settings name, language, import/export), *General*, *Feed*,
   *Video*, *Player*, *Swipe and seekbar*, *Shorts*, *Downloads*, *Ads*, *Community services*
